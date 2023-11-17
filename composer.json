@@ -1,5 +1,5 @@
 {
-    "name": "youcan/liquid",
+    "name": "youcanshop/liquid",
     "type": "library",
     "description": "Liquid template engine for themes.",
     "keywords": [
