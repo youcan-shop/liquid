@@ -1,0 +1,58 @@
+{
+    "name": "liquid/liquid",
+    "type": "library",
+    "description": "Liquid template engine for PHP",
+    "keywords": [
+        "liquid",
+        "template"
+    ],
+    "homepage": "https://github.com/kalimatas/php-liquid",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Guz Alexander",
+            "email": "kalimatas@gmail.com",
+            "homepage": "http://guzalexander.com"
+        },
+        {
+            "name": "Harald Hanek"
+        },
+        {
+            "name": "Mateo Murphy"
+        },
+        {
+            "name": "Alexey Kopytko",
+            "email": "alexey@kopytko.com",
+            "homepage": "https://www.alexeykopytko.com/"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": ">=2.8",
+        "friendsofphp/php-cs-fixer": "^3.22",
+        "infection/infection": ">=0.17.6",
+        "php-coveralls/php-coveralls": "^2.2",
+        "phpunit/phpunit": "^9.2.6"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Liquid\\": "src/Liquid"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Liquid\\": "tests/Liquid"
+        }
+    }
+}
