@@ -1,5 +1,6 @@
-- [ ] I've run the tests with `vendor/bin/phpunit`
-- [ ] None of the tests were found failing
-- [ ] I've seen the coverage report at `build/coverage/index.html`
-- [ ] Not a single line left uncovered by tests
-- [ ] Any coding standards issues were fixed with `vendor/bin/php-cs-fixer fix`
+Ticket: [ticket_number](https://youcanshop.atlassian.net/browse/ticket_number)
+
+### QA Steps
+
+- Go to `/something`
+- Verify said thing
