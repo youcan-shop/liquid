@@ -15,35 +15,35 @@ use Liquid\TestCase;
 
 class TagDecrementTest extends TestCase
 {
-	/**
-	 */
-	public function testSyntaxError()
-	{
-		$this->expectException(\Liquid\LiquidException::class);
+    /**
+     */
+    public function testSyntaxError()
+    {
+        $this->expectException(\Liquid\LiquidException::class);
 
-		$this->assertTemplateResult('', '{% decrement %}');
-	}
+        $this->assertTemplateResult('', '{% decrement %}');
+    }
 
-	/**
-	 * Undefined variable will become -1
-	 */
-	public function testDecrementNonExistingVariable()
-	{
-		$this->assertTemplateResult(-1, '{% decrement no_such_var %}{{ no_such_var }}');
-	}
+    /**
+     * Undefined variable will become -1
+     */
+    public function testDecrementNonExistingVariable()
+    {
+        $this->assertTemplateResult(-1, '{% decrement no_such_var %}{{ no_such_var }}');
+    }
 
-	public function testDecrementVariable()
-	{
-		$this->assertTemplateResult(42, '{% decrement var %}{{ var }}', array('var' => 43));
-	}
+    public function testDecrementVariable()
+    {
+        $this->assertTemplateResult(42, '{% decrement var %}{{ var }}', ['var' => 43]);
+    }
 
-	public function testDecrementNestedVariable()
-	{
-		$this->assertTemplateResult(42, '{% for var in vars %}{% decrement var %}{{ var }}{% endfor %}', array('vars' => array(43)));
-	}
+    public function testDecrementNestedVariable()
+    {
+        $this->assertTemplateResult(42, '{% for var in vars %}{% decrement var %}{{ var }}{% endfor %}', ['vars' => [43]]);
+    }
 
-	public function testVariableNameContainingNumber()
-	{
-		$this->assertTemplateResult(42, '{% decrement var123 %}{{ var123 }}', array('var123' => 43));
-	}
+    public function testVariableNameContainingNumber()
+    {
+        $this->assertTemplateResult(42, '{% decrement var123 %}{{ var123 }}', ['var123' => 43]);
+    }
 }

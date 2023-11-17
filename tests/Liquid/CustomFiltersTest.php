@@ -13,35 +13,35 @@ namespace Liquid;
 
 class CustomFiltersTest extends TestCase
 {
-	/**
-	 * The current context
-	 *
-	 * @var Context
-	 */
-	public $context;
+    /**
+     * The current context
+     *
+     * @var Context
+     */
+    public $context;
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+    public function testSortKey()
+    {
+        $data = [
+            [
+                [],
+                [],
+            ],
+            [
+                ['b' => 1, 'c' => 5, 'a' => 3, 'z' => 4, 'h' => 2],
+                ['a' => 3, 'b' => 1, 'c' => 5, 'h' => 2, 'z' => 4],
+            ],
+        ];
 
-		$this->context = new Context();
-	}
+        foreach ($data as $item) {
+            $this->assertEquals($item[1], CustomFilters::sort_key($item[0]));
+        }
+    }
 
-	public function testSortKey()
-	{
-		$data = array(
-			array(
-				array(),
-				array(),
-			),
-			array(
-				array('b' => 1, 'c' => 5, 'a' => 3, 'z' => 4, 'h' => 2),
-				array('a' => 3, 'b' => 1, 'c' => 5, 'h' => 2, 'z' => 4),
-			),
-		);
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-		foreach ($data as $item) {
-			$this->assertEquals($item[1], CustomFilters::sort_key($item[0]));
-		}
-	}
+        $this->context = new Context();
+    }
 }

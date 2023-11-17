@@ -16,443 +16,439 @@ namespace Liquid;
  */
 class Context
 {
-	/**
-	 * Local scopes
-	 *
-	 * @var array
-	 */
-	protected $assigns;
+    /**
+     * Registers for non-variable state data
+     *
+     * @var array
+     */
+    public $registers;
+    /**
+     * Global scopes
+     *
+     * @var array
+     */
+    public $environments = [];
+    /**
+     * Local scopes
+     *
+     * @var array
+     */
+    protected $assigns;
+    /**
+     * The filterbank holds all the filters
+     *
+     * @var Filterbank
+     */
+    protected $filterbank;
+    /**
+     * Called "sometimes" while rendering. For example to abort the execution of a rendering.
+     *
+     * @var null|callable
+     */
+    private $tickFunction = null;
 
-	/**
-	 * Registers for non-variable state data
-	 *
-	 * @var array
-	 */
-	public $registers;
+    /**
+     * Constructor
+     *
+     * @param array $assigns
+     * @param array $registers
+     */
+    public function __construct(array $assigns = [], array $registers = [])
+    {
+        $this->assigns = [$assigns];
+        $this->registers = $registers;
+        $this->filterbank = new Filterbank($this);
 
-	/**
-	 * The filterbank holds all the filters
-	 *
-	 * @var Filterbank
-	 */
-	protected $filterbank;
+        // first empty array serves as source for overrides, e.g. as in TagDecrement
+        $this->environments = [[], []];
 
-	/**
-	 * Global scopes
-	 *
-	 * @var array
-	 */
-	public $environments = array();
+        if (Liquid::get('EXPOSE_SERVER')) {
+            $this->environments[1] = $_SERVER;
+        } else {
+            $this->environments[1] = array_filter(
+                $_SERVER,
+                function ($key) {
+                    return in_array(
+                        $key,
+                        (array)Liquid::get('SERVER_SUPERGLOBAL_WHITELIST')
+                    );
+                },
+                ARRAY_FILTER_USE_KEY
+            );
+        }
+    }
 
-	/**
-	 * Called "sometimes" while rendering. For example to abort the execution of a rendering.
-	 *
-	 * @var null|callable
-	 */
-	private $tickFunction = null;
+    /**
+     * Replaces []
+     *
+     * @param string
+     * @param mixed $key
+     *
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return $this->resolve($key);
+    }
 
-	/**
-	 * Constructor
-	 *
-	 * @param array $assigns
-	 * @param array $registers
-	 */
-	public function __construct(array $assigns = array(), array $registers = array())
-	{
-		$this->assigns = array($assigns);
-		$this->registers = $registers;
-		$this->filterbank = new Filterbank($this);
+    /**
+     * Resolve a key by either returning the appropriate literal or by looking up the appropriate variable
+     *
+     * Test for empty has been moved to interpret condition, in Decision
+     *
+     * @param string $key
+     *
+     * @return mixed
+     * @throws LiquidException
+     */
+    private function resolve($key)
+    {
+        // This shouldn't happen
+        if (is_array($key)) {
+            throw new LiquidException("Cannot resolve arrays as key");
+        }
 
-		// first empty array serves as source for overrides, e.g. as in TagDecrement
-		$this->environments = array(array(), array());
+        if (is_null($key) || $key == 'null') {
+            return null;
+        }
 
-		if (Liquid::get('EXPOSE_SERVER')) {
-			$this->environments[1] = $_SERVER;
-		} else {
-			$this->environments[1] = array_filter(
-				$_SERVER,
-				function ($key) {
-					return in_array(
-						$key,
-						(array)Liquid::get('SERVER_SUPERGLOBAL_WHITELIST')
-					);
-				},
-				ARRAY_FILTER_USE_KEY
-			);
-		}
-	}
+        if ($key == 'true') {
+            return true;
+        }
 
-	/**
-	 * Sets a tick function, this function is called sometimes while liquid is rendering a template.
-	 *
-	 * @param callable $tickFunction
-	 */
-	public function setTickFunction(callable $tickFunction)
-	{
-		$this->tickFunction = $tickFunction;
-	}
+        if ($key == 'false') {
+            return false;
+        }
 
-	/**
-	 * Add a filter to the context
-	 *
-	 * @param mixed $filter
-	 */
-	public function addFilters($filter, callable $callback = null)
-	{
-		$this->filterbank->addFilter($filter, $callback);
-	}
+        if (preg_match('/^\'(.*)\'$/', $key, $matches)) {
+            return $matches[1];
+        }
 
-	/**
-	 * Invoke the filter that matches given name
-	 *
-	 * @param string $name The name of the filter
-	 * @param mixed $value The value to filter
-	 * @param array $args Additional arguments for the filter
-	 *
-	 * @return string
-	 */
-	public function invoke($name, $value, array $args = array())
-	{
-		try {
-			return $this->filterbank->invoke($name, $value, $args);
-		} catch (\TypeError $typeError) {
-			throw new LiquidException($typeError->getMessage(), 0, $typeError);
-		}
-	}
+        if (preg_match('/^"(.*)"$/', $key, $matches)) {
+            return $matches[1];
+        }
 
-	/**
-	 * Merges the given assigns into the current assigns
-	 *
-	 * @param array $newAssigns
-	 */
-	public function merge($newAssigns)
-	{
-		$this->assigns[0] = array_merge($this->assigns[0], $newAssigns);
-	}
+        if (preg_match('/^(-?\d+)$/', $key, $matches)) {
+            return $matches[1];
+        }
 
-	/**
-	 * Push new local scope on the stack.
-	 *
-	 * @return bool
-	 */
-	public function push()
-	{
-		array_unshift($this->assigns, array());
-		return true;
-	}
+        if (preg_match('/^(-?\d[\d\.]+)$/', $key, $matches)) {
+            return $matches[1];
+        }
 
-	/**
-	 * Pops the current scope from the stack.
-	 *
-	 * @throws LiquidException
-	 * @return bool
-	 */
-	public function pop()
-	{
-		if (count($this->assigns) == 1) {
-			throw new LiquidException('No elements to pop');
-		}
+        return $this->variable($key);
+    }
 
-		array_shift($this->assigns);
-	}
+    /**
+     * Resolved the namespaced queries gracefully.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     * @throws LiquidException
+     * @see Decision::stringValue
+     * @see AbstractBlock::renderAll
+     *
+     */
+    private function variable($key)
+    {
+        // Support numeric and variable array indicies
+        if (preg_match("|\[[0-9]+\]|", $key)) {
+            $key = preg_replace("|\[([0-9]+)\]|", ".$1", $key);
+        } elseif (preg_match("|\[[0-9a-z._]+\]|", $key, $matches)) {
+            $index = $this->get(str_replace(["[", "]"], "", $matches[0]));
+            if (strlen($index)) {
+                $key = preg_replace("|\[([0-9a-z._]+)\]|", ".$index", $key);
+            }
+        }
 
-	/**
-	 * Replaces []
-	 *
-	 * @param string
-	 * @param mixed $key
-	 *
-	 * @return mixed
-	 */
-	public function get($key)
-	{
-		return $this->resolve($key);
-	}
+        $parts = explode(Liquid::get('VARIABLE_ATTRIBUTE_SEPARATOR'), $key);
 
-	/**
-	 * Replaces []=
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @param bool $global
-	 */
-	public function set($key, $value, $global = false)
-	{
-		if ($global) {
-			for ($i = 0; $i < count($this->assigns); $i++) {
-				$this->assigns[$i][$key] = $value;
-			}
-		} else {
-			$this->assigns[0][$key] = $value;
-		}
-	}
+        $object = $this->fetch(array_shift($parts));
 
-	/**
-	 * Returns true if the given key will properly resolve
-	 *
-	 * @param string $key
-	 *
-	 * @return bool
-	 */
-	public function hasKey($key)
-	{
-		return (!is_null($this->resolve($key)));
-	}
+        while (count($parts) > 0) {
+            // since we still have a part to consider
+            // and since we can't dig deeper into plain values
+            // it can be thought as if it has a property with a null value
+            if (!is_object($object) && !is_array($object) && !is_string($object)) {
+                return null;
+            }
 
-	/**
-	 * Resolve a key by either returning the appropriate literal or by looking up the appropriate variable
-	 *
-	 * Test for empty has been moved to interpret condition, in Decision
-	 *
-	 * @param string $key
-	 *
-	 * @throws LiquidException
-	 * @return mixed
-	 */
-	private function resolve($key)
-	{
-		// This shouldn't happen
-		if (is_array($key)) {
-			throw new LiquidException("Cannot resolve arrays as key");
-		}
+            // first try to cast an object to an array or value
+            if (is_object($object)) {
+                if (method_exists($object, 'toLiquid')) {
+                    $object = $object->toLiquid();
+                } elseif (method_exists($object, 'toArray')) {
+                    $object = $object->toArray();
+                }
+            }
 
-		if (is_null($key) || $key == 'null') {
-			return null;
-		}
+            if (is_null($object)) {
+                return null;
+            }
 
-		if ($key == 'true') {
-			return true;
-		}
+            if ($object instanceof Drop) {
+                $object->setContext($this);
+            }
 
-		if ($key == 'false') {
-			return false;
-		}
+            $nextPartName = array_shift($parts);
 
-		if (preg_match('/^\'(.*)\'$/', $key, $matches)) {
-			return $matches[1];
-		}
+            if (is_string($object)) {
+                if ($nextPartName == 'size') {
+                    // if the last part of the context variable is .size we return the string length
+                    return mb_strlen($object);
+                }
 
-		if (preg_match('/^"(.*)"$/', $key, $matches)) {
-			return $matches[1];
-		}
+                // no other special properties for strings, yet
+                return null;
+            }
 
-		if (preg_match('/^(-?\d+)$/', $key, $matches)) {
-			return $matches[1];
-		}
+            if (is_array($object)) {
+                // if the last part of the context variable is .first we return the first array element
+                if ($nextPartName == 'first' && count($parts) == 0 && !array_key_exists('first', $object)) {
+                    return StandardFilters::first($object);
+                }
 
-		if (preg_match('/^(-?\d[\d\.]+)$/', $key, $matches)) {
-			return $matches[1];
-		}
+                // if the last part of the context variable is .last we return the last array element
+                if ($nextPartName == 'last' && count($parts) == 0 && !array_key_exists('last', $object)) {
+                    return StandardFilters::last($object);
+                }
 
-		return $this->variable($key);
-	}
+                // if the last part of the context variable is .size we just return the count
+                if ($nextPartName == 'size' && count($parts) == 0 && !array_key_exists('size', $object)) {
+                    return count($object);
+                }
 
-	/**
-	 * Fetches the current key in all the scopes
-	 *
-	 * @param string $key
-	 *
-	 * @return mixed
-	 */
-	private function fetch($key)
-	{
-		// TagDecrement depends on environments being checked before assigns
-		foreach ($this->environments as $environment) {
-			if (array_key_exists($key, $environment)) {
-				return $environment[$key];
-			}
-		}
+                // no key - no value
+                if (!array_key_exists($nextPartName, $object)) {
+                    return null;
+                }
 
-		foreach ($this->assigns as $scope) {
-			if (array_key_exists($key, $scope)) {
-				$obj = $scope[$key];
+                $object = $object[$nextPartName];
+                continue;
+            }
 
-				if ($obj instanceof Drop) {
-					$obj->setContext($this);
-				}
+            if (!is_object($object)) {
+                // we got plain value, yet asked to resolve a part
+                // think plain values have a null part with any name
+                return null;
+            }
 
-				return $obj;
-			}
-		}
+            if ($object instanceof \Countable) {
+                // if the last part of the context variable is .size we just return the count
+                if ($nextPartName == 'size' && count($parts) == 0) {
+                    return count($object);
+                }
+            }
 
-		return null;
-	}
+            if ($object instanceof Drop) {
+                // if the object is a drop, make sure it supports the given method
+                if (!$object->hasKey($nextPartName)) {
+                    return null;
+                }
 
-	/**
-	 * Resolved the namespaced queries gracefully.
-	 *
-	 * @param string $key
-	 *
-	 * @see Decision::stringValue
-	 * @see AbstractBlock::renderAll
-	 *
-	 * @throws LiquidException
-	 * @return mixed
-	 */
-	private function variable($key)
-	{
-		// Support numeric and variable array indicies
-		if (preg_match("|\[[0-9]+\]|", $key)) {
-			$key = preg_replace("|\[([0-9]+)\]|", ".$1", $key);
-		} elseif (preg_match("|\[[0-9a-z._]+\]|", $key, $matches)) {
-			$index = $this->get(str_replace(array("[", "]"), "", $matches[0]));
-			if (strlen($index)) {
-				$key = preg_replace("|\[([0-9a-z._]+)\]|", ".$index", $key);
-			}
-		}
+                $object = $object->invokeDrop($nextPartName);
+                continue;
+            }
 
-		$parts = explode(Liquid::get('VARIABLE_ATTRIBUTE_SEPARATOR'), $key);
+            // if it has `get` or `field_exists` methods
+            if (method_exists($object, Liquid::get('HAS_PROPERTY_METHOD'))) {
+                if (!call_user_func([$object, Liquid::get('HAS_PROPERTY_METHOD')], $nextPartName)) {
+                    return null;
+                }
 
-		$object = $this->fetch(array_shift($parts));
+                $object = call_user_func([$object, Liquid::get('GET_PROPERTY_METHOD')], $nextPartName);
+                continue;
+            }
 
-		while (count($parts) > 0) {
-			// since we still have a part to consider
-			// and since we can't dig deeper into plain values
-			// it can be thought as if it has a property with a null value
-			if (!is_object($object) && !is_array($object) && !is_string($object)) {
-				return null;
-			}
+            // if it's just a regular object, attempt to access a public method
+            if (is_callable([$object, $nextPartName])) {
+                $object = call_user_func([$object, $nextPartName]);
+                continue;
+            }
 
-			// first try to cast an object to an array or value
-			if (is_object($object)) {
-				if (method_exists($object, 'toLiquid')) {
-					$object = $object->toLiquid();
-				} elseif (method_exists($object, 'toArray')) {
-					$object = $object->toArray();
-				}
-			}
+            // if a magic accessor method present...
+            if (is_object($object) && method_exists($object, '__get')) {
+                $object = $object->$nextPartName;
+                continue;
+            }
 
-			if (is_null($object)) {
-				return null;
-			}
+            // Inexistent property is a null, PHP-speak
+            if (!property_exists($object, $nextPartName)) {
+                return null;
+            }
 
-			if ($object instanceof Drop) {
-				$object->setContext($this);
-			}
+            // then try a property (independent of accessibility)
+            if (property_exists($object, $nextPartName)) {
+                $object = $object->$nextPartName;
+                continue;
+            }
+            // we'll try casting this object in the next iteration
+        }
 
-			$nextPartName = array_shift($parts);
+        // lastly, try to get an embedded value of an object
+        // value could be of any type, not just string, so we have to do this
+        // conversion here, not later in AbstractBlock::renderAll
+        if (is_object($object) && method_exists($object, 'toLiquid')) {
+            $object = $object->toLiquid();
+        }
 
-			if (is_string($object)) {
-				if ($nextPartName == 'size') {
-					// if the last part of the context variable is .size we return the string length
-					return mb_strlen($object);
-				}
+        /*
+         * Before here were checks for object types and object to string conversion.
+         *
+         * Now we just return what we have:
+         * - Traversable objects are taken care of inside filters
+         * - Object-to-string conversion is handled at the last moment in Decision::stringValue, and in AbstractBlock::renderAll
+         *
+         * This way complex objects could be passed between templates and to filters
+         */
 
-				// no other special properties for strings, yet
-				return null;
-			}
+        return $object;
+    }
 
-			if (is_array($object)) {
-				// if the last part of the context variable is .first we return the first array element
-				if ($nextPartName == 'first' && count($parts) == 0 && !array_key_exists('first', $object)) {
-					return StandardFilters::first($object);
-				}
+    /**
+     * Fetches the current key in all the scopes
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    private function fetch($key)
+    {
+        // TagDecrement depends on environments being checked before assigns
+        foreach ($this->environments as $environment) {
+            if (array_key_exists($key, $environment)) {
+                return $environment[$key];
+            }
+        }
 
-				// if the last part of the context variable is .last we return the last array element
-				if ($nextPartName == 'last' && count($parts) == 0 && !array_key_exists('last', $object)) {
-					return StandardFilters::last($object);
-				}
+        foreach ($this->assigns as $scope) {
+            if (array_key_exists($key, $scope)) {
+                $obj = $scope[$key];
 
-				// if the last part of the context variable is .size we just return the count
-				if ($nextPartName == 'size' && count($parts) == 0 && !array_key_exists('size', $object)) {
-					return count($object);
-				}
+                if ($obj instanceof Drop) {
+                    $obj->setContext($this);
+                }
 
-				// no key - no value
-				if (!array_key_exists($nextPartName, $object)) {
-					return null;
-				}
+                return $obj;
+            }
+        }
 
-				$object = $object[$nextPartName];
-				continue;
-			}
+        return null;
+    }
 
-			if (!is_object($object)) {
-				// we got plain value, yet asked to resolve a part
-				// think plain values have a null part with any name
-				return null;
-			}
+    /**
+     * Returns true if the given key will properly resolve
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function hasKey($key)
+    {
+        return (!is_null($this->resolve($key)));
+    }
 
-			if ($object instanceof \Countable) {
-				// if the last part of the context variable is .size we just return the count
-				if ($nextPartName == 'size' && count($parts) == 0) {
-					return count($object);
-				}
-			}
+    /**
+     * Sets a tick function, this function is called sometimes while liquid is rendering a template.
+     *
+     * @param callable $tickFunction
+     */
+    public function setTickFunction(callable $tickFunction)
+    {
+        $this->tickFunction = $tickFunction;
+    }
 
-			if ($object instanceof Drop) {
-				// if the object is a drop, make sure it supports the given method
-				if (!$object->hasKey($nextPartName)) {
-					return null;
-				}
+    /**
+     * Add a filter to the context
+     *
+     * @param mixed $filter
+     */
+    public function addFilters($filter, callable $callback = null)
+    {
+        $this->filterbank->addFilter($filter, $callback);
+    }
 
-				$object = $object->invokeDrop($nextPartName);
-				continue;
-			}
+    /**
+     * Invoke the filter that matches given name
+     *
+     * @param string $name The name of the filter
+     * @param mixed $value The value to filter
+     * @param array $args Additional arguments for the filter
+     *
+     * @return string
+     */
+    public function invoke($name, $value, array $args = [])
+    {
+        try {
+            return $this->filterbank->invoke($name, $value, $args);
+        } catch (\TypeError $typeError) {
+            throw new LiquidException($typeError->getMessage(), 0, $typeError);
+        }
+    }
 
-			// if it has `get` or `field_exists` methods
-			if (method_exists($object, Liquid::get('HAS_PROPERTY_METHOD'))) {
-				if (!call_user_func(array($object, Liquid::get('HAS_PROPERTY_METHOD')), $nextPartName)) {
-					return null;
-				}
+    /**
+     * Merges the given assigns into the current assigns
+     *
+     * @param array $newAssigns
+     */
+    public function merge($newAssigns)
+    {
+        $this->assigns[0] = array_merge($this->assigns[0], $newAssigns);
+    }
 
-				$object = call_user_func(array($object, Liquid::get('GET_PROPERTY_METHOD')), $nextPartName);
-				continue;
-			}
+    /**
+     * Push new local scope on the stack.
+     *
+     * @return bool
+     */
+    public function push()
+    {
+        array_unshift($this->assigns, []);
 
-			// if it's just a regular object, attempt to access a public method
-			if (is_callable(array($object, $nextPartName))) {
-				$object = call_user_func(array($object, $nextPartName));
-				continue;
-			}
+        return true;
+    }
 
-			// if a magic accessor method present...
-			if (is_object($object) && method_exists($object, '__get')) {
-				$object = $object->$nextPartName;
-				continue;
-			}
+    /**
+     * Pops the current scope from the stack.
+     *
+     * @return bool
+     * @throws LiquidException
+     */
+    public function pop()
+    {
+        if (count($this->assigns) == 1) {
+            throw new LiquidException('No elements to pop');
+        }
 
-			// Inexistent property is a null, PHP-speak
-			if (!property_exists($object, $nextPartName)) {
-				return null;
-			}
+        array_shift($this->assigns);
+    }
 
-			// then try a property (independent of accessibility)
-			if (property_exists($object, $nextPartName)) {
-				$object = $object->$nextPartName;
-				continue;
-			}
+    /**
+     * Replaces []=
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param bool $global
+     */
+    public function set($key, $value, $global = false)
+    {
+        if ($global) {
+            for ($i = 0; $i < count($this->assigns); $i++) {
+                $this->assigns[$i][$key] = $value;
+            }
+        } else {
+            $this->assigns[0][$key] = $value;
+        }
+    }
 
-			// we'll try casting this object in the next iteration
-		}
+    public function tick()
+    {
+        if ($this->tickFunction === null) {
+            return;
+        }
 
-		// lastly, try to get an embedded value of an object
-		// value could be of any type, not just string, so we have to do this
-		// conversion here, not later in AbstractBlock::renderAll
-		if (is_object($object) && method_exists($object, 'toLiquid')) {
-			$object = $object->toLiquid();
-		}
-
-		/*
-		 * Before here were checks for object types and object to string conversion.
-		 *
-		 * Now we just return what we have:
-		 * - Traversable objects are taken care of inside filters
-		 * - Object-to-string conversion is handled at the last moment in Decision::stringValue, and in AbstractBlock::renderAll
-		 *
-		 * This way complex objects could be passed between templates and to filters
-		 */
-
-		return $object;
-	}
-
-	public function tick()
-	{
-		if ($this->tickFunction === null) {
-			return;
-		}
-
-		$tickFunction = $this->tickFunction;
-		$tickFunction($this);
-	}
+        $tickFunction = $this->tickFunction;
+        $tickFunction($this);
+    }
 }

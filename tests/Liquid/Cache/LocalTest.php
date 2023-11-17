@@ -15,31 +15,31 @@ use Liquid\TestCase;
 
 class LocalTest extends TestCase
 {
-	/** @var \Liquid\Cache\Local */
-	protected $cache;
+    /** @var \Liquid\Cache\Local */
+    protected $cache;
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+    public function testNotExists()
+    {
+        $this->assertFalse($this->cache->exists('no_such_key'));
+    }
 
-		$this->cache = new Local();
-	}
+    public function testReadNotExisting()
+    {
+        $this->assertFalse($this->cache->read('no_such_key'));
+    }
 
-	public function testNotExists()
-	{
-		$this->assertFalse($this->cache->exists('no_such_key'));
-	}
+    public function testSetGetFlush()
+    {
+        $this->assertTrue($this->cache->write('test', 'example'));
+        $this->assertSame('example', $this->cache->read('test'));
+        $this->assertTrue($this->cache->flush());
+        $this->assertFalse($this->cache->read('test'));
+    }
 
-	public function testReadNotExisting()
-	{
-		$this->assertFalse($this->cache->read('no_such_key'));
-	}
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-	public function testSetGetFlush()
-	{
-		$this->assertTrue($this->cache->write('test', 'example'));
-		$this->assertSame('example', $this->cache->read('test'));
-		$this->assertTrue($this->cache->flush());
-		$this->assertFalse($this->cache->read('test'));
-	}
+        $this->cache = new Local();
+    }
 }

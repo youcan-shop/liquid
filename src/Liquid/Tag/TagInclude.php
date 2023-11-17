@@ -12,13 +12,12 @@
 namespace Liquid\Tag;
 
 use Liquid\AbstractTag;
-use Liquid\Document;
 use Liquid\Context;
+use Liquid\Document;
 use Liquid\Exception\MissingFilesystemException;
 use Liquid\Exception\ParseException;
-use Liquid\Liquid;
-use Liquid\LiquidException;
 use Liquid\FileSystem;
+use Liquid\Liquid;
 use Liquid\Regexp;
 use Liquid\Template;
 
@@ -42,159 +41,156 @@ use Liquid\Template;
  */
 class TagInclude extends AbstractTag
 {
-	/**
-	 * @var string The name of the template
-	 */
-	private $templateName;
+    /**
+     * @var string The Source Hash
+     */
+    protected $hash;
+    /**
+     * @var string The name of the template
+     */
+    private $templateName;
+    /**
+     * @var bool True if the variable is a collection
+     */
+    private $collection;
+    /**
+     * @var mixed The value to pass to the child template as the template name
+     */
+    private $variable;
+    /**
+     * @var Document The Document that represents the included template
+     */
+    private $document;
 
-	/**
-	 * @var bool True if the variable is a collection
-	 */
-	private $collection;
+    /**
+     * Constructor
+     *
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem $fileSystem
+     *
+     * @throws \Liquid\Exception\ParseException
+     */
+    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    {
+        $regex = new Regexp('/("[^"]+"|\'[^\']+\'|[^\'"\s]+)(\s+(with|for)\s+(' . Liquid::get('QUOTED_FRAGMENT') . '+))?/');
 
-	/**
-	 * @var mixed The value to pass to the child template as the template name
-	 */
-	private $variable;
+        if (!$regex->match($markup)) {
+            throw new ParseException("Error in tag 'include' - Valid syntax: include '[template]' (with|for) [object|collection]");
+        }
 
-	/**
-	 * @var Document The Document that represents the included template
-	 */
-	private $document;
+        $unquoted = (strpos($regex->matches[1], '"') === false && strpos($regex->matches[1], "'") === false);
 
-	/**
-	 * @var string The Source Hash
-	 */
-	protected $hash;
+        $start = 1;
+        $len = strlen($regex->matches[1]) - 2;
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $markup
-	 * @param array $tokens
-	 * @param FileSystem $fileSystem
-	 *
-	 * @throws \Liquid\Exception\ParseException
-	 */
-	public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
-	{
-		$regex = new Regexp('/("[^"]+"|\'[^\']+\'|[^\'"\s]+)(\s+(with|for)\s+(' . Liquid::get('QUOTED_FRAGMENT') . '+))?/');
+        if ($unquoted) {
+            $start = 0;
+            $len = strlen($regex->matches[1]);
+        }
 
-		if (!$regex->match($markup)) {
-			throw new ParseException("Error in tag 'include' - Valid syntax: include '[template]' (with|for) [object|collection]");
-		}
+        $this->templateName = substr($regex->matches[1], $start, $len);
 
-		$unquoted = (strpos($regex->matches[1], '"') === false && strpos($regex->matches[1], "'") === false);
+        if (isset($regex->matches[1])) {
+            $this->collection = (isset($regex->matches[3])) ? ($regex->matches[3] == "for") : null;
+            $this->variable = (isset($regex->matches[4])) ? $regex->matches[4] : null;
+        }
 
-		$start = 1;
-		$len = strlen($regex->matches[1]) - 2;
+        $this->extractAttributes($markup);
 
-		if ($unquoted) {
-			$start = 0;
-			$len = strlen($regex->matches[1]);
-		}
+        parent::__construct($markup, $tokens, $fileSystem);
+    }
 
-		$this->templateName = substr($regex->matches[1], $start, $len);
+    /**
+     * Parses the tokens
+     *
+     * @param array $tokens
+     *
+     * @throws \Liquid\Exception\MissingFilesystemException
+     */
+    public function parse(array &$tokens)
+    {
+        if ($this->fileSystem === null) {
+            throw new MissingFilesystemException("No file system");
+        }
 
-		if (isset($regex->matches[1])) {
-			$this->collection = (isset($regex->matches[3])) ? ($regex->matches[3] == "for") : null;
-			$this->variable = (isset($regex->matches[4])) ? $regex->matches[4] : null;
-		}
+        // read the source of the template and create a new sub document
+        $source = $this->fileSystem->readTemplateFile($this->templateName);
 
-		$this->extractAttributes($markup);
+        $cache = Template::getCache();
 
-		parent::__construct($markup, $tokens, $fileSystem);
-	}
+        if (!$cache) {
+            // tokens in this new document
+            $templateTokens = Template::tokenize($source);
+            $this->document = new Document($templateTokens, $this->fileSystem);
 
-	/**
-	 * Parses the tokens
-	 *
-	 * @param array $tokens
-	 *
-	 * @throws \Liquid\Exception\MissingFilesystemException
-	 */
-	public function parse(array &$tokens)
-	{
-		if ($this->fileSystem === null) {
-			throw new MissingFilesystemException("No file system");
-		}
+            return;
+        }
 
-		// read the source of the template and create a new sub document
-		$source = $this->fileSystem->readTemplateFile($this->templateName);
+        $this->hash = md5($source);
+        $this->document = $cache->read($this->hash);
 
-		$cache = Template::getCache();
+        if ($this->document == false || $this->document->hasIncludes() == true) {
+            $templateTokens = Template::tokenize($source);
+            $this->document = new Document($templateTokens, $this->fileSystem);
+            $cache->write($this->hash, $this->document);
+        }
+    }
 
-		if (!$cache) {
-			// tokens in this new document
-			$templateTokens = Template::tokenize($source);
-			$this->document = new Document($templateTokens, $this->fileSystem);
-			return;
-		}
+    /**
+     * Check for cached includes; if there are - do not use cache
+     *
+     * @return boolean
+     * @see Document::hasIncludes()
+     */
+    public function hasIncludes()
+    {
+        if ($this->document->hasIncludes() == true) {
+            return true;
+        }
 
-		$this->hash = md5($source);
-		$this->document = $cache->read($this->hash);
+        $source = $this->fileSystem->readTemplateFile($this->templateName);
 
-		if ($this->document == false || $this->document->hasIncludes() == true) {
-			$templateTokens = Template::tokenize($source);
-			$this->document = new Document($templateTokens, $this->fileSystem);
-			$cache->write($this->hash, $this->document);
-		}
-	}
+        if (Template::getCache()->exists(md5($source)) && $this->hash === md5($source)) {
+            return false;
+        }
 
-	/**
-	 * Check for cached includes; if there are - do not use cache
-	 *
-	 * @see Document::hasIncludes()
-	 * @return boolean
-	 */
-	public function hasIncludes()
-	{
-		if ($this->document->hasIncludes() == true) {
-			return true;
-		}
+        return true;
+    }
 
-		$source = $this->fileSystem->readTemplateFile($this->templateName);
+    /**
+     * Renders the node
+     *
+     * @param Context $context
+     *
+     * @return string
+     */
+    public function render(Context $context)
+    {
+        $result = '';
+        $variable = $context->get($this->variable);
 
-		if (Template::getCache()->exists(md5($source)) && $this->hash === md5($source)) {
-			return false;
-		}
+        $context->push();
 
-		return true;
-	}
+        foreach ($this->attributes as $key => $value) {
+            $context->set($key, $context->get($value));
+        }
 
-	/**
-	 * Renders the node
-	 *
-	 * @param Context $context
-	 *
-	 * @return string
-	 */
-	public function render(Context $context)
-	{
-		$result = '';
-		$variable = $context->get($this->variable);
+        if ($this->collection) {
+            foreach ($variable as $item) {
+                $context->set($this->templateName, $item);
+                $result .= $this->document->render($context);
+            }
+        } else {
+            if (!is_null($this->variable)) {
+                $context->set($this->templateName, $variable);
+            }
 
-		$context->push();
+            $result .= $this->document->render($context);
+        }
 
-		foreach ($this->attributes as $key => $value) {
-			$context->set($key, $context->get($value));
-		}
+        $context->pop();
 
-		if ($this->collection) {
-			foreach ($variable as $item) {
-				$context->set($this->templateName, $item);
-				$result .= $this->document->render($context);
-			}
-		} else {
-			if (!is_null($this->variable)) {
-				$context->set($this->templateName, $variable);
-			}
-
-			$result .= $this->document->render($context);
-		}
-
-		$context->pop();
-
-		return $result;
-	}
+        return $result;
+    }
 }

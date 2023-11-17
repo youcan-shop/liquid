@@ -13,157 +13,157 @@ namespace Liquid;
 
 class TemplateTest extends TestCase
 {
-	const CACHE_DIR = 'cache_dir';
+    const CACHE_DIR = 'cache_dir';
 
-	/** @var string full path to cache dir  */
-	protected $cacheDir;
+    /** @var string full path to cache dir */
+    protected $cacheDir;
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+    /**
+     */
+    public function testSetCacheInvalidKey()
+    {
+        $this->expectException(\Liquid\LiquidException::class);
 
-		$this->cacheDir = __DIR__ . DIRECTORY_SEPARATOR . self::CACHE_DIR;
-	}
+        $template = new Template();
+        $template->setCache([]);
+    }
 
-	protected function tearDown(): void
-	{
-		parent::tearDown();
+    /**
+     */
+    public function testSetCacheInvalidClass()
+    {
+        $this->expectException(\Liquid\LiquidException::class);
 
-		// Remove tmp cache files
-		array_map('unlink', glob($this->cacheDir . DIRECTORY_SEPARATOR . '*'));
-	}
+        $template = new Template();
+        $template->setCache(['cache' => 'no_such_class']);
+    }
 
-	/**
-	 */
-	public function testSetCacheInvalidKey()
-	{
-		$this->expectException(\Liquid\LiquidException::class);
+    public function testSetCacheThroughArray()
+    {
+        $template = new Template();
+        $template->setCache(['cache' => 'file', 'cache_dir' => $this->cacheDir]);
+        $this->assertInstanceOf(\Liquid\Cache\File::class, $template::getCache());
+    }
 
-		$template = new Template();
-		$template->setCache(array());
-	}
+    public function testSetCacheThroughCacheObject()
+    {
+        $template = new Template();
+        $cache = new Cache\File(['cache_dir' => $this->cacheDir]);
+        $template->setCache($cache);
+        $this->assertEquals($cache, $template::getCache());
+    }
 
-	/**
-	 */
-	public function testSetCacheInvalidClass()
-	{
-		$this->expectException(\Liquid\LiquidException::class);
+    public function testTokenizeStrings()
+    {
+        $this->assertEquals([' '], Template::tokenize(' '));
+        $this->assertEquals(['hello world'], Template::tokenize('hello world'));
+    }
 
-		$template = new Template();
-		$template->setCache(array('cache' => 'no_such_class'));
-	}
+    public function testTokenizeVariables()
+    {
+        $this->assertEquals(['{{funk}}'], Template::tokenize('{{funk}}'));
+        $this->assertEquals([' ', '{{funk}}', ' '], Template::tokenize(' {{funk}} '));
+        $this->assertEquals([' ', '{{funk}}', ' ', '{{so}}', ' ', '{{brother}}', ' '], Template::tokenize(' {{funk}} {{so}} {{brother}} '));
+        $this->assertEquals([' ', '{{  funk  }}', ' '], Template::tokenize(' {{  funk  }} '));
+    }
 
-	public function testSetCacheThroughArray()
-	{
-		$template = new Template();
-		$template->setCache(array('cache' => 'file', 'cache_dir' => $this->cacheDir));
-		$this->assertInstanceOf(\Liquid\Cache\File::class, $template::getCache());
-	}
+    public function testTokenizeBlocks()
+    {
+        $this->assertEquals(['{%comment%}'], Template::tokenize('{%comment%}'));
+        $this->assertEquals([' ', '{%comment%}', ' '], Template::tokenize(' {%comment%} '));
+        $this->assertEquals([' ', '{%comment%}', ' ', '{%endcomment%}', ' '], Template::tokenize(' {%comment%} {%endcomment%} '));
+        $this->assertEquals(['  ', '{% comment %}', ' ', '{% endcomment %}', ' '], Template::tokenize("  {% comment %} {% endcomment %} "));
+    }
 
-	public function testSetCacheThroughCacheObject()
-	{
-		$template = new Template();
-		$cache = new Cache\File(array('cache_dir' => $this->cacheDir));
-		$template->setCache($cache);
-		$this->assertEquals($cache, $template::getCache());
-	}
+    public function testBlackspace()
+    {
+        $template = new Template();
+        $template->parse('  ');
 
-	public function testTokenizeStrings()
-	{
-		$this->assertEquals(array(' '), Template::tokenize(' '));
-		$this->assertEquals(array('hello world'), Template::tokenize('hello world'));
-	}
+        $nodelist = $template->getRoot()->getNodelist();
 
-	public function testTokenizeVariables()
-	{
-		$this->assertEquals(array('{{funk}}'), Template::tokenize('{{funk}}'));
-		$this->assertEquals(array(' ', '{{funk}}', ' '), Template::tokenize(' {{funk}} '));
-		$this->assertEquals(array(' ', '{{funk}}', ' ', '{{so}}', ' ', '{{brother}}', ' '), Template::tokenize(' {{funk}} {{so}} {{brother}} '));
-		$this->assertEquals(array(' ', '{{  funk  }}', ' '), Template::tokenize(' {{  funk  }} '));
-	}
+        $this->assertEquals(['  '], $nodelist);
+    }
 
-	public function testTokenizeBlocks()
-	{
-		$this->assertEquals(array('{%comment%}'), Template::tokenize('{%comment%}'));
-		$this->assertEquals(array(' ', '{%comment%}', ' '), Template::tokenize(' {%comment%} '));
-		$this->assertEquals(array(' ', '{%comment%}', ' ', '{%endcomment%}', ' '), Template::tokenize(' {%comment%} {%endcomment%} '));
-		$this->assertEquals(array('  ', '{% comment %}', ' ', '{% endcomment %}', ' '), Template::tokenize("  {% comment %} {% endcomment %} "));
-	}
+    public function testVariableBeginning()
+    {
+        $template = new Template();
+        $template->parse('{{funk}}  ');
 
-	public function testBlackspace()
-	{
-		$template = new Template();
-		$template->parse('  ');
+        $nodelist = $template->getRoot()->getNodelist();
 
-		$nodelist = $template->getRoot()->getNodelist();
+        $this->assertCount(2, $nodelist);
+        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[0]);
+        $this->assertIsString($nodelist[1]);
+    }
 
-		$this->assertEquals(array('  '), $nodelist);
-	}
+    public function testVariableEnd()
+    {
+        $template = new Template();
+        $template->parse('  {{funk}}');
 
-	public function testVariableBeginning()
-	{
-		$template = new Template();
-		$template->parse('{{funk}}  ');
+        $nodelist = $template->getRoot()->getNodelist();
 
-		$nodelist = $template->getRoot()->getNodelist();
+        $this->assertCount(2, $nodelist);
+        $this->assertIsString($nodelist[0]);
+        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[1]);
+    }
 
-		$this->assertCount(2, $nodelist);
-		$this->assertInstanceOf(\Liquid\Variable::class, $nodelist[0]);
-		$this->assertIsString($nodelist[1]);
-	}
+    public function testVariableMiddle()
+    {
+        $template = new Template();
+        $template->parse('  {{funk}}  ');
 
-	public function testVariableEnd()
-	{
-		$template = new Template();
-		$template->parse('  {{funk}}');
+        $nodelist = $template->getRoot()->getNodelist();
 
-		$nodelist = $template->getRoot()->getNodelist();
+        $this->assertCount(3, $nodelist);
+        $this->assertIsString($nodelist[0]);
+        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[1]);
+        $this->assertIsString($nodelist[2]);
+    }
 
-		$this->assertCount(2, $nodelist);
-		$this->assertIsString($nodelist[0]);
-		$this->assertInstanceOf(\Liquid\Variable::class, $nodelist[1]);
-	}
+    public function testVariableManyEmbeddedFragments()
+    {
+        $template = new Template();
+        $template->parse('  {{funk}}  {{soul}}  {{brother}} ');
 
-	public function testVariableMiddle()
-	{
-		$template = new Template();
-		$template->parse('  {{funk}}  ');
+        $nodelist = $template->getRoot()->getNodelist();
 
-		$nodelist = $template->getRoot()->getNodelist();
+        $this->assertCount(7, $nodelist);
+        $this->assertIsString($nodelist[0]);
+        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[1]);
+        $this->assertIsString($nodelist[2]);
+        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[3]);
+        $this->assertIsString($nodelist[4]);
+        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[5]);
+        $this->assertIsString($nodelist[6]);
+    }
 
-		$this->assertCount(3, $nodelist);
-		$this->assertIsString($nodelist[0]);
-		$this->assertInstanceOf(\Liquid\Variable::class, $nodelist[1]);
-		$this->assertIsString($nodelist[2]);
-	}
+    public function testWithBlock()
+    {
+        $template = new Template();
+        $template->parse('  {% comment %}  {% endcomment %} ');
 
-	public function testVariableManyEmbeddedFragments()
-	{
-		$template = new Template();
-		$template->parse('  {{funk}}  {{soul}}  {{brother}} ');
+        $nodelist = $template->getRoot()->getNodelist();
 
-		$nodelist = $template->getRoot()->getNodelist();
+        $this->assertCount(3, $nodelist);
+        $this->assertIsString($nodelist[0]);
+        $this->assertInstanceOf(\Liquid\Tag\TagComment::class, $nodelist[1]);
+        $this->assertIsString($nodelist[2]);
+    }
 
-		$this->assertCount(7, $nodelist);
-		$this->assertIsString($nodelist[0]);
-		$this->assertInstanceOf(\Liquid\Variable::class, $nodelist[1]);
-		$this->assertIsString($nodelist[2]);
-		$this->assertInstanceOf(\Liquid\Variable::class, $nodelist[3]);
-		$this->assertIsString($nodelist[4]);
-		$this->assertInstanceOf(\Liquid\Variable::class, $nodelist[5]);
-		$this->assertIsString($nodelist[6]);
-	}
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-	public function testWithBlock()
-	{
-		$template = new Template();
-		$template->parse('  {% comment %}  {% endcomment %} ');
+        $this->cacheDir = __DIR__ . DIRECTORY_SEPARATOR . self::CACHE_DIR;
+    }
 
-		$nodelist = $template->getRoot()->getNodelist();
+    protected function tearDown(): void
+    {
+        parent::tearDown();
 
-		$this->assertCount(3, $nodelist);
-		$this->assertIsString($nodelist[0]);
-		$this->assertInstanceOf(\Liquid\Tag\TagComment::class, $nodelist[1]);
-		$this->assertIsString($nodelist[2]);
-	}
+        // Remove tmp cache files
+        array_map('unlink', glob($this->cacheDir . DIRECTORY_SEPARATOR . '*'));
+    }
 }

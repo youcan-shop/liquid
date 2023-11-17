@@ -1,15 +1,16 @@
 # Liquid template engine for PHP [![CI](https://github.com/kalimatas/php-liquid/actions/workflows/tests.yaml/badge.svg)](https://github.com/kalimatas/php-liquid/actions/workflows/tests.yaml) [![Coverage Status](https://coveralls.io/repos/github/kalimatas/php-liquid/badge.svg?branch=master)](https://coveralls.io/github/kalimatas/php-liquid?branch=master) [![Total Downloads](https://poser.pugx.org/liquid/liquid/downloads.svg)](https://packagist.org/packages/liquid/liquid)
 
-Liquid is a PHP port of the [Liquid template engine for Ruby](https://github.com/Shopify/liquid), which was written by Tobias Lutke. Although there are many other templating engines for PHP, including Smarty (from which Liquid was partially inspired), Liquid had some advantages that made porting worthwhile:
+Liquid is a PHP port of the [Liquid template engine for Ruby](https://github.com/Shopify/liquid), which was written by Tobias Lutke. Although there are many other templating
+engines for PHP, including Smarty (from which Liquid was partially inspired), Liquid had some advantages that made porting worthwhile:
 
- * Readable and human friendly syntax, that is usable in any type of document, not just html, without need for escaping.
- * Quick and easy to use and maintain.
- * 100% secure, no possibility of embedding PHP code.
- * Clean OO design, rather than the mix of OO and procedural found in other templating engines.
- * Seperate compiling and rendering stages for improved performance.
- * Easy to extend with your own "tags and filters":https://github.com/harrydeluxe/php-liquid/wiki/Liquid-for-programmers.
- * 100% Markup compatibility with a Ruby templating engine, making templates usable for either.
- * Unit tested: Liquid is fully unit-tested. The library is stable and ready to be used in large projects.
+* Readable and human friendly syntax, that is usable in any type of document, not just html, without need for escaping.
+* Quick and easy to use and maintain.
+* 100% secure, no possibility of embedding PHP code.
+* Clean OO design, rather than the mix of OO and procedural found in other templating engines.
+* Seperate compiling and rendering stages for improved performance.
+* Easy to extend with your own "tags and filters":https://github.com/harrydeluxe/php-liquid/wiki/Liquid-for-programmers.
+* 100% Markup compatibility with a Ruby templating engine, making templates usable for either.
+* Unit tested: Liquid is fully unit-tested. The library is stable and ready to be used in large projects.
 
 ## Why Liquid?
 
@@ -95,7 +96,8 @@ Similarly, the following snippet will parse and render `templates/home.liquid` w
     $template->setCache(new \Liquid\Cache\Local());
     echo $template->parseFile('home')->render();
 
-If you render the same template over and over for at least a dozen of times, the class-local cache will give you a slight speed up in range of some milliseconds per render depending on a complexity of your template.
+If you render the same template over and over for at least a dozen of times, the class-local cache will give you a slight speed up in range of some milliseconds per render
+depending on a complexity of your template.
 
 You should probably extend `Liquid\Template` to initialize everything you do with `Liquid::set` in one place.
 
@@ -115,7 +117,7 @@ Adding filters has never been easier.
 
 ## Requirements
 
- * PHP 7.0+
+* PHP 7.0+
 
 Some earlier versions could be used with PHP 5.3/5.4/5.5/5.6, though they're not supported anymore.
 
@@ -131,9 +133,9 @@ This fork is based on [php-liquid](https://github.com/harrydeluxe/php-liquid) by
 
 It contains several improvements:
 
- * namespaces
- * installing via composer
- * new standard filters
- * `raw` tag added
+* namespaces
+* installing via composer
+* new standard filters
+* `raw` tag added
 
 Any help is appreciated!

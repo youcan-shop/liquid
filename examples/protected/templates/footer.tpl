@@ -1,3 +1,3 @@
 <div id="footer">
-	&copy; {{ 'now' | date: "%Y" }} {% include 'subfooter' %}
+    &copy; {{ 'now' | date: "%Y" }} {% include 'subfooter' %}
 </div>

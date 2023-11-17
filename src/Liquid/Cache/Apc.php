@@ -21,54 +21,55 @@ use Liquid\LiquidException;
  */
 class Apc extends Cache
 {
-	/**
-	 * Constructor.
-	 *
-	 * It checks the availability of apccache.
-	 *
-	 * @param array $options
-	 *
-	 * @throws LiquidException if APC cache extension is not loaded or is disabled.
-	 */
-	public function __construct(array $options = array())
-	{
-		parent::__construct($options);
+    /**
+     * Constructor.
+     *
+     * It checks the availability of apccache.
+     *
+     * @param array $options
+     *
+     * @throws LiquidException if APC cache extension is not loaded or is disabled.
+     */
+    public function __construct(array $options = [])
+    {
+        parent::__construct($options);
 
-		if (!function_exists('apc_fetch')) {
-			throw new LiquidException(get_class($this).' requires PHP apc extension or similar to be loaded.');
-		}
-	}
+        if (!function_exists('apc_fetch')) {
+            throw new LiquidException(get_class($this) . ' requires PHP apc extension or similar to be loaded.');
+        }
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function read($key, $unserialize = true)
-	{
-		return apc_fetch($this->prefix . $key);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function read($key, $unserialize = true)
+    {
+        return apc_fetch($this->prefix . $key);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function exists($key)
-	{
-		apc_fetch($this->prefix . $key, $success);
-		return (bool) $success;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function exists($key)
+    {
+        apc_fetch($this->prefix . $key, $success);
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function write($key, $value, $serialize = true)
-	{
-		return apc_store($this->prefix . $key, $value, $this->expire);
-	}
+        return (bool)$success;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function flush($expiredOnly = false)
-	{
-		return apc_clear_cache('user');
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function write($key, $value, $serialize = true)
+    {
+        return apc_store($this->prefix . $key, $value, $this->expire);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function flush($expiredOnly = false)
+    {
+        return apc_clear_cache('user');
+    }
 }

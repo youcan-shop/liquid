@@ -17,16 +17,17 @@ namespace Liquid;
 class CustomFilters
 {
 
-	/**
-	 * Sort an array by key.
-	 *
-	 * @param array $input
-	 *
-	 * @return array
-	 */
-	public static function sort_key(array $input)
-	{
-		ksort($input);
-		return $input;
-	}
+    /**
+     * Sort an array by key.
+     *
+     * @param array $input
+     *
+     * @return array
+     */
+    public static function sort_key(array $input)
+    {
+        ksort($input);
+
+        return $input;
+    }
 }

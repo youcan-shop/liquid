@@ -15,17 +15,17 @@ use Liquid\TestCase;
 
 class TagBlockTest extends TestCase
 {
-	/**
-	 */
-	public function testSyntaxError()
-	{
-		$this->expectException(\Liquid\Exception\ParseException::class);
+    /**
+     */
+    public function testSyntaxError()
+    {
+        $this->expectException(\Liquid\Exception\ParseException::class);
 
-		$this->assertTemplateResult('', '{% block %}');
-	}
+        $this->assertTemplateResult('', '{% block %}');
+    }
 
-	public function testCreateBlock()
-	{
-		$this->assertTemplateResult('block content', '{% block foo %}block content{% endblock %}');
-	}
+    public function testCreateBlock()
+    {
+        $this->assertTemplateResult('block content', '{% block foo %}block content{% endblock %}');
+    }
 }

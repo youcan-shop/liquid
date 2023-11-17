@@ -11,24 +11,24 @@
 
 namespace Liquid\Tag;
 
-use Liquid\TestCase;
 use Liquid\Template;
+use Liquid\TestCase;
 
 class TagCaptureTest extends TestCase
 {
-	/**
-	 */
-	public function testInvalidSyntax()
-	{
-		$this->expectException(\Liquid\Exception\ParseException::class);
+    /**
+     */
+    public function testInvalidSyntax()
+    {
+        $this->expectException(\Liquid\Exception\ParseException::class);
 
-		$template = new Template();
-		$template->parse("{% capture %} hello");
-	}
+        $template = new Template();
+        $template->parse("{% capture %} hello");
+    }
 
-	public function testCapture()
-	{
-		$assigns = array('var' => 'content');
-		$this->assertTemplateResult('content foo content foo ', '{{ var2 }}{% capture var2 %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}', $assigns);
-	}
+    public function testCapture()
+    {
+        $assigns = ['var' => 'content'];
+        $this->assertTemplateResult('content foo content foo ', '{{ var2 }}{% capture var2 %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}', $assigns);
+    }
 }

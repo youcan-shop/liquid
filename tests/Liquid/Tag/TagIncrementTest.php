@@ -15,30 +15,30 @@ use Liquid\TestCase;
 
 class TagIncrementTest extends TestCase
 {
-	/**
-	 */
-	public function testSyntaxError()
-	{
-		$this->expectException(\Liquid\Exception\ParseException::class);
+    /**
+     */
+    public function testSyntaxError()
+    {
+        $this->expectException(\Liquid\Exception\ParseException::class);
 
-		$this->assertTemplateResult('', '{% increment %}');
-	}
+        $this->assertTemplateResult('', '{% increment %}');
+    }
 
-	/**
-	 * Undefined variable will become 0
-	 */
-	public function testIncrementNonExistingVariable()
-	{
-		$this->assertTemplateResult(0, '{% increment no_such_var %}{{ no_such_var }}');
-	}
+    /**
+     * Undefined variable will become 0
+     */
+    public function testIncrementNonExistingVariable()
+    {
+        $this->assertTemplateResult(0, '{% increment no_such_var %}{{ no_such_var }}');
+    }
 
-	public function testIncrementVariable()
-	{
-		$this->assertTemplateResult(42, '{% increment var %}{{ var }}', array('var' => 41));
-	}
+    public function testIncrementVariable()
+    {
+        $this->assertTemplateResult(42, '{% increment var %}{{ var }}', ['var' => 41]);
+    }
 
-	public function testIncrementNestedVariable()
-	{
-		$this->assertTemplateResult(42, '{% for var in vars %}{% increment var %}{{ var }}{% endfor %}', array('vars' => array(41)));
-	}
+    public function testIncrementNestedVariable()
+    {
+        $this->assertTemplateResult(42, '{% for var in vars %}{% increment var %}{{ var }}{% endfor %}', ['vars' => [41]]);
+    }
 }

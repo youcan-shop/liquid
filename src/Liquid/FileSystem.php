@@ -21,12 +21,12 @@ namespace Liquid;
  */
 interface FileSystem
 {
-	/**
-	 * Retrieve a template file.
-	 *
-	 * @param string $templatePath
-	 *
-	 * @return string
-	 */
-	public function readTemplateFile($templatePath);
+    /**
+     * Retrieve a template file.
+     *
+     * @param string $templatePath
+     *
+     * @return string
+     */
+    public function readTemplateFile($templatePath);
 }

@@ -13,51 +13,51 @@ namespace Liquid;
 
 class VariableResolutionTest extends TestCase
 {
-	public function testSimpleVariable()
-	{
-		$template = new Template();
-		$template->parse("{{test}}");
-		$this->assertEquals('worked', $template->render(array('test' => 'worked')));
-	}
+    public function testSimpleVariable()
+    {
+        $template = new Template();
+        $template->parse("{{test}}");
+        $this->assertEquals('worked', $template->render(['test' => 'worked']));
+    }
 
-	public function testSimpleWithWhitespaces()
-	{
-		$template = new Template();
+    public function testSimpleWithWhitespaces()
+    {
+        $template = new Template();
 
-		$template->parse('  {{ test }}  ');
-		$this->assertEquals('  worked  ', $template->render(array('test' => 'worked')));
-		$this->assertEquals('  worked wonderfully  ', $template->render(array('test' => 'worked wonderfully')));
-	}
+        $template->parse('  {{ test }}  ');
+        $this->assertEquals('  worked  ', $template->render(['test' => 'worked']));
+        $this->assertEquals('  worked wonderfully  ', $template->render(['test' => 'worked wonderfully']));
+    }
 
-	public function testIgnoreUnknown()
-	{
-		$template = new Template();
+    public function testIgnoreUnknown()
+    {
+        $template = new Template();
 
-		$template->parse('{{ test }}');
-		$this->assertEquals('', $template->render());
-	}
+        $template->parse('{{ test }}');
+        $this->assertEquals('', $template->render());
+    }
 
-	public function testLineBreak()
-	{
-		$template = new Template();
+    public function testLineBreak()
+    {
+        $template = new Template();
 
-		$template->parse("{{ test |\n strip_html }}");
-		$this->assertEquals('worked', $template->render(array('test' => '<b>worked</b>')));
-	}
+        $template->parse("{{ test |\n strip_html }}");
+        $this->assertEquals('worked', $template->render(['test' => '<b>worked</b>']));
+    }
 
-	public function testArrayScoping()
-	{
-		$template = new Template();
+    public function testArrayScoping()
+    {
+        $template = new Template();
 
-		$template->parse('{{ test.test }}');
-		$this->assertEquals('worked', $template->render(array('test' => array('test' => 'worked'))));
-	}
+        $template->parse('{{ test.test }}');
+        $this->assertEquals('worked', $template->render(['test' => ['test' => 'worked']]));
+    }
 
-	public function testVariableArrayIndices()
-	{
-		$template = new Template();
+    public function testVariableArrayIndices()
+    {
+        $template = new Template();
 
-		$template->parse("{% assign days = 'Mon,Tue,Wed,Thu,Fri,Sat,Sun' | split: ',' %}{% for i in (0..6) %}{{ days[i] }} {% endfor %}");
-		$this->assertEquals('Mon Tue Wed Thu Fri Sat Sun ', $template->render());
-	}
+        $template->parse("{% assign days = 'Mon,Tue,Wed,Thu,Fri,Sat,Sun' | split: ',' %}{% for i in (0..6) %}{{ days[i] }} {% endfor %}");
+        $this->assertEquals('Mon Tue Wed Thu Fri Sat Sun ', $template->render());
+    }
 }

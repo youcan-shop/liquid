@@ -12,12 +12,12 @@
 namespace Liquid\Tag;
 
 use Liquid\AbstractTag;
-use Liquid\Exception\ParseException;
-use Liquid\Liquid;
 use Liquid\Context;
+use Liquid\Exception\ParseException;
+use Liquid\FileSystem;
+use Liquid\Liquid;
 use Liquid\Regexp;
 use Liquid\Variable;
-use Liquid\FileSystem;
 
 /**
  * Cycles between a list of values; calls to the tag will return each value in turn
@@ -36,95 +36,95 @@ use Liquid\FileSystem;
  */
 class TagCycle extends AbstractTag
 {
-	/**
-	 * @var string The name of the cycle; if none is given one is created using the value list
-	 */
-	private $name;
+    /**
+     * @var string The name of the cycle; if none is given one is created using the value list
+     */
+    private $name;
 
-	/**
-	 * @var Variable[] The variables to cycle between
-	 */
-	private $variables = array();
+    /**
+     * @var Variable[] The variables to cycle between
+     */
+    private $variables = [];
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $markup
-	 * @param array $tokens
-	 * @param FileSystem $fileSystem
-	 *
-	 * @throws \Liquid\Exception\ParseException
-	 */
-	public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
-	{
-		$simpleSyntax = new Regexp("/" . Liquid::get('QUOTED_FRAGMENT') . "/");
-		$namedSyntax = new Regexp("/(" . Liquid::get('QUOTED_FRAGMENT') . ")\s*\:\s*(.*)/");
+    /**
+     * Constructor
+     *
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem $fileSystem
+     *
+     * @throws \Liquid\Exception\ParseException
+     */
+    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    {
+        $simpleSyntax = new Regexp("/" . Liquid::get('QUOTED_FRAGMENT') . "/");
+        $namedSyntax = new Regexp("/(" . Liquid::get('QUOTED_FRAGMENT') . ")\s*\:\s*(.*)/");
 
-		if ($namedSyntax->match($markup)) {
-			$this->variables = $this->variablesFromString($namedSyntax->matches[2]);
-			$this->name = $namedSyntax->matches[1];
-		} elseif ($simpleSyntax->match($markup)) {
-			$this->variables = $this->variablesFromString($markup);
-			$this->name = "'" . implode($this->variables) . "'";
-		} else {
-			throw new ParseException("Syntax Error in 'cycle' - Valid syntax: cycle [name :] var [, var2, var3 ...]");
-		}
-	}
+        if ($namedSyntax->match($markup)) {
+            $this->variables = $this->variablesFromString($namedSyntax->matches[2]);
+            $this->name = $namedSyntax->matches[1];
+        } elseif ($simpleSyntax->match($markup)) {
+            $this->variables = $this->variablesFromString($markup);
+            $this->name = "'" . implode($this->variables) . "'";
+        } else {
+            throw new ParseException("Syntax Error in 'cycle' - Valid syntax: cycle [name :] var [, var2, var3 ...]");
+        }
+    }
 
-	/**
-	 * Renders the tag
-	 *
-	 * @var Context $context
-	 * @return string
-	 */
-	public function render(Context $context)
-	{
-		$context->push();
+    /**
+     * Extract variables from a string of markup
+     *
+     * @param string $markup
+     *
+     * @return array;
+     */
+    private function variablesFromString($markup)
+    {
+        $regexp = new Regexp('/\s*(' . Liquid::get('QUOTED_FRAGMENT') . ')\s*/');
+        $parts = explode(',', $markup);
+        $result = [];
 
-		$key = $context->get($this->name);
+        foreach ($parts as $part) {
+            $regexp->match($part);
 
-		if (isset($context->registers['cycle'][$key])) {
-			$iteration = $context->registers['cycle'][$key];
-		} else {
-			$iteration = 0;
-		}
+            if (!empty($regexp->matches[1])) {
+                $result[] = $regexp->matches[1];
+            }
+        }
 
-		$result = $context->get($this->variables[$iteration]);
+        return $result;
+    }
 
-		$iteration += 1;
+    /**
+     * Renders the tag
+     *
+     * @return string
+     * @var Context $context
+     */
+    public function render(Context $context)
+    {
+        $context->push();
 
-		if ($iteration >= count($this->variables)) {
-			$iteration = 0;
-		}
+        $key = $context->get($this->name);
 
-		$context->registers['cycle'][$key] = $iteration;
+        if (isset($context->registers['cycle'][$key])) {
+            $iteration = $context->registers['cycle'][$key];
+        } else {
+            $iteration = 0;
+        }
 
-		$context->pop();
+        $result = $context->get($this->variables[$iteration]);
 
-		return $result;
-	}
+        $iteration += 1;
 
-	/**
-	 * Extract variables from a string of markup
-	 *
-	 * @param string $markup
-	 *
-	 * @return array;
-	 */
-	private function variablesFromString($markup)
-	{
-		$regexp = new Regexp('/\s*(' . Liquid::get('QUOTED_FRAGMENT') . ')\s*/');
-		$parts = explode(',', $markup);
-		$result = array();
+        if ($iteration >= count($this->variables)) {
+            $iteration = 0;
+        }
 
-		foreach ($parts as $part) {
-			$regexp->match($part);
+        $context->registers['cycle'][$key] = $iteration;
 
-			if (!empty($regexp->matches[1])) {
-				$result[] = $regexp->matches[1];
-			}
-		}
+        $context->pop();
 
-		return $result;
-	}
+        return $result;
+    }
 }

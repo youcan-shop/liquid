@@ -28,15 +28,15 @@ use Liquid\Context;
  */
 class TagBreak extends AbstractTag
 {
-	/**
-	 * Renders the tag
-	 *
-	 * @param Context $context
-	 *
-	 * @return string|void
-	 */
-	public function render(Context $context)
-	{
-		$context->registers['break'] = true;
-	}
+    /**
+     * Renders the tag
+     *
+     * @param Context $context
+     *
+     * @return string|void
+     */
+    public function render(Context $context)
+    {
+        $context->registers['break'] = true;
+    }
 }

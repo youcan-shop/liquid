@@ -18,43 +18,45 @@ use Liquid\Cache;
  */
 class Local extends Cache
 {
-	private $cache = array();
+    private $cache = [];
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function read($key, $unserialize = true)
-	{
-		if (isset($this->cache[$key])) {
-			return $this->cache[$key];
-		}
+    /**
+     * {@inheritdoc}
+     */
+    public function read($key, $unserialize = true)
+    {
+        if (isset($this->cache[$key])) {
+            return $this->cache[$key];
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function exists($key)
-	{
-		return isset($this->cache[$key]);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function exists($key)
+    {
+        return isset($this->cache[$key]);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function write($key, $value, $serialize = true)
-	{
-		$this->cache[$key] = $value;
-		return true;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function write($key, $value, $serialize = true)
+    {
+        $this->cache[$key] = $value;
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function flush($expiredOnly = false)
-	{
-		$this->cache = array();
-		return true;
-	}
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function flush($expiredOnly = false)
+    {
+        $this->cache = [];
+
+        return true;
+    }
 }

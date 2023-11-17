@@ -11,22 +11,22 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use Liquid\Cache\Local;
 use Liquid\Liquid;
 use Liquid\Template;
-use Liquid\Cache\Local;
 
 Liquid::set('INCLUDE_SUFFIX', '');
 Liquid::set('INCLUDE_PREFIX', '');
 Liquid::set('INCLUDE_ALLOW_EXT', true);
 Liquid::set('ESCAPE_BY_DEFAULT', true);
 
-$template = new Template(__DIR__.'/protected/templates/');
+$template = new Template(__DIR__ . '/protected/templates/');
 
 $template->parse("Hello, {% include 'honorific.html' %}{{ plain-html | raw }} {{ comment-with-xss }}\n");
 $template->setCache(new Local());
 
 echo $template->render([
-	'name' => 'Alex',
-	'plain-html' => '<b>Your comment was:</b>',
-	'comment-with-xss' => '<script>alert();</script>',
-]);
+                           'name'             => 'Alex',
+                           'plain-html'       => '<b>Your comment was:</b>',
+                           'comment-with-xss' => '<script>alert();</script>',
+                       ]);

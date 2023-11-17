@@ -15,21 +15,21 @@ use Liquid\TestCase;
 
 class NoTransformTest extends TestCase
 {
-	public function testNoTransform()
-	{
-		$this->assertTemplateResult(
-			'this text should come out of the template without change...',
-			'this text should come out of the template without change...'
-		);
+    public function testNoTransform()
+    {
+        $this->assertTemplateResult(
+            'this text should come out of the template without change...',
+            'this text should come out of the template without change...'
+        );
 
-		$this->assertTemplateResult('blah', 'blah');
-		$this->assertTemplateResult('<blah>', '<blah>');
-		$this->assertTemplateResult('|,.:', '|,.:');
-		$this->assertTemplateResult('', '');
+        $this->assertTemplateResult('blah', 'blah');
+        $this->assertTemplateResult('<blah>', '<blah>');
+        $this->assertTemplateResult('|,.:', '|,.:');
+        $this->assertTemplateResult('', '');
 
-		$text = "this shouldnt see any transformation either but has multiple lines
+        $text = "this shouldnt see any transformation either but has multiple lines
 		         as you can clearly see here ...";
 
-		$this->assertTemplateResult($text, $text);
-	}
+        $this->assertTemplateResult($text, $text);
+    }
 }

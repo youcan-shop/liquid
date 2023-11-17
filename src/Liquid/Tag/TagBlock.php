@@ -25,32 +25,32 @@ use Liquid\Regexp;
  */
 class TagBlock extends AbstractBlock
 {
-	/**
-	 * The variable to assign to
-	 *
-	 * @var string
-	 */
-	private $block;
+    /**
+     * The variable to assign to
+     *
+     * @var string
+     */
+    private $block;
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $markup
-	 * @param array $tokens
-	 * @param FileSystem $fileSystem
-	 *
-	 * @throws \Liquid\Exception\ParseException
-	 * @return \Liquid\Tag\TagBlock
-	 */
-	public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
-	{
-		$syntaxRegexp = new Regexp('/(\w+)/');
+    /**
+     * Constructor
+     *
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem $fileSystem
+     *
+     * @return \Liquid\Tag\TagBlock
+     * @throws \Liquid\Exception\ParseException
+     */
+    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    {
+        $syntaxRegexp = new Regexp('/(\w+)/');
 
-		if ($syntaxRegexp->match($markup)) {
-			$this->block = $syntaxRegexp->matches[1];
-			parent::__construct($markup, $tokens, $fileSystem);
-		} else {
-			throw new ParseException("Syntax Error in 'block' - Valid syntax: block [name]");
-		}
-	}
+        if ($syntaxRegexp->match($markup)) {
+            $this->block = $syntaxRegexp->matches[1];
+            parent::__construct($markup, $tokens, $fileSystem);
+        } else {
+            throw new ParseException("Syntax Error in 'block' - Valid syntax: block [name]");
+        }
+    }
 }

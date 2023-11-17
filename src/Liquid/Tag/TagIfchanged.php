@@ -20,42 +20,43 @@ use Liquid\FileSystem;
  */
 class TagIfchanged extends AbstractBlock
 {
-	/**
-	 * The last value
-	 *
-	 * @var string
-	 */
-	private $lastValue = '';
+    /**
+     * The last value
+     *
+     * @var string
+     */
+    private $lastValue = '';
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $markup
-	 * @param array $tokens
-	 * @param FileSystem $fileSystem
-	 *
-	 * @throws \Liquid\LiquidException
-	 */
-	public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
-	{
-		parent::__construct($markup, $tokens, $fileSystem);
-	}
+    /**
+     * Constructor
+     *
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem $fileSystem
+     *
+     * @throws \Liquid\LiquidException
+     */
+    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    {
+        parent::__construct($markup, $tokens, $fileSystem);
+    }
 
-	/**
-	 * Renders the block
-	 *
-	 * @param Context $context
-	 *
-	 * @return string
-	 */
-	public function render(Context $context)
-	{
-		$output = parent::render($context);
+    /**
+     * Renders the block
+     *
+     * @param Context $context
+     *
+     * @return string
+     */
+    public function render(Context $context)
+    {
+        $output = parent::render($context);
 
-		if ($this->lastValue == $output) {
-			return '';
-		}
-		$this->lastValue = $output;
-		return $this->lastValue;
-	}
+        if ($this->lastValue == $output) {
+            return '';
+        }
+        $this->lastValue = $output;
+
+        return $this->lastValue;
+    }
 }

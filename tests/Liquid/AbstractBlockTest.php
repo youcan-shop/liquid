@@ -15,24 +15,24 @@ use Liquid\TestCase;
 
 class AbstractBlockTest extends TestCase
 {
-	public function testUnterminatedBlockError()
-	{
-		$this->expectException(\Liquid\Exception\ParseException::class);
+    public function testUnterminatedBlockError()
+    {
+        $this->expectException(\Liquid\Exception\ParseException::class);
 
-		$this->assertTemplateResult('', '{% block }');
-	}
+        $this->assertTemplateResult('', '{% block }');
+    }
 
-	public function testWhitespaceHandler()
-	{
-		$this->assertTemplateResult('foo', '{% if true %}foo{% endif %}');
-		$this->assertTemplateResult(' foo ', '{% if true %} foo {% endif %}');
-		$this->assertTemplateResult('  foo  ', ' {% if true %} foo {% endif %} ');
-		$this->assertTemplateResult('foo ', '{% if true -%} foo {% endif %}');
-		$this->assertTemplateResult('foo', '{% if true -%} foo {%- endif %}');
-		$this->assertTemplateResult('foo', ' {%- if true -%} foo {%- endif %}');
-		$this->assertTemplateResult('foo', ' {%- if true -%} foo {%- endif -%} ');
-		$this->assertTemplateResult('foo', ' {%- if true -%} foo {%- endif -%}  {%- if false -%} bar {%- endif -%} ');
-		$this->assertTemplateResult('foobar', ' {%- if true -%} foo {%- endif -%}  {%- if true -%} bar {%- endif -%} ');
-		$this->assertTemplateResult('-> foo', '{% if true %}-> {% endif %} {%- if true -%} foo {%- endif -%}');
-	}
+    public function testWhitespaceHandler()
+    {
+        $this->assertTemplateResult('foo', '{% if true %}foo{% endif %}');
+        $this->assertTemplateResult(' foo ', '{% if true %} foo {% endif %}');
+        $this->assertTemplateResult('  foo  ', ' {% if true %} foo {% endif %} ');
+        $this->assertTemplateResult('foo ', '{% if true -%} foo {% endif %}');
+        $this->assertTemplateResult('foo', '{% if true -%} foo {%- endif %}');
+        $this->assertTemplateResult('foo', ' {%- if true -%} foo {%- endif %}');
+        $this->assertTemplateResult('foo', ' {%- if true -%} foo {%- endif -%} ');
+        $this->assertTemplateResult('foo', ' {%- if true -%} foo {%- endif -%}  {%- if false -%} bar {%- endif -%} ');
+        $this->assertTemplateResult('foobar', ' {%- if true -%} foo {%- endif -%}  {%- if true -%} bar {%- endif -%} ');
+        $this->assertTemplateResult('-> foo', '{% if true %}-> {% endif %} {%- if true -%} foo {%- endif -%}');
+    }
 }

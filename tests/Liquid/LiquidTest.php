@@ -13,76 +13,76 @@ namespace Liquid;
 
 class LiquidTest extends TestCase
 {
-	public function testGetNonExistingPropery()
-	{
-		$this->assertNull(Liquid::get('no_such_value'));
-	}
+    public function testGetNonExistingPropery()
+    {
+        $this->assertNull(Liquid::get('no_such_value'));
+    }
 
-	public function testSetProperty()
-	{
-		$key = 'test_key';
-		$value = 'test_value';
-		Liquid::set($key, $value);
-		$this->assertSame($value, Liquid::get($key));
-	}
+    public function testSetProperty()
+    {
+        $key = 'test_key';
+        $value = 'test_value';
+        Liquid::set($key, $value);
+        $this->assertSame($value, Liquid::get($key));
+    }
 
-	public function testGetSetAllowedChars()
-	{
-		Liquid::set('ALLOWED_VARIABLE_CHARS', 'abc');
-		$this->assertSame('abc', Liquid::get('ALLOWED_VARIABLE_CHARS'));
-		$this->assertSame('abc+', Liquid::get('VARIABLE_NAME'));
-	}
+    public function testGetSetAllowedChars()
+    {
+        Liquid::set('ALLOWED_VARIABLE_CHARS', 'abc');
+        $this->assertSame('abc', Liquid::get('ALLOWED_VARIABLE_CHARS'));
+        $this->assertSame('abc+', Liquid::get('VARIABLE_NAME'));
+    }
 
-	public function testArrayFlattenEmptyArray()
-	{
-		$this->assertSame(array(), Liquid::arrayFlatten(array()));
-	}
+    public function testArrayFlattenEmptyArray()
+    {
+        $this->assertSame([], Liquid::arrayFlatten([]));
+    }
 
-	public function testArrayFlattenFlatArray()
-	{
-		$object = new \stdClass();
+    public function testArrayFlattenFlatArray()
+    {
+        $object = new \stdClass();
 
-		// Method does not maintain keys.
-		$original = array(
-			'one' => 'one_value',
-			42,
-			$object,
-		);
+        // Method does not maintain keys.
+        $original = [
+            'one' => 'one_value',
+            42,
+            $object,
+        ];
 
-		$expected = array(
-			'one_value',
-			42,
-			$object
-		);
+        $expected = [
+            'one_value',
+            42,
+            $object,
+        ];
 
-		$this->assertEquals($expected, Liquid::arrayFlatten($original));
-	}
+        $this->assertEquals($expected, Liquid::arrayFlatten($original));
+    }
 
-	public function testArrayFlattenNestedArray()
-	{
-		$object = new \stdClass();
+    public function testArrayFlattenNestedArray()
+    {
+        $object = new \stdClass();
 
-		// Method does not maintain keys.
-		$original = array(
-			'one' => 'one_value',
-			42 => array(
-				'one_value',
-				array(
-					'two_value',
-					10
-				),
-			),
-			$object,
-		);
+        // Method does not maintain keys.
+        $original = [
+            'one' => 'one_value',
+            42    => [
+                'one_value',
+                [
+                    'two_value',
+                    10,
+                ],
+            ],
+            $object,
+        ];
 
-		$expected = array(
-			'one_value',
-			'one_value',
-			'two_value',
-			10,
-			$object
-		);
+        $expected = [
+            'one_value',
+            'one_value',
+            'two_value',
+            10,
+            $object,
+        ];
 
-		$this->assertEquals($expected, Liquid::arrayFlatten($original));
-	}
+        $this->assertEquals($expected, Liquid::arrayFlatten($original));
+    }
 }

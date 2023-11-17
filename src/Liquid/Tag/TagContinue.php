@@ -28,15 +28,15 @@ use Liquid\Context;
  */
 class TagContinue extends AbstractTag
 {
-	/**
-	 * Renders the tag
-	 *
-	 * @param Context $context
-	 *
-	 * @return string|void
-	 */
-	public function render(Context $context)
-	{
-		$context->registers['continue'] = true;
-	}
+    /**
+     * Renders the tag
+     *
+     * @param Context $context
+     *
+     * @return string|void
+     */
+    public function render(Context $context)
+    {
+        $context->registers['continue'] = true;
+    }
 }

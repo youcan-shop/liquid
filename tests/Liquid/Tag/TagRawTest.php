@@ -15,14 +15,14 @@ use Liquid\TestCase;
 
 class TagRawTest extends TestCase
 {
-	public function testRaw()
-	{
-		$this->assertTemplateResult(
-			'{{ y | plus: x }}{% if %} is equal to 11.',
-			'{% raw %}{{ y | plus: x }}{% if %}{% endraw %} is equal to 11.',
-			array('x' => 5, 'y' => 6)
-		);
+    public function testRaw()
+    {
+        $this->assertTemplateResult(
+            '{{ y | plus: x }}{% if %} is equal to 11.',
+            '{% raw %}{{ y | plus: x }}{% if %}{% endraw %} is equal to 11.',
+            ['x' => 5, 'y' => 6]
+        );
 
-		$this->assertTemplateResult('', '{% raw %}{% endraw %}');
-	}
+        $this->assertTemplateResult('', '{% raw %}{% endraw %}');
+    }
 }

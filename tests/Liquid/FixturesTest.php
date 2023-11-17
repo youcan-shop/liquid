@@ -15,36 +15,39 @@ use Liquid\FileSystem\Virtual;
 
 class FixturesTest extends TestCase
 {
-	/**
-	 * @dataProvider fixtures
-	 * @param string $liquid
-	 * @param string $data
-	 * @param string $expected
-	 */
-	public function testFixture($liquid, $data, $expected)
-	{
-		$template = new Template();
-		$template->setFileSystem(new Virtual(function ($filename) {
-			if (is_file(__DIR__.'/fixtures/'.$filename)) {
-				return file_get_contents(__DIR__.'/fixtures/'.$filename);
-			}
-		}));
+    /**
+     * @dataProvider fixtures
+     *
+     * @param string $liquid
+     * @param string $data
+     * @param string $expected
+     */
+    public function testFixture($liquid, $data, $expected)
+    {
+        $template = new Template();
+        $template->setFileSystem(
+            new Virtual(function ($filename) {
+                if (is_file(__DIR__ . '/fixtures/' . $filename)) {
+                    return file_get_contents(__DIR__ . '/fixtures/' . $filename);
+                }
+            })
+        );
 
-		$template->parse(file_get_contents($liquid));
-		$result = $template->render(include $data);
+        $template->parse(file_get_contents($liquid));
+        $result = $template->render(include $data);
 
-		if (getenv('GOLDEN') !== false) {
-			file_put_contents($expected, $result);
-			$this->markTestIncomplete("Saved golden fixture");
-		}
+        if (getenv('GOLDEN') !== false) {
+            file_put_contents($expected, $result);
+            $this->markTestIncomplete("Saved golden fixture");
+        }
 
-		$this->assertEquals(file_get_contents($expected), $result);
-	}
+        $this->assertEquals(file_get_contents($expected), $result);
+    }
 
-	public function fixtures()
-	{
-		foreach (array_map(null, glob(__DIR__.'/fixtures/*.liquid'), glob(__DIR__.'/fixtures/*.php'), glob(__DIR__.'/fixtures/*.html')) as $files) {
-			yield basename($files[0], '.liquid') => $files;
-		};
-	}
+    public function fixtures()
+    {
+        foreach (array_map(null, glob(__DIR__ . '/fixtures/*.liquid'), glob(__DIR__ . '/fixtures/*.php'), glob(__DIR__ . '/fixtures/*.html')) as $files) {
+            yield basename($files[0], '.liquid') => $files;
+        };
+    }
 }

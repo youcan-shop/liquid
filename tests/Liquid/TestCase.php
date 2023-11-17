@@ -13,51 +13,51 @@ namespace Liquid;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-	const TEMPLATES_DIR = 'templates';
+    const TEMPLATES_DIR = 'templates';
 
-	/**
-	 * @var mixed Filters
-	 */
-	public $filters;
+    /**
+     * @var mixed Filters
+     */
+    public $filters;
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+    /**
+     * @param mixed $expected
+     * @param string $templateString
+     * @param array $assigns
+     * @param string $message
+     */
+    public function assertTemplateResult($expected, $templateString, array $assigns = [], $message = "%s")
+    {
+        $template = new Template();
+        $template->parse($templateString);
 
-		$defaultConfig = array(
-			'HAS_PROPERTY_METHOD' => 'field_exists',
-			'GET_PROPERTY_METHOD' => 'get',
-			'FILTER_SEPARATOR' => '\|',
-			'ARGUMENT_SEPARATOR' => ',',
-			'FILTER_ARGUMENT_SEPARATOR' => ':',
-			'VARIABLE_ATTRIBUTE_SEPARATOR' => '.',
-			'INCLUDE_ALLOW_EXT' => false,
-			'INCLUDE_SUFFIX' => 'liquid',
-			'INCLUDE_PREFIX' => '_',
-			'VARIABLE_START' => '{{',
-			'VARIABLE_END' => '}}',
-			'VARIABLE_NAME' => '[a-zA-Z_][a-zA-Z0-9_.-]*',
-			'EXPOSE_SERVER' => false,
-		);
+        $this->assertEquals($expected, $template->render($assigns, $this->filters), $message);
+    }
 
-		foreach ($defaultConfig as $configKey => $configValue) {
-			Liquid::set($configKey, $configValue);
-		}
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-		Template::setCache(null);
-	}
+        $defaultConfig = [
+            'HAS_PROPERTY_METHOD'          => 'field_exists',
+            'GET_PROPERTY_METHOD'          => 'get',
+            'FILTER_SEPARATOR'             => '\|',
+            'ARGUMENT_SEPARATOR'           => ',',
+            'FILTER_ARGUMENT_SEPARATOR'    => ':',
+            'VARIABLE_ATTRIBUTE_SEPARATOR' => '.',
+            'INCLUDE_ALLOW_EXT'            => false,
+            'INCLUDE_SUFFIX'               => 'liquid',
+            'INCLUDE_PREFIX'               => '_',
+            'VARIABLE_START'               => '{{',
+            'VARIABLE_END'                 => '}}',
+            'VARIABLE_NAME'                => '[a-zA-Z_][a-zA-Z0-9_.-]*',
+            'EXPOSE_SERVER'                => false,
+        ];
 
-	/**
-	 * @param mixed $expected
-	 * @param string $templateString
-	 * @param array $assigns
-	 * @param string $message
-	 */
-	public function assertTemplateResult($expected, $templateString, array $assigns = array(), $message = "%s")
-	{
-		$template = new Template();
-		$template->parse($templateString);
+        foreach ($defaultConfig as $configKey => $configValue) {
+            Liquid::set($configKey, $configValue);
+        }
 
-		$this->assertEquals($expected, $template->render($assigns, $this->filters), $message);
-	}
+        Template::setCache(null);
+    }
 }

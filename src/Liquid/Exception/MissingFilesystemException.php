@@ -11,8 +11,6 @@
 
 namespace Liquid\Exception;
 
-use Liquid\Exception\ParseException;
-
 /**
  * Class MissingFilesystemException
  * @package Liquid\Exception

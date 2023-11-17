@@ -15,39 +15,39 @@ use Liquid\TestCase;
 
 class ApcTest extends TestCase
 {
-	/** @var \Liquid\Cache\Apc */
-	protected $cache;
+    /** @var \Liquid\Cache\Apc */
+    protected $cache;
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+    public function testNotExists()
+    {
+        $this->assertFalse($this->cache->exists('no_such_key'));
+    }
 
-		if (!function_exists('apc_fetch')) {
-			$this->markTestSkipped("Alternative PHP Cache (APC) not available");
-		}
+    public function testReadNotExisting()
+    {
+        $this->assertFalse($this->cache->read('no_such_key'));
+    }
 
-		if (!ini_get('apc.enable_cli')) {
-			$this->markTestSkipped("APC not enabled with cli. Run with: php -d apc.enable_cli=1");
-		}
+    public function testSetGetFlush()
+    {
+        $this->assertTrue($this->cache->write('test', 'example'), "Failed to set value.");
+        $this->assertSame('example', $this->cache->read('test'));
+        $this->assertTrue($this->cache->flush());
+        $this->assertFalse($this->cache->read('test'));
+    }
 
-		$this->cache = new Apc();
-	}
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-	public function testNotExists()
-	{
-		$this->assertFalse($this->cache->exists('no_such_key'));
-	}
+        if (!function_exists('apc_fetch')) {
+            $this->markTestSkipped("Alternative PHP Cache (APC) not available");
+        }
 
-	public function testReadNotExisting()
-	{
-		$this->assertFalse($this->cache->read('no_such_key'));
-	}
+        if (!ini_get('apc.enable_cli')) {
+            $this->markTestSkipped("APC not enabled with cli. Run with: php -d apc.enable_cli=1");
+        }
 
-	public function testSetGetFlush()
-	{
-		$this->assertTrue($this->cache->write('test', 'example'), "Failed to set value.");
-		$this->assertSame('example', $this->cache->read('test'));
-		$this->assertTrue($this->cache->flush());
-		$this->assertFalse($this->cache->read('test'));
-	}
+        $this->cache = new Apc();
+    }
 }

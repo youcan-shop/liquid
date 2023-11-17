@@ -2,5 +2,5 @@
 {% extends "base.tpl" %}
 
 {% block footer %}
-	{{ document.copyright }}
+{{ document.copyright }}
 {% endblock %}

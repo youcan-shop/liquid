@@ -11,8 +11,8 @@
 
 namespace Liquid\Tag;
 
-use Liquid\Liquid;
 use Liquid\AbstractBlock;
+use Liquid\Liquid;
 use Liquid\Regexp;
 
 /**
@@ -27,26 +27,26 @@ use Liquid\Regexp;
  */
 class TagRaw extends AbstractBlock
 {
-	/**
-	 * @param array $tokens
-	 */
-	public function parse(array &$tokens)
-	{
-		$tagRegexp = new Regexp('/^' . Liquid::get('TAG_START') . '\s*(\w+)\s*(.*)?' . Liquid::get('TAG_END') . '$/');
+    /**
+     * @param array $tokens
+     */
+    public function parse(array &$tokens)
+    {
+        $tagRegexp = new Regexp('/^' . Liquid::get('TAG_START') . '\s*(\w+)\s*(.*)?' . Liquid::get('TAG_END') . '$/');
 
-		$this->nodelist = array();
+        $this->nodelist = [];
 
-		while (count($tokens)) {
-			$token = array_shift($tokens);
+        while (count($tokens)) {
+            $token = array_shift($tokens);
 
-			if ($tagRegexp->match($token)) {
-				// If we found the proper block delimiter just end parsing here and let the outer block proceed
-				if ($tagRegexp->matches[1] == $this->blockDelimiter()) {
-					break;
-				}
-			}
+            if ($tagRegexp->match($token)) {
+                // If we found the proper block delimiter just end parsing here and let the outer block proceed
+                if ($tagRegexp->matches[1] == $this->blockDelimiter()) {
+                    break;
+                }
+            }
 
-			$this->nodelist[] = $token;
-		}
-	}
+            $this->nodelist[] = $token;
+        }
+    }
 }

@@ -12,10 +12,10 @@
 namespace Liquid\Tag;
 
 use Liquid\AbstractBlock;
-use Liquid\Exception\ParseException;
-use Liquid\Liquid;
 use Liquid\Context;
+use Liquid\Exception\ParseException;
 use Liquid\FileSystem;
+use Liquid\Liquid;
 use Liquid\Regexp;
 
 /**
@@ -35,202 +35,202 @@ use Liquid\Regexp;
  */
 class TagFor extends AbstractBlock
 {
-	/**
-	 * @var array The collection to loop over
-	 */
-	private $collectionName;
+    /**
+     * @var array The collection to loop over
+     */
+    private $collectionName;
 
-	/**
-	 * @var string The variable name to assign collection elements to
-	 */
-	private $variableName;
+    /**
+     * @var string The variable name to assign collection elements to
+     */
+    private $variableName;
 
-	/**
-	 * @var string The name of the loop, which is a compound of the collection and variable names
-	 */
-	private $name;
+    /**
+     * @var string The name of the loop, which is a compound of the collection and variable names
+     */
+    private $name;
 
-	/**
-	 * @var string The type of the loop (collection or digit)
-	 */
-	private $type = 'collection';
+    /**
+     * @var string The type of the loop (collection or digit)
+     */
+    private $type = 'collection';
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $markup
-	 * @param array $tokens
-	 * @param FileSystem $fileSystem
-	 *
-	 * @throws \Liquid\Exception\ParseException
-	 */
-	public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
-	{
-		parent::__construct($markup, $tokens, $fileSystem);
+    /**
+     * Constructor
+     *
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem $fileSystem
+     *
+     * @throws \Liquid\Exception\ParseException
+     */
+    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    {
+        parent::__construct($markup, $tokens, $fileSystem);
 
-		$syntaxRegexp = new Regexp('/(\w+)\s+in\s+(' . Liquid::get('VARIABLE_NAME') . ')/');
+        $syntaxRegexp = new Regexp('/(\w+)\s+in\s+(' . Liquid::get('VARIABLE_NAME') . ')/');
 
-		if ($syntaxRegexp->match($markup)) {
-			$this->variableName = $syntaxRegexp->matches[1];
-			$this->collectionName = $syntaxRegexp->matches[2];
-			$this->name = $syntaxRegexp->matches[1] . '-' . $syntaxRegexp->matches[2];
-			$this->extractAttributes($markup);
-		} else {
-			$syntaxRegexp = new Regexp('/(\w+)\s+in\s+\((\d+|' . Liquid::get('VARIABLE_NAME') . ')\s*\.\.\s*(\d+|' . Liquid::get('VARIABLE_NAME') . ')\)/');
-			if ($syntaxRegexp->match($markup)) {
-				$this->type = 'digit';
-				$this->variableName = $syntaxRegexp->matches[1];
-				$this->start = $syntaxRegexp->matches[2];
-				$this->collectionName = $syntaxRegexp->matches[3];
-				$this->name = $syntaxRegexp->matches[1].'-digit';
-				$this->extractAttributes($markup);
-			} else {
-				throw new ParseException("Syntax Error in 'for loop' - Valid syntax: for [item] in [collection]");
-			}
-		}
-	}
+        if ($syntaxRegexp->match($markup)) {
+            $this->variableName = $syntaxRegexp->matches[1];
+            $this->collectionName = $syntaxRegexp->matches[2];
+            $this->name = $syntaxRegexp->matches[1] . '-' . $syntaxRegexp->matches[2];
+            $this->extractAttributes($markup);
+        } else {
+            $syntaxRegexp = new Regexp('/(\w+)\s+in\s+\((\d+|' . Liquid::get('VARIABLE_NAME') . ')\s*\.\.\s*(\d+|' . Liquid::get('VARIABLE_NAME') . ')\)/');
+            if ($syntaxRegexp->match($markup)) {
+                $this->type = 'digit';
+                $this->variableName = $syntaxRegexp->matches[1];
+                $this->start = $syntaxRegexp->matches[2];
+                $this->collectionName = $syntaxRegexp->matches[3];
+                $this->name = $syntaxRegexp->matches[1] . '-digit';
+                $this->extractAttributes($markup);
+            } else {
+                throw new ParseException("Syntax Error in 'for loop' - Valid syntax: for [item] in [collection]");
+            }
+        }
+    }
 
-	/**
-	 * Renders the tag
-	 *
-	 * @param Context $context
-	 *
-	 * @return null|string
-	 */
-	public function render(Context $context)
-	{
-		if (!isset($context->registers['for'])) {
-			$context->registers['for'] = array();
-		}
+    /**
+     * Renders the tag
+     *
+     * @param Context $context
+     *
+     * @return null|string
+     */
+    public function render(Context $context)
+    {
+        if (!isset($context->registers['for'])) {
+            $context->registers['for'] = [];
+        }
 
-		if ($this->type == 'digit') {
-			return $this->renderDigit($context);
-		}
+        if ($this->type == 'digit') {
+            return $this->renderDigit($context);
+        }
 
-		// that's the default
-		return $this->renderCollection($context);
-	}
+        // that's the default
+        return $this->renderCollection($context);
+    }
 
-	private function renderCollection(Context $context)
-	{
-		$collection = $context->get($this->collectionName);
+    private function renderDigit(Context $context)
+    {
+        $start = $this->start;
+        if (!is_integer($this->start)) {
+            $start = $context->get($this->start);
+        }
 
-		if ($collection instanceof \Generator && !$collection->valid()) {
-			return '';
-		}
+        $end = $this->collectionName;
+        if (!is_integer($this->collectionName)) {
+            $end = $context->get($this->collectionName);
+        }
 
-		if ($collection instanceof \Traversable) {
-			$collection = iterator_to_array($collection);
-		}
+        $range = [$start, $end];
 
-		if (is_null($collection) || !is_array($collection) || count($collection) == 0) {
-			return '';
-		}
+        $context->push();
+        $result = '';
+        $index = 0;
+        $length = $range[1] - $range[0];
+        for ($i = $range[0]; $i <= $range[1]; $i++) {
+            $context->set($this->variableName, $i);
+            $context->set('forloop', [
+                'name'    => $this->name,
+                'length'  => $length,
+                'index'   => $index + 1,
+                'index0'  => $index,
+                'rindex'  => $length - $index,
+                'rindex0' => $length - $index - 1,
+                'first'   => (int)($index == 0),
+                'last'    => (int)($index == $length - 1),
+            ]);
 
-		$range = array(0, count($collection));
+            $result .= $this->renderAll($this->nodelist, $context);
 
-		if (isset($this->attributes['limit']) || isset($this->attributes['offset'])) {
-			$offset = 0;
+            $index++;
 
-			if (isset($this->attributes['offset'])) {
-				$offset = ($this->attributes['offset'] == 'continue') ? $context->registers['for'][$this->name] : $context->get($this->attributes['offset']);
-			}
+            if (isset($context->registers['break'])) {
+                unset($context->registers['break']);
+                break;
+            }
+            if (isset($context->registers['continue'])) {
+                unset($context->registers['continue']);
+            }
+        }
 
-			$limit = (isset($this->attributes['limit'])) ? $context->get($this->attributes['limit']) : null;
-			$rangeEnd = $limit ? $limit : count($collection) - $offset;
-			$range = array($offset, $rangeEnd);
+        $context->pop();
 
-			$context->registers['for'][$this->name] = $rangeEnd + $offset;
-		}
+        return $result;
+    }
 
-		$result = '';
-		$segment = array_slice($collection, $range[0], $range[1]);
-		if (!count($segment)) {
-			return null;
-		}
+    private function renderCollection(Context $context)
+    {
+        $collection = $context->get($this->collectionName);
 
-		$context->push();
-		$length = count($segment);
+        if ($collection instanceof \Generator && !$collection->valid()) {
+            return '';
+        }
 
-		$index = 0;
-		foreach ($segment as $key => $item) {
-			$value = is_numeric($key) ? $item : array($key, $item);
-			$context->set($this->variableName, $value);
-			$context->set('forloop', array(
-					'name' => $this->name,
-					'length' => $length,
-					'index' => $index + 1,
-					'index0' => $index,
-					'rindex' => $length - $index,
-					'rindex0' => $length - $index - 1,
-					'first' => (int)($index == 0),
-					'last' => (int)($index == $length - 1)
-			));
+        if ($collection instanceof \Traversable) {
+            $collection = iterator_to_array($collection);
+        }
 
-			$result .= $this->renderAll($this->nodelist, $context);
+        if (is_null($collection) || !is_array($collection) || count($collection) == 0) {
+            return '';
+        }
 
-			$index++;
+        $range = [0, count($collection)];
 
-			if (isset($context->registers['break'])) {
-				unset($context->registers['break']);
-				break;
-			}
-			if (isset($context->registers['continue'])) {
-				unset($context->registers['continue']);
-			}
-		}
+        if (isset($this->attributes['limit']) || isset($this->attributes['offset'])) {
+            $offset = 0;
 
-		$context->pop();
+            if (isset($this->attributes['offset'])) {
+                $offset = ($this->attributes['offset'] == 'continue') ? $context->registers['for'][$this->name] : $context->get($this->attributes['offset']);
+            }
 
-		return $result;
-	}
+            $limit = (isset($this->attributes['limit'])) ? $context->get($this->attributes['limit']) : null;
+            $rangeEnd = $limit ? $limit : count($collection) - $offset;
+            $range = [$offset, $rangeEnd];
 
-	private function renderDigit(Context $context)
-	{
-		$start = $this->start;
-		if (!is_integer($this->start)) {
-			$start = $context->get($this->start);
-		}
+            $context->registers['for'][$this->name] = $rangeEnd + $offset;
+        }
 
-		$end = $this->collectionName;
-		if (!is_integer($this->collectionName)) {
-			$end = $context->get($this->collectionName);
-		}
+        $result = '';
+        $segment = array_slice($collection, $range[0], $range[1]);
+        if (!count($segment)) {
+            return null;
+        }
 
-		$range = array($start, $end);
+        $context->push();
+        $length = count($segment);
 
-		$context->push();
-		$result = '';
-		$index = 0;
-		$length = $range[1] - $range[0];
-		for ($i = $range[0]; $i <= $range[1]; $i++) {
-			$context->set($this->variableName, $i);
-			$context->set('forloop', array(
-				'name'		=> $this->name,
-				'length'	=> $length,
-				'index'		=> $index + 1,
-				'index0'	=> $index,
-				'rindex'	=> $length - $index,
-				'rindex0'	=> $length - $index - 1,
-				'first'		=> (int)($index == 0),
-				'last'		=> (int)($index == $length - 1)
-			));
+        $index = 0;
+        foreach ($segment as $key => $item) {
+            $value = is_numeric($key) ? $item : [$key, $item];
+            $context->set($this->variableName, $value);
+            $context->set('forloop', [
+                'name'    => $this->name,
+                'length'  => $length,
+                'index'   => $index + 1,
+                'index0'  => $index,
+                'rindex'  => $length - $index,
+                'rindex0' => $length - $index - 1,
+                'first'   => (int)($index == 0),
+                'last'    => (int)($index == $length - 1),
+            ]);
 
-			$result .= $this->renderAll($this->nodelist, $context);
+            $result .= $this->renderAll($this->nodelist, $context);
 
-			$index++;
+            $index++;
 
-			if (isset($context->registers['break'])) {
-				unset($context->registers['break']);
-				break;
-			}
-			if (isset($context->registers['continue'])) {
-				unset($context->registers['continue']);
-			}
-		}
+            if (isset($context->registers['break'])) {
+                unset($context->registers['break']);
+                break;
+            }
+            if (isset($context->registers['continue'])) {
+                unset($context->registers['continue']);
+            }
+        }
 
-		$context->pop();
+        $context->pop();
 
-		return $result;
-	}
+        return $result;
+    }
 }
