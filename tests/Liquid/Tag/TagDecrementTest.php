@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\TestCase;
+use YouCan\Liquid\TestCase;
 
 class TagDecrementTest extends TestCase
 {
@@ -19,7 +19,7 @@ class TagDecrementTest extends TestCase
      */
     public function testSyntaxError()
     {
-        $this->expectException(\Liquid\LiquidException::class);
+        $this->expectException(\YouCan\Liquid\LiquidException::class);
 
         $this->assertTemplateResult('', '{% decrement %}');
     }

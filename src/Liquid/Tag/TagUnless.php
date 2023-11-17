@@ -9,7 +9,7 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
 /**
  * An if statement

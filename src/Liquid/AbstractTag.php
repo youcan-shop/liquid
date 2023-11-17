@@ -9,7 +9,7 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
 /**
  * Base class for tags.

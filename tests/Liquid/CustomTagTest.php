@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
-use Liquid\Tag\TagComment;
+use YouCan\Liquid\Tag\TagComment;
 
 class TagFoo extends TagComment
 {
@@ -27,7 +27,7 @@ class CustomTagTest extends TestCase
             $this->markTestIncomplete("Test tag already registered. Are you missing @depends?");
         }
 
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
         $this->expectExceptionMessage('Unknown tag foo');
 
         $template->parse('[ba{% foo %} Comment {% endfoo %}r]');

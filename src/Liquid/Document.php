@@ -9,11 +9,11 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
-use Liquid\Tag\TagBlock;
-use Liquid\Tag\TagExtends;
-use Liquid\Tag\TagInclude;
+use YouCan\Liquid\Tag\TagBlock;
+use YouCan\Liquid\Tag\TagExtends;
+use YouCan\Liquid\Tag\TagInclude;
 
 /**
  * This class represents the entire template document.
@@ -36,8 +36,8 @@ class Document extends AbstractBlock
      * Check for cached includes; if there are - do not use cache
      *
      * @return bool if need to discard cache
-     * @see \Liquid\Tag\TagExtends::hasIncludes()
-     * @see \Liquid\Tag\TagInclude::hasIncludes()
+     * @see \YouCan\Liquid\Tag\TagExtends::hasIncludes()
+     * @see \YouCan\Liquid\Tag\TagInclude::hasIncludes()
      */
     public function hasIncludes()
     {

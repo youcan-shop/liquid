@@ -9,11 +9,11 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\AbstractBlock;
-use Liquid\Context;
-use Liquid\FileSystem;
+use YouCan\Liquid\AbstractBlock;
+use YouCan\Liquid\Context;
+use YouCan\Liquid\FileSystem;
 
 /**
  * Quickly create a table from a collection
@@ -34,7 +34,7 @@ class TagIfchanged extends AbstractBlock
      * @param array $tokens
      * @param FileSystem $fileSystem
      *
-     * @throws \Liquid\LiquidException
+     * @throws \YouCan\Liquid\LiquidException
      */
     public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
     {

@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\TestCase;
+use YouCan\Liquid\TestCase;
 
 class TagIfTest extends TestCase
 {
@@ -226,7 +226,7 @@ class TagIfTest extends TestCase
      */
     public function testSyntaxErrorNotClosed()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
         $this->expectExceptionMessage('if tag was never closed');
 
         $this->assertTemplateResult('', '{% if jerry == 1 %}');
@@ -234,7 +234,7 @@ class TagIfTest extends TestCase
 
     public function testSyntaxErrorNotClosedLineBreak()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
         $this->expectExceptionMessage('if tag was never closed');
 
         $this->assertTemplateResult('', "{% if jerry\n == 1 %}");
@@ -244,7 +244,7 @@ class TagIfTest extends TestCase
      */
     public function testSyntaxErrorEnd()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $this->assertTemplateResult('', '{% if jerry == 1 %}{% end %}');
     }
@@ -253,7 +253,7 @@ class TagIfTest extends TestCase
      */
     public function testInvalidOperator()
     {
-        $this->expectException(\Liquid\Exception\RenderException::class);
+        $this->expectException(\YouCan\Liquid\Exception\RenderException::class);
 
         $this->assertTemplateResult('', '{% if foo === y %}true{% else %}false{% endif %}', ['foo' => true, 'y' => true]);
     }
@@ -262,7 +262,7 @@ class TagIfTest extends TestCase
      */
     public function testIncomparable()
     {
-        $this->expectException(\Liquid\Exception\RenderException::class);
+        $this->expectException(\YouCan\Liquid\Exception\RenderException::class);
 
         $this->assertTemplateResult('', '{% if foo == 1 %}true{% endif %}', ['foo' => (object)[]]);
     }
@@ -271,7 +271,7 @@ class TagIfTest extends TestCase
      */
     public function testSyntaxErrorElse()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
         $this->expectExceptionMessage('does not expect else tag');
 
         $this->assertTemplateResult('', '{% if foo == 1 %}{% endif %}{% else %}');
@@ -281,7 +281,7 @@ class TagIfTest extends TestCase
      */
     public function testSyntaxErrorUnknown()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
         $this->expectExceptionMessage('Unknown tag');
 
         $this->assertTemplateResult('', '{% unknown-tag %}');

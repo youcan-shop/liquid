@@ -9,10 +9,10 @@
  * @package Liquid
  */
 
-namespace Liquid\Cache;
+namespace YouCan\Liquid\Cache;
 
-use Liquid\Cache;
-use Liquid\LiquidException;
+use YouCan\Liquid\Cache;
+use YouCan\Liquid\LiquidException;
 
 /**
  * Implements cache stored in Apc.

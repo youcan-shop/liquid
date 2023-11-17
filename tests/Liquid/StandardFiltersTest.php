@@ -9,7 +9,7 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
 class MoneyFilter
 {
@@ -81,7 +81,7 @@ class StandardFiltersTest extends TestCase
      */
     public function testSizeObject()
     {
-        $this->expectException(\Liquid\LiquidException::class);
+        $this->expectException(\YouCan\Liquid\LiquidException::class);
         $this->expectExceptionMessage('cannot be estimated');
 
         StandardFilters::size((object)[]);

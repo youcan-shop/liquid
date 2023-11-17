@@ -9,11 +9,11 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\AbstractBlock;
-use Liquid\Liquid;
-use Liquid\Regexp;
+use YouCan\Liquid\AbstractBlock;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\Regexp;
 
 /**
  * Allows output of Liquid code on a page without being parsed.

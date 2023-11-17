@@ -9,10 +9,10 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\Liquid;
-use Liquid\TestCase;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\TestCase;
 
 class TagPaginateTest extends TestCase
 {
@@ -68,7 +68,7 @@ class TagPaginateTest extends TestCase
      */
     public function testSyntaxErrorCase()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $this->assertTemplateResult('', '{% paginate products %}{% endpaginate %}');
     }
@@ -77,7 +77,7 @@ class TagPaginateTest extends TestCase
      */
     public function testNoCollection()
     {
-        $this->expectException(\Liquid\Exception\RenderException::class);
+        $this->expectException(\YouCan\Liquid\Exception\RenderException::class);
         $this->expectExceptionMessage('Missing collection');
 
         $this->assertTemplateResult('', '{% paginate products by 1 %}{% for product in products %}{{ product.id }}{% endfor %}{% endpaginate %}');

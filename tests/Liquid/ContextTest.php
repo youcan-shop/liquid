@@ -9,7 +9,7 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
 class HundredCentes
 {
@@ -172,7 +172,7 @@ class ContextTest extends TestCase
      */
     public function testNoScopeToPop()
     {
-        $this->expectException(\Liquid\LiquidException::class);
+        $this->expectException(\YouCan\Liquid\LiquidException::class);
 
         $this->context->pop();
     }
@@ -181,7 +181,7 @@ class ContextTest extends TestCase
      */
     public function testGetArray()
     {
-        $this->expectException(\Liquid\LiquidException::class);
+        $this->expectException(\YouCan\Liquid\LiquidException::class);
 
         $this->context->get([]);
     }

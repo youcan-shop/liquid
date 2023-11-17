@@ -9,13 +9,13 @@
  * @package Liquid
  */
 
-namespace Liquid\Cache;
+namespace YouCan\Liquid\Cache;
 
-use Liquid\TestCase;
+use YouCan\Liquid\TestCase;
 
 class LocalTest extends TestCase
 {
-    /** @var \Liquid\Cache\Local */
+    /** @var \YouCan\Liquid\Cache\Local */
     protected $cache;
 
     public function testNotExists()

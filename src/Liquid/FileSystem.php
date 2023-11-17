@@ -9,7 +9,7 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
 /**
  * A Liquid file system is way to let your templates retrieve other templates for use with the include tag.

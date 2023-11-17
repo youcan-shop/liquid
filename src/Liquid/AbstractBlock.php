@@ -9,16 +9,16 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
-use Liquid\Exception\ParseException;
+use YouCan\Liquid\Exception\ParseException;
 
 /**
  * Base class for blocks.
  */
 class AbstractBlock extends AbstractTag
 {
-    const TAG_PREFIX = '\Liquid\Tag\Tag';
+    const TAG_PREFIX = '\YouCan\Liquid\Tag\Tag';
     /**
      * Whenever next token should be ltrim'med.
      *
@@ -44,7 +44,7 @@ class AbstractBlock extends AbstractTag
      * @param array $tokens
      *
      * @return void
-     * @throws \Liquid\LiquidException
+     * @throws \YouCan\Liquid\LiquidException
      */
     public function parse(array &$tokens)
     {
@@ -169,7 +169,7 @@ class AbstractBlock extends AbstractTag
      * @param string $params
      * @param array $tokens
      *
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     protected function unknownTag($tag, $params, array $tokens)
     {
@@ -189,7 +189,7 @@ class AbstractBlock extends AbstractTag
      * @param string $token
      *
      * @return Variable
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     private function createVariable($token)
     {
@@ -208,7 +208,7 @@ class AbstractBlock extends AbstractTag
      * this method is subclassed, like it is for Document
      *
      * @return bool
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     protected function assertMissingDelimitation()
     {

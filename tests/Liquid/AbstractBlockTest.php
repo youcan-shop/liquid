@@ -9,15 +9,15 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\TestCase;
+use YouCan\Liquid\TestCase;
 
 class AbstractBlockTest extends TestCase
 {
     public function testUnterminatedBlockError()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $this->assertTemplateResult('', '{% block }');
     }

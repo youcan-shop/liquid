@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
-use Liquid\Exception\RenderException;
+use YouCan\Liquid\Exception\RenderException;
 
 /**
  * Base class for blocks that make logical decisions.
@@ -55,7 +55,7 @@ class Decision extends AbstractBlock
      * @param mixed $value
      *
      * @return string
-     * @throws \Liquid\Exception\RenderException
+     * @throws \YouCan\Liquid\Exception\RenderException
      */
     private function stringValue($value)
     {
@@ -91,7 +91,7 @@ class Decision extends AbstractBlock
      * @param Context $context
      *
      * @return bool
-     * @throws \Liquid\Exception\RenderException
+     * @throws \YouCan\Liquid\Exception\RenderException
      */
     protected function interpretCondition($left, $right, $op, Context $context)
     {

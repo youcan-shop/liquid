@@ -9,13 +9,13 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\AbstractBlock;
-use Liquid\Context;
-use Liquid\Exception\ParseException;
-use Liquid\FileSystem;
-use Liquid\Regexp;
+use YouCan\Liquid\AbstractBlock;
+use YouCan\Liquid\Context;
+use YouCan\Liquid\Exception\ParseException;
+use YouCan\Liquid\FileSystem;
+use YouCan\Liquid\Regexp;
 
 /**
  * Captures the output inside a block and assigns it to a variable
@@ -40,7 +40,7 @@ class TagCapture extends AbstractBlock
      * @param array $tokens
      * @param FileSystem $fileSystem
      *
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
     {

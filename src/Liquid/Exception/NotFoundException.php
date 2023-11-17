@@ -9,7 +9,7 @@
  * @package Liquid
  */
 
-namespace Liquid\Exception;
+namespace YouCan\Liquid\Exception;
 
 /**
  * NotFoundException class.

@@ -9,10 +9,10 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
-use Liquid\Cache\File;
-use Liquid\FileSystem\Virtual;
+use YouCan\Liquid\Cache\File;
+use YouCan\Liquid\FileSystem\Virtual;
 
 class VirtualFileSystemTest extends TestCase
 {
@@ -20,7 +20,7 @@ class VirtualFileSystemTest extends TestCase
      */
     public function testInvalidCallback()
     {
-        $this->expectException(\Liquid\LiquidException::class);
+        $this->expectException(\YouCan\Liquid\LiquidException::class);
         $this->expectExceptionMessage('Not a callback');
 
         new Virtual('');
@@ -49,7 +49,7 @@ class VirtualFileSystemTest extends TestCase
      */
     public function testWithFileCache()
     {
-        $this->expectException(\Liquid\LiquidException::class);
+        $this->expectException(\YouCan\Liquid\LiquidException::class);
         $this->expectExceptionMessage('cannot be used with a serializing cache');
 
         $template = new Template();

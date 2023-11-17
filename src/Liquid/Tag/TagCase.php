@@ -9,14 +9,14 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\Context;
-use Liquid\Decision;
-use Liquid\Exception\ParseException;
-use Liquid\FileSystem;
-use Liquid\Liquid;
-use Liquid\Regexp;
+use YouCan\Liquid\Context;
+use YouCan\Liquid\Decision;
+use YouCan\Liquid\Exception\ParseException;
+use YouCan\Liquid\FileSystem;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\Regexp;
 
 /**
  * A switch statement
@@ -62,7 +62,7 @@ class TagCase extends Decision
      * @param array $tokens
      * @param FileSystem $fileSystem
      *
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
     {
@@ -105,7 +105,7 @@ class TagCase extends Decision
      * @param string $params
      * @param array $tokens
      *
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     public function unknownTag($tag, $params, array $tokens)
     {

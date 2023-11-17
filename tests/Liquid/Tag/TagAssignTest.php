@@ -9,10 +9,10 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\Template;
-use Liquid\TestCase;
+use YouCan\Liquid\Template;
+use YouCan\Liquid\TestCase;
 
 /**
  * Basic tests for the assignment of one variable to another. This also tests the
@@ -26,7 +26,7 @@ class TagAssignTest extends TestCase
      */
     public function testInvalidAssign()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $template = new Template();
 

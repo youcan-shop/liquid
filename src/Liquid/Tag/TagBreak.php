@@ -9,10 +9,10 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\AbstractTag;
-use Liquid\Context;
+use YouCan\Liquid\AbstractTag;
+use YouCan\Liquid\Context;
 
 /**
  * Break iteration of the current loop

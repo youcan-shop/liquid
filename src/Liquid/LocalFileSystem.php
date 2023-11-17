@@ -9,11 +9,11 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
 /**
- * @deprecated Left for backward compatibility reasons. Use \Liquid\FileSystem\Local instead.
+ * @deprecated Left for backward compatibility reasons. Use \YouCan\Liquid\FileSystem\Local instead.
  */
-class LocalFileSystem extends \Liquid\FileSystem\Local
+class LocalFileSystem extends \YouCan\Liquid\FileSystem\Local
 {
 }

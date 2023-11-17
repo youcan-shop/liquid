@@ -9,15 +9,15 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\AbstractBlock;
-use Liquid\Context;
-use Liquid\Exception\ParseException;
-use Liquid\Exception\RenderException;
-use Liquid\FileSystem;
-use Liquid\Liquid;
-use Liquid\Regexp;
+use YouCan\Liquid\AbstractBlock;
+use YouCan\Liquid\Context;
+use YouCan\Liquid\Exception\ParseException;
+use YouCan\Liquid\Exception\RenderException;
+use YouCan\Liquid\FileSystem;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\Regexp;
 
 /**
  * Quickly create a table from a collection
@@ -52,7 +52,7 @@ class TagTablerow extends AbstractBlock
      * @param array $tokens
      * @param FileSystem $fileSystem
      *
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
     {
@@ -76,7 +76,7 @@ class TagTablerow extends AbstractBlock
      * @param Context $context
      *
      * @return string
-     * @throws \Liquid\Exception\RenderException
+     * @throws \YouCan\Liquid\Exception\RenderException
      */
     public function render(Context $context)
     {

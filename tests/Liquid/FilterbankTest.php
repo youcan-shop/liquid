@@ -53,9 +53,9 @@ namespace {
     }
 } // global namespace
 
-namespace Liquid {
+namespace YouCan\Liquid {
 
-    use Liquid\Cache\File;
+    use YouCan\Liquid\Cache\File;
 
     class NamespacedClassFilter
     {
@@ -77,7 +77,7 @@ namespace Liquid {
          */
         public function testAddFilterNotObjectAndString()
         {
-            $this->expectException(\Liquid\Exception\WrongArgumentException::class);
+            $this->expectException(\YouCan\Liquid\Exception\WrongArgumentException::class);
 
             $this->filterBank->addFilter([]);
         }
@@ -86,7 +86,7 @@ namespace Liquid {
          */
         public function testAddFilterNoFunctionOrClass()
         {
-            $this->expectException(\Liquid\Exception\WrongArgumentException::class);
+            $this->expectException(\YouCan\Liquid\Exception\WrongArgumentException::class);
 
             $this->filterBank->addFilter('no_such_function_or_class');
         }
@@ -100,7 +100,7 @@ namespace Liquid {
             $var = new Variable('var | date');
             $this->context->set('var', []);
 
-            $this->expectException(\Liquid\LiquidException::class);
+            $this->expectException(\YouCan\Liquid\LiquidException::class);
             $var->render($this->context);
         }
 

@@ -9,13 +9,13 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\Cache\Local;
-use Liquid\Liquid;
-use Liquid\Template;
-use Liquid\TestCase;
-use Liquid\TestFileSystem;
+use YouCan\Liquid\Cache\Local;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\Template;
+use YouCan\Liquid\TestCase;
+use YouCan\Liquid\TestFileSystem;
 
 class TagIncludeTest extends TestCase
 {
@@ -25,7 +25,7 @@ class TagIncludeTest extends TestCase
      */
     public function testInvalidSyntaxNoTemplateName()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
         $this->expectExceptionMessage('Error in tag');
 
         $template = new Template();
@@ -37,7 +37,7 @@ class TagIncludeTest extends TestCase
      */
     public function testMissingFilesystem()
     {
-        $this->expectException(\Liquid\Exception\MissingFilesystemException::class);
+        $this->expectException(\YouCan\Liquid\Exception\MissingFilesystemException::class);
         $this->expectExceptionMessage('No file system');
 
         $template = new Template();

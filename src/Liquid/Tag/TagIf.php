@@ -9,14 +9,14 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\Context;
-use Liquid\Decision;
-use Liquid\Exception\ParseException;
-use Liquid\FileSystem;
-use Liquid\Liquid;
-use Liquid\Regexp;
+use YouCan\Liquid\Context;
+use YouCan\Liquid\Decision;
+use YouCan\Liquid\Exception\ParseException;
+use YouCan\Liquid\FileSystem;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\Regexp;
 
 /**
  * An if statement
@@ -85,7 +85,7 @@ class TagIf extends Decision
      * @param Context $context
      *
      * @return string
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     public function render(Context $context)
     {

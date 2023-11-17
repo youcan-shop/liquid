@@ -9,26 +9,26 @@
  * @package Liquid
  */
 
-namespace Liquid\Cache;
+namespace YouCan\Liquid\Cache;
 
-use Liquid\TestCase;
+use YouCan\Liquid\TestCase;
 
 class FileTest extends TestCase
 {
-    /** @var \Liquid\Cache\File */
+    /** @var \YouCan\Liquid\Cache\File */
     protected $cache;
     protected $cacheDir;
 
     public function testConstructInvalidOptions()
     {
-        $this->expectException(\Liquid\Exception\FilesystemException::class);
+        $this->expectException(\YouCan\Liquid\Exception\FilesystemException::class);
 
         new File();
     }
 
     public function testConstructNoSuchDirOrNotWritable()
     {
-        $this->expectException(\Liquid\Exception\FilesystemException::class);
+        $this->expectException(\YouCan\Liquid\Exception\FilesystemException::class);
 
         new File(['cache_dir' => '/no/such/dir/liquid/cache']);
     }

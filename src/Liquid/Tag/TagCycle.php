@@ -9,15 +9,15 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\AbstractTag;
-use Liquid\Context;
-use Liquid\Exception\ParseException;
-use Liquid\FileSystem;
-use Liquid\Liquid;
-use Liquid\Regexp;
-use Liquid\Variable;
+use YouCan\Liquid\AbstractTag;
+use YouCan\Liquid\Context;
+use YouCan\Liquid\Exception\ParseException;
+use YouCan\Liquid\FileSystem;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Variable;
 
 /**
  * Cycles between a list of values; calls to the tag will return each value in turn
@@ -53,7 +53,7 @@ class TagCycle extends AbstractTag
      * @param array $tokens
      * @param FileSystem $fileSystem
      *
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
     {

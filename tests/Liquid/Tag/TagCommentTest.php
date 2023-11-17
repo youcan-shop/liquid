@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\TestCase;
+use YouCan\Liquid\TestCase;
 
 class TagCommentTest extends TestCase
 {

@@ -9,12 +9,12 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\Cache\Local;
-use Liquid\Template;
-use Liquid\TestCase;
-use Liquid\TestFileSystem;
+use YouCan\Liquid\Cache\Local;
+use YouCan\Liquid\Template;
+use YouCan\Liquid\TestCase;
+use YouCan\Liquid\TestFileSystem;
 
 /**
  * @see TagExtends
@@ -159,7 +159,7 @@ class TagExtendsTest extends TestCase
      */
     public function testInvalidSyntaxNoTemplateName()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $template = new Template();
         $template->parse("{% extends %}");
@@ -169,7 +169,7 @@ class TagExtendsTest extends TestCase
      */
     public function testInvalidSyntaxNotQuotedTemplateName()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
         $this->expectExceptionMessage('Error in tag');
 
         $template = new Template();
@@ -180,7 +180,7 @@ class TagExtendsTest extends TestCase
      */
     public function testMissingFilesystem()
     {
-        $this->expectException(\Liquid\Exception\MissingFilesystemException::class);
+        $this->expectException(\YouCan\Liquid\Exception\MissingFilesystemException::class);
         $this->expectExceptionMessage('No file system');
 
         $template = new Template();
@@ -191,7 +191,7 @@ class TagExtendsTest extends TestCase
      */
     public function testInvalidSyntaxEmptyTemplateName()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $template = new Template();
         $template->setFileSystem($this->fs);

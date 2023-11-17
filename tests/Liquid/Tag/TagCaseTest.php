@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\TestCase;
+use YouCan\Liquid\TestCase;
 
 class Stringable
 {
@@ -114,7 +114,7 @@ class TagCaseTest extends TestCase
      */
     public function testSyntaxErrorCase()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $this->assertTemplateResult('', '{% case %}{% when 5 %}{% endcase %}');
     }
@@ -123,7 +123,7 @@ class TagCaseTest extends TestCase
      */
     public function testSyntaxErrorWhen()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $this->assertTemplateResult('', '{% case condition %}{% when %}{% endcase %}');
     }
@@ -132,7 +132,7 @@ class TagCaseTest extends TestCase
      */
     public function testSyntaxErrorEnd()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $this->assertTemplateResult('', '{% case condition %}{% end %}');
     }
@@ -141,7 +141,7 @@ class TagCaseTest extends TestCase
      */
     public function testObject()
     {
-        $this->expectException(\Liquid\Exception\RenderException::class);
+        $this->expectException(\YouCan\Liquid\Exception\RenderException::class);
 
         $this->assertTemplateResult('', '{% case variable %}{% when 5 %}{% endcase %}', ['variable' => (object)[]]);
     }

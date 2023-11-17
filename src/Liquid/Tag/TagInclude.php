@@ -9,17 +9,17 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\AbstractTag;
-use Liquid\Context;
-use Liquid\Document;
-use Liquid\Exception\MissingFilesystemException;
-use Liquid\Exception\ParseException;
-use Liquid\FileSystem;
-use Liquid\Liquid;
-use Liquid\Regexp;
-use Liquid\Template;
+use YouCan\Liquid\AbstractTag;
+use YouCan\Liquid\Context;
+use YouCan\Liquid\Document;
+use YouCan\Liquid\Exception\MissingFilesystemException;
+use YouCan\Liquid\Exception\ParseException;
+use YouCan\Liquid\FileSystem;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Template;
 
 /**
  * Includes another, partial, template
@@ -69,7 +69,7 @@ class TagInclude extends AbstractTag
      * @param array $tokens
      * @param FileSystem $fileSystem
      *
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
     {
@@ -106,7 +106,7 @@ class TagInclude extends AbstractTag
      *
      * @param array $tokens
      *
-     * @throws \Liquid\Exception\MissingFilesystemException
+     * @throws \YouCan\Liquid\Exception\MissingFilesystemException
      */
     public function parse(array &$tokens)
     {

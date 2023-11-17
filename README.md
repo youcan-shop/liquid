@@ -46,7 +46,7 @@ You can install this lib via [composer](https://getcomposer.org/):
 
 The main class is `Liquid::Template` class. There are two separate stages of working with Liquid templates: parsing and rendering. Here is a simple example:
 
-    use Liquid\Template;
+    use YouCan\Liquid\Template;
 
     $template = new Template();
     $template->parse("Hello, {{ name }}!");
@@ -61,9 +61,9 @@ To find more examples have a look at the `examples` directory or at the original
 
 You would probably want to add a caching layer (at very least a request-wide one), enable context-aware automatic escaping, and do load includes from disk with full file names.
 
-    use Liquid\Liquid;
-    use Liquid\Template;
-    use Liquid\Cache\Local;
+    use YouCan\Liquid\Liquid;
+    use YouCan\Liquid\Template;
+    use YouCan\Liquid\Cache\Local;
 
     Liquid::set('INCLUDE_SUFFIX', '');
     Liquid::set('INCLUDE_PREFIX', '');
@@ -90,16 +90,16 @@ Note that automatic escaping is not a standard Liquid feature: use with care.
 
 Similarly, the following snippet will parse and render `templates/home.liquid` while storing parsing results in a class-local cache:
 
-    \Liquid\Liquid::set('INCLUDE_PREFIX', '');
+    \YouCan\Liquid\Liquid::set('INCLUDE_PREFIX', '');
 
-    $template = new \Liquid\Template(__DIR__ . '/protected/templates');
-    $template->setCache(new \Liquid\Cache\Local());
+    $template = new \YouCan\Liquid\Template(__DIR__ . '/protected/templates');
+    $template->setCache(new \YouCan\Liquid\Cache\Local());
     echo $template->parseFile('home')->render();
 
 If you render the same template over and over for at least a dozen of times, the class-local cache will give you a slight speed up in range of some milliseconds per render
 depending on a complexity of your template.
 
-You should probably extend `Liquid\Template` to initialize everything you do with `Liquid::set` in one place.
+You should probably extend `YouCan\Liquid\Template` to initialize everything you do with `Liquid::set` in one place.
 
 ### Custom filters
 

@@ -9,11 +9,11 @@
  * @package Liquid
  */
 
-namespace Liquid\Exception;
+namespace YouCan\Liquid\Exception;
 
 /**
  * Class MissingFilesystemException
- * @package Liquid\Exception
+ * @package YouCan\Liquid\Exception
  */
 class MissingFilesystemException extends ParseException
 {

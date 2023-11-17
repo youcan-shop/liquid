@@ -9,10 +9,10 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\AbstractBlock;
-use Liquid\Context;
+use YouCan\Liquid\AbstractBlock;
+use YouCan\Liquid\Context;
 
 /**
  * Creates a comment; everything inside will be ignored

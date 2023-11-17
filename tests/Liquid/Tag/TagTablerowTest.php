@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\TestCase;
+use YouCan\Liquid\TestCase;
 
 class TagTablerowTest extends TestCase
 {
@@ -46,7 +46,7 @@ class TagTablerowTest extends TestCase
      */
     public function testInvalidSyntax()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $this->assertTemplateResult('', '{%tablerow item array%} yo {%endtablerow%}', []);
     }
@@ -55,7 +55,7 @@ class TagTablerowTest extends TestCase
      */
     public function testNotArray()
     {
-        $this->expectException(\Liquid\Exception\RenderException::class);
+        $this->expectException(\YouCan\Liquid\Exception\RenderException::class);
 
         $this->assertTemplateResult('', '{%tablerow item in array%} yo {%endtablerow%}', ['array' => true]);
     }

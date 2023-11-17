@@ -9,7 +9,7 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
 /**
  * A drop in liquid is a class which allows you to to export DOM like things to liquid.

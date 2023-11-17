@@ -9,10 +9,10 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\Template;
-use Liquid\TestCase;
+use YouCan\Liquid\Template;
+use YouCan\Liquid\TestCase;
 
 class TagCycleTest extends TestCase
 {
@@ -20,7 +20,7 @@ class TagCycleTest extends TestCase
      */
     public function testInvalidSyntax()
     {
-        $this->expectException(\Liquid\Exception\ParseException::class);
+        $this->expectException(\YouCan\Liquid\Exception\ParseException::class);
 
         $template = new Template();
         $template->parse("{% cycle %}");

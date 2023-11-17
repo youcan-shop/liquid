@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid\Cache;
+namespace YouCan\Liquid\Cache;
 
-use Liquid\Cache;
+use YouCan\Liquid\Cache;
 
 /**
  * Implements cache with data stored in an embedded variable with no handling of expiration dates for simplicity

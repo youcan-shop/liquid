@@ -11,7 +11,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Liquid\Template;
+use YouCan\Liquid\Template;
 
 $template = new Template();
 $template->registerFilter('absolute_url', function ($arg) {

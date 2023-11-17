@@ -9,10 +9,10 @@
  * @package Liquid
  */
 
-namespace Liquid\FileSystem;
+namespace YouCan\Liquid\FileSystem;
 
-use Liquid\Exception\FilesystemException;
-use Liquid\FileSystem;
+use YouCan\Liquid\Exception\FilesystemException;
+use YouCan\Liquid\FileSystem;
 
 /**
  * This implements a virtual file system with actual code used to find files injected from outside thus achieving inversion of control.
@@ -29,7 +29,7 @@ class Virtual implements FileSystem
      *
      * @param callable $callback Callback is responsible for providing content of requested templates. Should return template's text.
      *
-     * @throws \Liquid\Exception\FilesystemException
+     * @throws \YouCan\Liquid\Exception\FilesystemException
      */
     public function __construct($callback)
     {

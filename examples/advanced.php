@@ -11,9 +11,9 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Liquid\Cache\Local;
-use Liquid\Liquid;
-use Liquid\Template;
+use YouCan\Liquid\Cache\Local;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\Template;
 
 Liquid::set('INCLUDE_SUFFIX', '');
 Liquid::set('INCLUDE_PREFIX', '');

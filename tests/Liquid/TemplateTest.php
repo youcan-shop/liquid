@@ -9,7 +9,7 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
 class TemplateTest extends TestCase
 {
@@ -22,7 +22,7 @@ class TemplateTest extends TestCase
      */
     public function testSetCacheInvalidKey()
     {
-        $this->expectException(\Liquid\LiquidException::class);
+        $this->expectException(\YouCan\Liquid\LiquidException::class);
 
         $template = new Template();
         $template->setCache([]);
@@ -32,7 +32,7 @@ class TemplateTest extends TestCase
      */
     public function testSetCacheInvalidClass()
     {
-        $this->expectException(\Liquid\LiquidException::class);
+        $this->expectException(\YouCan\Liquid\LiquidException::class);
 
         $template = new Template();
         $template->setCache(['cache' => 'no_such_class']);
@@ -42,7 +42,7 @@ class TemplateTest extends TestCase
     {
         $template = new Template();
         $template->setCache(['cache' => 'file', 'cache_dir' => $this->cacheDir]);
-        $this->assertInstanceOf(\Liquid\Cache\File::class, $template::getCache());
+        $this->assertInstanceOf(\YouCan\Liquid\Cache\File::class, $template::getCache());
     }
 
     public function testSetCacheThroughCacheObject()
@@ -93,7 +93,7 @@ class TemplateTest extends TestCase
         $nodelist = $template->getRoot()->getNodelist();
 
         $this->assertCount(2, $nodelist);
-        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[0]);
+        $this->assertInstanceOf(\YouCan\Liquid\Variable::class, $nodelist[0]);
         $this->assertIsString($nodelist[1]);
     }
 
@@ -106,7 +106,7 @@ class TemplateTest extends TestCase
 
         $this->assertCount(2, $nodelist);
         $this->assertIsString($nodelist[0]);
-        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[1]);
+        $this->assertInstanceOf(\YouCan\Liquid\Variable::class, $nodelist[1]);
     }
 
     public function testVariableMiddle()
@@ -118,7 +118,7 @@ class TemplateTest extends TestCase
 
         $this->assertCount(3, $nodelist);
         $this->assertIsString($nodelist[0]);
-        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[1]);
+        $this->assertInstanceOf(\YouCan\Liquid\Variable::class, $nodelist[1]);
         $this->assertIsString($nodelist[2]);
     }
 
@@ -131,11 +131,11 @@ class TemplateTest extends TestCase
 
         $this->assertCount(7, $nodelist);
         $this->assertIsString($nodelist[0]);
-        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[1]);
+        $this->assertInstanceOf(\YouCan\Liquid\Variable::class, $nodelist[1]);
         $this->assertIsString($nodelist[2]);
-        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[3]);
+        $this->assertInstanceOf(\YouCan\Liquid\Variable::class, $nodelist[3]);
         $this->assertIsString($nodelist[4]);
-        $this->assertInstanceOf(\Liquid\Variable::class, $nodelist[5]);
+        $this->assertInstanceOf(\YouCan\Liquid\Variable::class, $nodelist[5]);
         $this->assertIsString($nodelist[6]);
     }
 
@@ -148,7 +148,7 @@ class TemplateTest extends TestCase
 
         $this->assertCount(3, $nodelist);
         $this->assertIsString($nodelist[0]);
-        $this->assertInstanceOf(\Liquid\Tag\TagComment::class, $nodelist[1]);
+        $this->assertInstanceOf(\YouCan\Liquid\Tag\TagComment::class, $nodelist[1]);
         $this->assertIsString($nodelist[2]);
     }
 

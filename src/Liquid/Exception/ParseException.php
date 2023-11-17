@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid\Exception;
+namespace YouCan\Liquid\Exception;
 
-use Liquid\LiquidException;
+use YouCan\Liquid\LiquidException;
 
 /**
  * ParseException class.

@@ -9,10 +9,10 @@
  * @package Liquid
  */
 
-namespace Liquid\Cache;
+namespace YouCan\Liquid\Cache;
 
-use Liquid\Cache;
-use Liquid\Exception\NotFoundException;
+use YouCan\Liquid\Cache;
+use YouCan\Liquid\Exception\NotFoundException;
 
 /**
  * Implements cache stored in files.

@@ -1,38 +1,26 @@
 {
-    "name": "liquid/liquid",
+    "name": "youcan/liquid",
     "type": "library",
-    "description": "Liquid template engine for PHP",
+    "description": "Liquid template engine for themes.",
     "keywords": [
         "liquid",
-        "template"
+        "template",
+        "youcan"
     ],
-    "homepage": "https://github.com/kalimatas/php-liquid",
+    "homepage": "https://github.com/youcan-shop/liquid",
     "license": "MIT",
     "authors": [
         {
-            "name": "Guz Alexander",
-            "email": "kalimatas@gmail.com",
-            "homepage": "http://guzalexander.com"
-        },
-        {
-            "name": "Harald Hanek"
-        },
-        {
-            "name": "Mateo Murphy"
-        },
-        {
-            "name": "Alexey Kopytko",
-            "email": "alexey@kopytko.com",
-            "homepage": "https://www.alexeykopytko.com/"
+            "name": "Aymane D. Hlamnach",
+            "email": "aymane.hlamnach@youcan.shop",
+            "homepage": "https://github.com/azuradara"
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0"
+        "php": "^7.4 || ^8.2"
     },
     "require-dev": {
         "ergebnis/composer-normalize": ">=2.8",
-        "friendsofphp/php-cs-fixer": "^3.22",
-        "infection/infection": ">=0.17.6",
         "php-coveralls/php-coveralls": "^2.2",
         "phpunit/phpunit": "^9.2.6"
     },
@@ -47,12 +35,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Liquid\\": "src/Liquid"
+            "YouCan\\Liquid\\": "src/Liquid"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Liquid\\": "tests/Liquid"
+            "YouCan\\Liquid\\": "tests/Liquid"
         }
     }
 }

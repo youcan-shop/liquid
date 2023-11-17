@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
-use Liquid\Exception\RenderException;
+use YouCan\Liquid\Exception\RenderException;
 
 /**
  * A selection of standard filters.

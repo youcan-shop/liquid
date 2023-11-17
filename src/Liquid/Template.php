@@ -9,23 +9,23 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
-use Liquid\Exception\CacheException;
-use Liquid\Exception\MissingFilesystemException;
+use YouCan\Liquid\Exception\CacheException;
+use YouCan\Liquid\Exception\MissingFilesystemException;
 
 /**
  * The Template class.
  *
  * Example:
  *
- *     $tpl = new \Liquid\Template();
+ *     $tpl = new \YouCan\Liquid\Template();
  *     $tpl->parse(template_source);
  *     $tpl->render(array('foo'=>1, 'bar'=>2);
  */
 class Template
 {
-    const CLASS_PREFIX = '\Liquid\Cache\\';
+    const CLASS_PREFIX = '\YouCan\Liquid\Cache\\';
     /**
      * @var array Custom tags
      */
@@ -79,7 +79,7 @@ class Template
     /**
      * @param array|Cache $cache
      *
-     * @throws \Liquid\Exception\CacheException
+     * @throws \YouCan\Liquid\Exception\CacheException
      */
     public static function setCache($cache)
     {
@@ -156,7 +156,7 @@ class Template
      * @param string $templatePath
      *
      * @return Template
-     * @throws \Liquid\Exception\MissingFilesystemException
+     * @throws \YouCan\Liquid\Exception\MissingFilesystemException
      */
     public function parseFile($templatePath)
     {

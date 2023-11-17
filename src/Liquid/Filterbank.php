@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
-use Liquid\Exception\WrongArgumentException;
+use YouCan\Liquid\Exception\WrongArgumentException;
 
 /**
  * The filter bank is where all registered filters are stored, and where filter invocation is handled
@@ -49,8 +49,8 @@ class Filterbank
     {
         $this->context = $context;
 
-        $this->addFilter(\Liquid\StandardFilters::class);
-        $this->addFilter(\Liquid\CustomFilters::class);
+        $this->addFilter(\YouCan\Liquid\StandardFilters::class);
+        $this->addFilter(\YouCan\Liquid\CustomFilters::class);
     }
 
     /**
@@ -60,7 +60,7 @@ class Filterbank
      *                        filters will be called statically) or the name of a function.
      *
      * @return bool
-     * @throws \Liquid\Exception\WrongArgumentException
+     * @throws \YouCan\Liquid\Exception\WrongArgumentException
      */
     public function addFilter($filter, callable $callback = null)
     {

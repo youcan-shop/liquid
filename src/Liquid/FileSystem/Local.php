@@ -9,13 +9,13 @@
  * @package Liquid
  */
 
-namespace Liquid\FileSystem;
+namespace YouCan\Liquid\FileSystem;
 
-use Liquid\Exception\NotFoundException;
-use Liquid\Exception\ParseException;
-use Liquid\FileSystem;
-use Liquid\Liquid;
-use Liquid\Regexp;
+use YouCan\Liquid\Exception\NotFoundException;
+use YouCan\Liquid\Exception\ParseException;
+use YouCan\Liquid\FileSystem;
+use YouCan\Liquid\Liquid;
+use YouCan\Liquid\Regexp;
 
 /**
  * This implements an abstract file system which retrieves template files named in a manner similar to Rails partials,
@@ -37,7 +37,7 @@ class Local implements FileSystem
      *
      * @param string $root The root path for templates
      *
-     * @throws \Liquid\Exception\NotFoundException
+     * @throws \YouCan\Liquid\Exception\NotFoundException
      */
     public function __construct($root)
     {
@@ -71,8 +71,8 @@ class Local implements FileSystem
      * @param string $templatePath
      *
      * @return string
-     * @throws \Liquid\Exception\NotFoundException
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\NotFoundException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     public function fullPath($templatePath)
     {

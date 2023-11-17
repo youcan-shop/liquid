@@ -9,14 +9,14 @@
  * @package Liquid
  */
 
-namespace Liquid\Tag;
+namespace YouCan\Liquid\Tag;
 
-use Liquid\AbstractTag;
-use Liquid\Context;
-use Liquid\Exception\ParseException;
-use Liquid\FileSystem;
-use Liquid\Regexp;
-use Liquid\Variable;
+use YouCan\Liquid\AbstractTag;
+use YouCan\Liquid\Context;
+use YouCan\Liquid\Exception\ParseException;
+use YouCan\Liquid\FileSystem;
+use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Variable;
 
 /**
  * Performs an assignment of one variable to another
@@ -45,7 +45,7 @@ class TagAssign extends AbstractTag
      * @param array $tokens
      * @param FileSystem $fileSystem
      *
-     * @throws \Liquid\Exception\ParseException
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
     {

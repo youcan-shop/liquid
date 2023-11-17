@@ -9,9 +9,9 @@
  * @package Liquid
  */
 
-namespace Liquid;
+namespace YouCan\Liquid;
 
-use Liquid\FileSystem\Virtual;
+use YouCan\Liquid\FileSystem\Virtual;
 
 class TestFileSystem extends Virtual
 {
