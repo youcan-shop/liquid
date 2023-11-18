@@ -16,6 +16,7 @@ use YouCan\Liquid\Context;
 use YouCan\Liquid\Exception\ParseException;
 use YouCan\Liquid\FileSystem;
 use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Template;
 
 /**
  * Captures the output inside a block and assigns it to a variable
@@ -34,24 +35,21 @@ class TagCapture extends AbstractBlock
     private $to;
 
     /**
-     * Constructor
-     *
-     * @param string $markup
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     *
-     * @throws \YouCan\Liquid\Exception\ParseException
+     * @throws ParseException
      */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
         $syntaxRegexp = new Regexp('/(\w+)/');
 
         if ($syntaxRegexp->match($markup)) {
             $this->to = $syntaxRegexp->matches[1];
-            parent::__construct($markup, $tokens, $fileSystem);
-        } else {
-            throw new ParseException("Syntax Error in 'capture' - Valid syntax: capture [var] [value]");
+
+            parent::__construct($template, $markup, $tokens, $fileSystem);
+
+            return;
         }
+
+        throw new ParseException("Syntax Error in 'capture' - Valid syntax: capture [var] [value]");
     }
 
     /**

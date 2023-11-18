@@ -11,11 +11,13 @@
 
 namespace YouCan\Liquid\Tag;
 
+use SebastianBergmann\Template\Exception;
 use YouCan\Liquid\AbstractTag;
 use YouCan\Liquid\Context;
 use YouCan\Liquid\Exception\ParseException;
 use YouCan\Liquid\FileSystem;
 use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Template;
 use YouCan\Liquid\Variable;
 
 /**
@@ -47,8 +49,10 @@ class TagAssign extends AbstractTag
      *
      * @throws \YouCan\Liquid\Exception\ParseException
      */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, $markup, array &$tokens, FileSystem $fileSystem = null)
     {
+        $this->template = $template;
+
         $syntaxRegexp = new Regexp('/(\w+)\s*=\s*(.*)\s*/');
 
         if ($syntaxRegexp->match($markup)) {

@@ -17,6 +17,7 @@ use YouCan\Liquid\Exception\ParseException;
 use YouCan\Liquid\FileSystem;
 use YouCan\Liquid\Liquid;
 use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Template;
 
 /**
  * Used to increment a counter into a template
@@ -45,8 +46,10 @@ class TagIncrement extends AbstractTag
      *
      * @throws \YouCan\Liquid\Exception\ParseException
      */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, $markup, array &$tokens, FileSystem $fileSystem = null)
     {
+        $this->template = $template;
+
         $syntax = new Regexp('/(' . Liquid::get('VARIABLE_NAME') . ')/');
 
         if ($syntax->match($markup)) {

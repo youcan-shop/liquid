@@ -75,6 +75,7 @@ class File extends Cache
     public function write($key, $value, $serialize = true)
     {
         $bytes = file_put_contents($this->path . $this->prefix . $key, $serialize ? serialize($value) : $value);
+
         $this->gc();
 
         return $bytes !== false;

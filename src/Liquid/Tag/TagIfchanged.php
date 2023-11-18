@@ -14,6 +14,7 @@ namespace YouCan\Liquid\Tag;
 use YouCan\Liquid\AbstractBlock;
 use YouCan\Liquid\Context;
 use YouCan\Liquid\FileSystem;
+use YouCan\Liquid\Template;
 
 /**
  * Quickly create a table from a collection
@@ -27,18 +28,9 @@ class TagIfchanged extends AbstractBlock
      */
     private $lastValue = '';
 
-    /**
-     * Constructor
-     *
-     * @param string $markup
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     *
-     * @throws \YouCan\Liquid\LiquidException
-     */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
-        parent::__construct($markup, $tokens, $fileSystem);
+        parent::__construct($template, $markup, $tokens, $fileSystem);
     }
 
     /**

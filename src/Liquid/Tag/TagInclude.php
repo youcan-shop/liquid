@@ -63,15 +63,9 @@ class TagInclude extends AbstractTag
     private $document;
 
     /**
-     * Constructor
-     *
-     * @param string $markup
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     *
-     * @throws \YouCan\Liquid\Exception\ParseException
+     * @throws ParseException
      */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
         $regex = new Regexp('/("[^"]+"|\'[^\']+\'|[^\'"\s]+)(\s+(with|for)\s+(' . Liquid::get('QUOTED_FRAGMENT') . '+))?/');
 
@@ -98,7 +92,7 @@ class TagInclude extends AbstractTag
 
         $this->extractAttributes($markup);
 
-        parent::__construct($markup, $tokens, $fileSystem);
+        parent::__construct($template, $markup, $tokens, $fileSystem);
     }
 
     /**
@@ -122,7 +116,7 @@ class TagInclude extends AbstractTag
         if (!$cache) {
             // tokens in this new document
             $templateTokens = Template::tokenize($source);
-            $this->document = new Document($templateTokens, $this->fileSystem);
+            $this->document = new Document($this->template, $templateTokens, $this->fileSystem);
 
             return;
         }
@@ -132,7 +126,7 @@ class TagInclude extends AbstractTag
 
         if ($this->document == false || $this->document->hasIncludes() == true) {
             $templateTokens = Template::tokenize($source);
-            $this->document = new Document($templateTokens, $this->fileSystem);
+            $this->document = new Document($this->template, $templateTokens, $this->fileSystem);
             $cache->write($this->hash, $this->document);
         }
     }

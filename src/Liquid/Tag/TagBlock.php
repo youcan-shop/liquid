@@ -15,6 +15,7 @@ use YouCan\Liquid\AbstractBlock;
 use YouCan\Liquid\Exception\ParseException;
 use YouCan\Liquid\FileSystem;
 use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Template;
 
 /**
  * Marks a section of a template as being reusable.
@@ -30,27 +31,23 @@ class TagBlock extends AbstractBlock
      *
      * @var string
      */
-    private $block;
+    private string $block;
 
     /**
-     * Constructor
-     *
-     * @param string $markup
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     *
-     * @return \YouCan\Liquid\Tag\TagBlock
-     * @throws \YouCan\Liquid\Exception\ParseException
+     * @throws ParseException
      */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
         $syntaxRegexp = new Regexp('/(\w+)/');
 
         if ($syntaxRegexp->match($markup)) {
             $this->block = $syntaxRegexp->matches[1];
-            parent::__construct($markup, $tokens, $fileSystem);
-        } else {
-            throw new ParseException("Syntax Error in 'block' - Valid syntax: block [name]");
+
+            parent::__construct($template, $markup, $tokens, $fileSystem);
+
+            return;
         }
+
+        throw new ParseException("Syntax Error in 'block' - Valid syntax: block [name]");
     }
 }

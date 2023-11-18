@@ -17,6 +17,7 @@ use YouCan\Liquid\Exception\ParseException;
 use YouCan\Liquid\FileSystem;
 use YouCan\Liquid\Liquid;
 use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Template;
 
 /**
  * An if statement
@@ -43,20 +44,13 @@ class TagIf extends Decision
      */
     private $nodelistHolders = [];
 
-    /**
-     * Constructor
-     *
-     * @param string $markup
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
         $this->nodelist = &$this->nodelistHolders[count($this->blocks)];
 
         array_push($this->blocks, ['if', $markup, &$this->nodelist]);
 
-        parent::__construct($markup, $tokens, $fileSystem);
+        parent::__construct($template, $markup, $tokens, $fileSystem);
     }
 
     /**
@@ -64,7 +58,8 @@ class TagIf extends Decision
      *
      * @param string $tag
      * @param array $params
-     * @param array $tokens
+     *
+     * @throws ParseException
      */
     public function unknownTag($tag, $params, array $tokens)
     {
@@ -120,9 +115,9 @@ class TagIf extends Decision
                         $right = (isset($conditionalRegex->matches[3])) ? $conditionalRegex->matches[3] : null;
 
                         array_push($conditions, [
-                            'left' => $left,
+                            'left'     => $left,
                             'operator' => $operator,
-                            'right' => $right,
+                            'right'    => $right,
                         ]);
                     } else {
                         throw new ParseException("Syntax Error in tag 'if' - Valid syntax: if [condition]");
