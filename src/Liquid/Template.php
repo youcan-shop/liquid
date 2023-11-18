@@ -256,4 +256,9 @@ class Template
     {
         $this->tickFunction = $tickFunction;
     }
+
+    public function __sleep()
+    {
+        return ['tags'];
+    }
 }
