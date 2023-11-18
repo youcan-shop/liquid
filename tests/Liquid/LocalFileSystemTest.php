@@ -135,11 +135,6 @@ class LocalFileSystemTest extends TestCase
         $this->assertEquals('test content', trim($fileSystem->readTemplateFile('mypartial')));
     }
 
-    public function testDeprecatedLocalFileSystemExists()
-    {
-        $this->assertInstanceOf(Local::class, new LocalFileSystem($this->root));
-    }
-
     public function testParseTemplateFile()
     {
         Liquid::set('INCLUDE_PREFIX', '');

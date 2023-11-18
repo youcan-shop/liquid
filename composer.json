@@ -24,6 +24,9 @@
         "php-coveralls/php-coveralls": "^2.2",
         "phpunit/phpunit": "^9.2.6"
     },
+    "scripts": {
+        "test": "vendor/bin/phpunit --testdox"
+    },
     "config": {
         "sort-packages": true,
         "allow-plugins": true

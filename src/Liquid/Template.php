@@ -13,6 +13,7 @@ namespace YouCan\Liquid;
 
 use YouCan\Liquid\Exception\CacheException;
 use YouCan\Liquid\Exception\MissingFilesystemException;
+use YouCan\Liquid\FileSystem\Local;
 
 /**
  * The Template class.
@@ -62,7 +63,7 @@ class Template
     public function __construct($path = null, $cache = null)
     {
         $this->fileSystem = $path !== null
-            ? new LocalFileSystem($path)
+            ? new Local($path)
             : null;
 
         $this->setCache($cache);
