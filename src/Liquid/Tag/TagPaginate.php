@@ -18,6 +18,7 @@ use YouCan\Liquid\Exception\RenderException;
 use YouCan\Liquid\FileSystem;
 use YouCan\Liquid\Liquid;
 use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Template;
 
 /**
  * The paginate tag works in conjunction with the for tag to split content into numerous pages.
@@ -70,18 +71,11 @@ class TagPaginate extends AbstractBlock
 
 
     /**
-     * Constructor
-     *
-     * @param string $markup
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     *
-     * @throws \YouCan\Liquid\Exception\ParseException
-     *
+     * @throws ParseException
      */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
-        parent::__construct($markup, $tokens, $fileSystem);
+        parent::__construct($template, $markup, $tokens, $fileSystem);
 
         $syntax = new Regexp('/(' . Liquid::get('VARIABLE_NAME') . ')\s+by\s+(\w+)/');
 

@@ -28,13 +28,13 @@ class Template
 {
     const CLASS_PREFIX = '\YouCan\Liquid\Cache\\';
     /**
-     * @var array Custom tags
-     */
-    private static $tags = [];
-    /**
      * @var Cache
      */
     private static $cache;
+
+    /** @var array<string, class-string<AbstractTag>> */
+    private array $tags = [];
+
     /**
      * @var Document The root of the node tree
      */
@@ -101,23 +101,16 @@ class Template
         }
     }
 
-    /**
-     * Register custom Tags
-     *
-     * @param string $name
-     * @param string $class
-     */
-    public static function registerTag($name, $class)
+    public function getTags(): array
     {
-        self::$tags[$name] = $class;
+        return $this->tags;
     }
 
-    /**
-     * @return array
-     */
-    public static function getTags()
+    public function registerTag(string $name, string $class): self
     {
-        return self::$tags;
+        $this->tags[$name] = $class;
+
+        return $this;
     }
 
     /**
@@ -203,7 +196,7 @@ class Template
     private function parseAlways($source)
     {
         $tokens = Template::tokenize($source);
-        $this->root = new Document($tokens, $this->fileSystem);
+        $this->root = new Document($this, $tokens, $this->fileSystem);
 
         return $this;
     }
@@ -262,5 +255,10 @@ class Template
     public function setTickFunction(callable $tickFunction)
     {
         $this->tickFunction = $tickFunction;
+    }
+
+    public function __sleep()
+    {
+        return ['tags'];
     }
 }

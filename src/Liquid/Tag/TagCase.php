@@ -17,6 +17,7 @@ use YouCan\Liquid\Exception\ParseException;
 use YouCan\Liquid\FileSystem;
 use YouCan\Liquid\Liquid;
 use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Template;
 
 /**
  * A switch statement
@@ -56,28 +57,24 @@ class TagCase extends Decision
     public $right;
 
     /**
-     * Constructor
-     *
-     * @param string $markup
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     *
-     * @throws \YouCan\Liquid\Exception\ParseException
+     * @throws ParseException
      */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
         $this->nodelists = [];
         $this->elseNodelist = [];
 
-        parent::__construct($markup, $tokens, $fileSystem);
+        parent::__construct($template, $markup, $tokens, $fileSystem);
 
         $syntaxRegexp = new Regexp('/' . Liquid::get('QUOTED_FRAGMENT') . '/');
 
         if ($syntaxRegexp->match($markup)) {
             $this->left = $syntaxRegexp->matches[0];
-        } else {
-            throw new ParseException("Syntax Error in tag 'case' - Valid syntax: case [condition]"); // harry
+
+            return;
         }
+
+        throw new ParseException("Syntax Error in tag 'case' - Valid syntax: case [condition]"); // harry
     }
 
     /**
@@ -148,7 +145,7 @@ class TagCase extends Decision
         $runElseBlock = true;
 
         foreach ($this->nodelists as $data) {
-            list($right, $nodelist) = $data;
+            [$right, $nodelist] = $data;
 
             foreach ($right as $var) {
                 if ($this->equalVariables($this->left, $var, $context)) {

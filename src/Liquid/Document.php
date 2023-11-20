@@ -20,15 +20,14 @@ use YouCan\Liquid\Tag\TagInclude;
  */
 class Document extends AbstractBlock
 {
-    /**
-     * Constructor.
-     *
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     */
-    public function __construct(array &$tokens, FileSystem $fileSystem = null)
-    {
+    public function __construct(
+        Template $template,
+        array &$tokens,
+        ?FileSystem $fileSystem = null
+    ) {
+        $this->template = $template;
         $this->fileSystem = $fileSystem;
+
         $this->parse($tokens);
     }
 

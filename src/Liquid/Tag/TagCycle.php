@@ -17,6 +17,7 @@ use YouCan\Liquid\Exception\ParseException;
 use YouCan\Liquid\FileSystem;
 use YouCan\Liquid\Liquid;
 use YouCan\Liquid\Regexp;
+use YouCan\Liquid\Template;
 use YouCan\Liquid\Variable;
 
 /**
@@ -55,8 +56,10 @@ class TagCycle extends AbstractTag
      *
      * @throws \YouCan\Liquid\Exception\ParseException
      */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, $markup, array &$tokens, FileSystem $fileSystem = null)
     {
+        $this->template = $template;
+
         $simpleSyntax = new Regexp("/" . Liquid::get('QUOTED_FRAGMENT') . "/");
         $namedSyntax = new Regexp("/(" . Liquid::get('QUOTED_FRAGMENT') . ")\s*\:\s*(.*)/");
 

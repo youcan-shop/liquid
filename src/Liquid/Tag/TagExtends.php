@@ -44,15 +44,9 @@ class TagExtends extends AbstractTag
     private $document;
 
     /**
-     * Constructor
-     *
-     * @param string $markup
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     *
-     * @throws \YouCan\Liquid\Exception\ParseException
+     * @throws ParseException
      */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
         $regex = new Regexp('/("[^"]+"|\'[^\']+\')?/');
 
@@ -62,15 +56,11 @@ class TagExtends extends AbstractTag
             throw new ParseException("Error in tag 'extends' - Valid syntax: extends '[template name]'");
         }
 
-        parent::__construct($markup, $tokens, $fileSystem);
+        parent::__construct($template, $markup, $tokens, $fileSystem);
     }
 
     /**
-     * Parses the tokens
-     *
-     * @param array $tokens
-     *
-     * @throws \YouCan\Liquid\Exception\MissingFilesystemException
+     * @throws MissingFilesystemException
      */
     public function parse(array &$tokens)
     {
@@ -131,7 +121,7 @@ class TagExtends extends AbstractTag
         $cache = Template::getCache();
 
         if (!$cache) {
-            $this->document = new Document($rest, $this->fileSystem);
+            $this->document = new Document($this->template, $rest, $this->fileSystem);
 
             return;
         }
@@ -141,7 +131,7 @@ class TagExtends extends AbstractTag
         $this->document = $cache->read($this->hash);
 
         if ($this->document == false || $this->document->hasIncludes() == true) {
-            $this->document = new Document($rest, $this->fileSystem);
+            $this->document = new Document($this->template, $rest, $this->fileSystem);
             $cache->write($this->hash, $this->document);
         }
     }

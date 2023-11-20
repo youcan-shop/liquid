@@ -11,9 +11,6 @@
 
 namespace YouCan\Liquid;
 
-/**
- * Base class for tags.
- */
 abstract class AbstractTag
 {
     /**
@@ -37,17 +34,18 @@ abstract class AbstractTag
      */
     protected $attributes = [];
 
-    /**
-     * Constructor.
-     *
-     * @param string $markup
-     * @param array $tokens
-     * @param FileSystem $fileSystem
-     */
-    public function __construct($markup, array &$tokens, FileSystem $fileSystem = null)
-    {
+    protected Template $template;
+
+    public function __construct(
+        Template $template,
+        string $markup,
+        array &$tokens,
+        ?FileSystem $fileSystem = null
+    ) {
+        $this->template = $template;
         $this->markup = $markup;
         $this->fileSystem = $fileSystem;
+
         $this->parse($tokens);
     }
 

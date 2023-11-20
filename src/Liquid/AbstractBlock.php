@@ -44,7 +44,7 @@ class AbstractBlock extends AbstractTag
      * @param array $tokens
      *
      * @return void
-     * @throws \YouCan\Liquid\LiquidException
+     * @throws LiquidException
      */
     public function parse(array &$tokens)
     {
@@ -56,7 +56,7 @@ class AbstractBlock extends AbstractTag
 
         $this->nodelist = [];
 
-        $tags = Template::getTags();
+        $tags = $this->template->getTags();
 
         while (count($tokens)) {
             $token = array_shift($tokens);
@@ -80,7 +80,7 @@ class AbstractBlock extends AbstractTag
                     }
 
                     if ($tagName !== null) {
-                        $this->nodelist[] = new $tagName($tagRegexp->matches[2], $tokens, $this->fileSystem);
+                        $this->nodelist[] = new $tagName($this->template, $tagRegexp->matches[2], $tokens, $this->fileSystem);
                         if ($tagRegexp->matches[1] == 'extends') {
                             return;
                         }

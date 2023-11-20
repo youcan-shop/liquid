@@ -212,18 +212,21 @@ namespace YouCan\Liquid {
         public function testWithSerializingCache()
         {
             $template = new Template();
+
             $template->registerFilter('foo', function ($arg) {
                 return "Foo $arg";
             });
+
             $template->setCache(
-                new File([
-                             'cache_dir' => __DIR__ . '/cache_dir/',
-                         ])
+                new File(['cache_dir' => __DIR__ . '/cache_dir/'])
             );
+
             $template->parse("{{'test' | foo }}");
+
             $this->assertEquals('Foo test', $template->render());
 
             $template->parse("{{'bar' | foo }}");
+
             $this->assertEquals('Foo bar', $template->render());
         }
 
