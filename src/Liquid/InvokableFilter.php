@@ -8,6 +8,10 @@ interface InvokableFilter
 
     public function name(): string;
 
+    /**
+     * @param mixed ...$args
+     *
+     * @return mixed
+     */
     public function __invoke(...$args);
-
 }
