@@ -46,18 +46,15 @@ class Context
      * @var null|callable
      */
     private $tickFunction = null;
+    
+    private Template $template;
 
-    /**
-     * Constructor
-     *
-     * @param array $assigns
-     * @param array $registers
-     */
-    public function __construct(array $assigns = [], array $registers = [])
+    public function __construct(Template $template, array $assigns = [], array $registers = [])
     {
+        $this->template = $template;
         $this->assigns = [$assigns];
         $this->registers = $registers;
-        $this->filterbank = new Filterbank($this);
+        $this->filterbank = new Filterbank($this->template, $this);
 
         // first empty array serves as source for overrides, e.g. as in TagDecrement
         $this->environments = [[], []];

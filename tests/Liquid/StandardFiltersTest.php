@@ -1191,6 +1191,6 @@ class StandardFiltersTest extends TestCase
     {
         parent::setUp();
 
-        $this->context = new Context();
+        $this->context = new Context(new Template());
     }
 }

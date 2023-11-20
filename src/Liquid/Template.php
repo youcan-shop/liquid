@@ -219,14 +219,12 @@ class Template
      * Renders the current template
      *
      * @param array $assigns an array of values for the template
-     * @param array $filters additional filters for the template
+     * @param ?array $filters additional filters for the template
      * @param array $registers additional registers for the template
-     *
-     * @return string
      */
-    public function render(array $assigns = [], $filters = null, array $registers = [])
+    public function render(array $assigns = [], $filters = null, array $registers = []): string
     {
-        $context = new Context($assigns, $registers);
+        $context = new Context($this, $assigns, $registers);
 
         if ($this->tickFunction) {
             $context->setTickFunction($this->tickFunction);

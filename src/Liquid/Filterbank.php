@@ -39,14 +39,16 @@ class Filterbank
      * @var Context
      */
     private $context;
+    private Template $template;
 
     /**
      * Constructor
      *
      * @param $context
      */
-    public function __construct(Context $context)
+    public function __construct(Template $template, Context $context)
     {
+        $this->template = $template;
         $this->context = $context;
 
         $this->addFilter(\YouCan\Liquid\StandardFilters::class);
@@ -73,6 +75,14 @@ class Filterbank
 
         // If the filter is a class, register all its static methods
         if (is_string($filter) && class_exists($filter)) {
+            if (class_implements($filter, InvokableFilter::class)) {
+                /** @var InvokableFilter $instance */
+                $instance = new $filter($this->template);
+                $this->methodMap[$instance->name()] = $instance;
+
+                return true;
+            }
+
             $reflection = new \ReflectionClass($filter);
             foreach ($reflection->getMethods(\ReflectionMethod::IS_STATIC) as $method) {
                 $this->methodMap[$method->name] = $method->class;

@@ -65,6 +65,28 @@ namespace YouCan\Liquid {
         }
     }
 
+    class Invokable implements InvokableFilter
+    {
+        private Template $template;
+
+        public function __construct(Template $template)
+        {
+            $this->template = $template;
+        }
+
+        public function __invoke(...$args): string
+        {
+            $this->template->parse($args[0]);
+
+            return $this->template->render();
+        }
+
+        public function name(): string
+        {
+            return 'invokable';
+        }
+    }
+
     class FilterbankTest extends TestCase
     {
         /** @var FilterBank */
@@ -130,6 +152,16 @@ namespace YouCan\Liquid {
             $this->context->set('var', 1000);
             $this->context->addFilters(NamespacedClassFilter::class);
             $this->assertEquals('good 1000', $var->render($this->context));
+        }
+
+        /**
+         * Test using an invokable filter
+         */
+        public function testInvokableFilter()
+        {
+            $var = new Variable("'gooba' | invokable");
+            $this->context->addFilters(Invokable::class);
+            $this->assertEquals('gooba', $var->render($this->context));
         }
 
         /**
@@ -234,8 +266,10 @@ namespace YouCan\Liquid {
         {
             parent::setUp();
 
-            $this->context = new Context();
-            $this->filterBank = new FilterBank($this->context);
+            $template = new Template();
+
+            $this->context = new Context($template);
+            $this->filterBank = new FilterBank($template, $this->context);
         }
 
         protected function tearDown(): void

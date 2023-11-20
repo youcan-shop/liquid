@@ -42,6 +42,6 @@ class CustomFiltersTest extends TestCase
     {
         parent::setUp();
 
-        $this->context = new Context();
+        $this->context = new Context(new Template());
     }
 }
