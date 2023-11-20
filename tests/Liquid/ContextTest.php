@@ -358,11 +358,11 @@ class ContextTest extends TestCase
 
     public function testAddFilter()
     {
-        $context = new Context();
+        $context = new Context(new Template());
         $context->addFilters(new HiFilter());
         $this->assertEquals('hi? hi!', $context->invoke('hi', 'hi?'));
 
-        $context = new Context();
+        $context = new Context(new Template());
         $this->assertEquals('hi?', $context->invoke('hi', 'hi?'));
 
         $context->addFilters(new HiFilter());
@@ -453,7 +453,7 @@ class ContextTest extends TestCase
         $_GET['test'] = '<script>alert()</script>';
         // Previously $_GET would override directly set values
         // It happend during class construction - we need to create a brand new instance right here
-        $context = new Context();
+        $context = new Context(new Template());
         $context->set('test', 'test');
         $this->assertEquals('test', $context->get('test'));
     }
@@ -462,7 +462,7 @@ class ContextTest extends TestCase
     {
         $_SERVER['AWS_SECRET_ACCESS_KEY'] = 'super_secret';
 
-        $context = new Context();
+        $context = new Context(new Template());
         $this->assertNull($context->get('AWS_SECRET_ACCESS_KEY'));
 
         $context->set('AWS_SECRET_ACCESS_KEY', 'test');
@@ -473,7 +473,7 @@ class ContextTest extends TestCase
 
         Liquid::set('SERVER_SUPERGLOBAL_WHITELIST', ['FOO']);
 
-        $context = new Context();
+        $context = new Context(new Template());
         $this->assertEquals('foo', $context->get('FOO'));
         $this->assertNull($context->get('BAR'));
 
@@ -487,7 +487,7 @@ class ContextTest extends TestCase
 
         $_SERVER['AWS_SECRET_ACCESS_KEY'] = 'super_secret';
 
-        $context = new Context();
+        $context = new Context(new Template());
         $this->assertEquals('super_secret', $context->get('AWS_SECRET_ACCESS_KEY'));
 
         $context->set('AWS_SECRET_ACCESS_KEY', 'test');
@@ -498,6 +498,6 @@ class ContextTest extends TestCase
     {
         parent::setUp();
 
-        $this->context = new Context();
+        $this->context = new Context(new Template());
     }
 }
