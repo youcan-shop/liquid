@@ -46,7 +46,7 @@ class Context
      * @var null|callable
      */
     private $tickFunction = null;
-    
+
     private Template $template;
 
     public function __construct(Template $template, array $assigns = [], array $registers = [])
@@ -447,5 +447,13 @@ class Context
 
         $tickFunction = $this->tickFunction;
         $tickFunction($this);
+    }
+
+    /**
+     * @return array|array[]
+     */
+    public function assigns(): array
+    {
+        return $this->assigns;
     }
 }
