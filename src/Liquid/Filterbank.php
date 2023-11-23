@@ -75,8 +75,7 @@ class Filterbank
 
         // If the filter is a class, register all its static methods
         if (is_string($filter) && class_exists($filter)) {
-            if (class_implements($filter, InvokableFilter::class)) {
-                /** @var InvokableFilter $instance */
+            if (is_subclass_of($filter, InvokableFilter::class)) {
                 $instance = new $filter($this->template);
                 $this->methodMap[$instance->name()] = $instance;
 
