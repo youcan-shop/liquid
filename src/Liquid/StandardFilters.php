@@ -278,6 +278,10 @@ class StandardFilters
             return $input;
         }
 
+        if (is_null($input)) {
+            return '';
+        }
+
         return htmlentities($input, ENT_QUOTES);
     }
 
