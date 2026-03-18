@@ -46,7 +46,7 @@ class StandardFilters
             $first_char = mb_substr($matches[2], 0, 1);
 
             return $matches[1] . mb_strtoupper($first_char) . mb_substr($matches[2], 1);
-        },                           ucwords($input));
+        }, ucwords($input));
     }
 
 
@@ -161,7 +161,7 @@ class StandardFilters
                 'U',
                 '%',
             ],
-            $strftimeFormat
+            $strftimeFormat,
         );
 
         $formatted = $dateTime->format($dateFormat);
@@ -238,6 +238,27 @@ class StandardFilters
         return json_encode($input);
     }
 
+    /**
+     * Creates an array including only the objects with a given property value
+     * @link https://shopify.github.io/liquid/filters/where/
+     *
+     * @param array $input
+     * @param string ...$args
+     *
+     * @throws LiquidException
+     * @return array
+     */
+    public static function where(array $input, string ...$args): array
+    {
+        switch (count($args)) {
+            case 1:
+                return array_filter($input, fn($v) => ($v[$args[0]] ?? null) !== null);
+            case 2:
+                return array_filter($input, fn($v) => ($v[$args[0]] ?? '') == $args[1]);
+            default:
+                throw new LiquidException('Wrong number of arguments to function `where`, given ' . count($args) . ', expected 1 or 2');
+        }
+    }
 
     /**
      * Escape a string
@@ -721,9 +742,9 @@ class StandardFilters
     public static function strip_newlines($input)
     {
         return is_string($input) ? str_replace([
-                                                   "\n",
-                                                   "\r",
-                                               ], '', $input) : $input;
+            "\n",
+            "\r",
+        ], '', $input) : $input;
     }
 
 

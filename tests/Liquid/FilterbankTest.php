@@ -11,6 +11,8 @@
 
 namespace {
 
+    use YouCan\Liquid\Context;
+
     /**
      * Global function acts as a filter.
      *
@@ -28,11 +30,11 @@ namespace {
      */
     class ClassFilter
     {
+        public Context $context;
+
         private $variable = 'not set';
 
-        public function __construct()
-        {
-        }
+        public function __construct() {}
 
         public static function static_test()
         {
@@ -59,6 +61,8 @@ namespace YouCan\Liquid {
 
     class NamespacedClassFilter
     {
+        public Context $context;
+
         public static function static_test2($var)
         {
             return "good {$var}";
@@ -250,7 +254,7 @@ namespace YouCan\Liquid {
             });
 
             $template->setCache(
-                new File(['cache_dir' => __DIR__ . '/cache_dir/'])
+                new File(['cache_dir' => __DIR__ . '/cache_dir/']),
             );
 
             $template->parse("{{'test' | foo }}");

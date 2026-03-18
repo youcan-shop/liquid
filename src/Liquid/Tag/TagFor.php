@@ -52,9 +52,15 @@ class TagFor extends AbstractBlock
     private $name;
 
     /**
+     * @var string
+     */
+    private $start;
+
+    /**
      * @var string The type of the loop (collection or digit)
      */
     private $type = 'collection';
+
 
     /**
      * @throws ParseException

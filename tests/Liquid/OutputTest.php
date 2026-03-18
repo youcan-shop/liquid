@@ -13,6 +13,8 @@ namespace YouCan\Liquid;
 
 class FunnyFilter
 {
+    public Context $context;
+
     public function make_funny($input)
     {
         return 'LOL';
@@ -192,5 +194,31 @@ class OutputTest extends TestCase
         ];
 
         $this->filters = new FunnyFilter();
+    }
+
+    public function testFilterArray()
+    {
+        $text = ' {{ cars | where: "model", "bmw" | json }} ';
+        $expected = ' [{"model":"bmw"}] ';
+
+        $this->assertTemplateResult($expected, $text, [
+            'cars' => [
+                ['model' => 'bmw'],
+                ['model' => 'audi'],
+            ],
+        ]);
+    }
+
+    public function testFilterArrayTruthy()
+    {
+        $text = ' {{ cars | where: "available" | json }} ';
+        $expected = ' [{"model":"bmw","available":1}] ';
+
+        $this->assertTemplateResult($expected, $text, [
+            'cars' => [
+                ['model' => 'bmw', 'available' => 1],
+                ['model' => 'audi'],
+            ],
+        ]);
     }
 }

@@ -46,7 +46,7 @@ class NoToLiquid
         return 'example';
     }
 
-    public function count()
+    public function count(): int
     {
         return 1;
     }
@@ -135,6 +135,8 @@ class GetSetMagic
 
 class HiFilter
 {
+    public Context $context;
+
     public function hi($value)
     {
         return $value . ' hi!';
@@ -143,6 +145,8 @@ class HiFilter
 
 class GlobalFilter
 {
+    public Context $context;
+
     public function notice($value)
     {
         return "Global $value";
@@ -151,6 +155,8 @@ class GlobalFilter
 
 class LocalFilter
 {
+    public Context $context;
+
     public function notice($value)
     {
         return "Local $value";
