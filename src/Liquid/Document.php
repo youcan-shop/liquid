@@ -24,8 +24,6 @@ class Document extends AbstractBlock
      * @param Template $template
      * @param array $tokens
      * @param FileSystem|null $fileSystem
-     *
-     * @throws LiquidException
      */
     public function __construct(
         Template $template,
@@ -33,11 +31,6 @@ class Document extends AbstractBlock
         ?FileSystem $fileSystem = null
     ) {
         parent::__construct($template, '', $tokens, $fileSystem);
-
-        $this->template = $template;
-        $this->fileSystem = $fileSystem;
-
-        $this->parse($tokens);
     }
 
     /**
