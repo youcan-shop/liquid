@@ -53,7 +53,7 @@ abstract class AbstractTag
         Template $template,
         string $markup,
         array &$tokens,
-        ?FileSystem $fileSystem = null,
+        ?FileSystem $fileSystem = null
     ) {
         $this->template = $template;
         $this->markup = $markup;
