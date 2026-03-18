@@ -218,7 +218,16 @@ class OutputTest extends TestCase
             'cars' => [
                 ['model' => 'bmw', 'available' => 1],
                 ['model' => 'audi'],
+                ['model' => 'toyota', 'available' => false],
             ],
         ]);
+    }
+
+    public function testFilterArrayNull()
+    {
+        $text = ' {{ cars | where: "available" | json }} ';
+        $expected = ' null ';
+
+        $this->assertTemplateResult($expected, $text, []);
     }
 }
