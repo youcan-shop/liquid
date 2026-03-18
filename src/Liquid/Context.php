@@ -67,10 +67,10 @@ class Context
                 function ($key) {
                     return in_array(
                         $key,
-                        (array)Liquid::get('SERVER_SUPERGLOBAL_WHITELIST')
+                        (array) Liquid::get('SERVER_SUPERGLOBAL_WHITELIST'),
                     );
                 },
-                ARRAY_FILTER_USE_KEY
+                ARRAY_FILTER_USE_KEY,
             );
         }
     }
@@ -95,8 +95,8 @@ class Context
      *
      * @param string $key
      *
-     * @return mixed
      * @throws LiquidException
+     * @return mixed
      */
     private function resolve($key)
     {
@@ -141,8 +141,8 @@ class Context
      *
      * @param string $key
      *
-     * @return mixed
      * @throws LiquidException
+     * @return mixed
      * @see Decision::stringValue
      * @see AbstractBlock::renderAll
      *
@@ -361,7 +361,7 @@ class Context
      *
      * @param mixed $filter
      */
-    public function addFilters($filter, callable $callback = null)
+    public function addFilters($filter, ?callable $callback = null)
     {
         $this->filterbank->addFilter($filter, $callback);
     }
@@ -409,8 +409,8 @@ class Context
     /**
      * Pops the current scope from the stack.
      *
-     * @return bool
      * @throws LiquidException
+     * @return bool
      */
     public function pop()
     {

@@ -42,7 +42,7 @@ class TagCycleTest extends TestCase
     {
         $this->assertTemplateResult(
             'one one two two one one',
-            '{%cycle 1: "one", "two" %} {%cycle 2: "one", "two" %} {%cycle 1: "one", "two" %} {%cycle 2: "one", "two" %} {%cycle 1: "one", "two" %} {%cycle 2: "one", "two" %}'
+            '{%cycle 1: "one", "two" %} {%cycle 2: "one", "two" %} {%cycle 1: "one", "two" %} {%cycle 2: "one", "two" %} {%cycle 1: "one", "two" %} {%cycle 2: "one", "two" %}',
         );
     }
 
@@ -52,7 +52,7 @@ class TagCycleTest extends TestCase
         $this->assertTemplateResult(
             'one one two two one one',
             '{%cycle var1: "one", "two" %} {%cycle var2: "one", "two" %} {%cycle var1: "one", "two" %} {%cycle var2: "one", "two" %} {%cycle var1: "one", "two" %} {%cycle var2: "one", "two" %}',
-            $assigns
+            $assigns,
         );
     }
 }

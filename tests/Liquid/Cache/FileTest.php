@@ -151,10 +151,10 @@ class FileTest extends TestCase
         $this->removeOldCachedFiles();
 
         $this->cache = new File([
-                                    'cache_dir'    => $this->cacheDir,
-                                    'cache_expire' => 3600,
-                                    'cache_prefix' => 'liquid_',
-                                ]);
+            'cache_dir'    => $this->cacheDir,
+            'cache_expire' => 3600,
+            'cache_prefix' => 'liquid_',
+        ]);
     }
 
     private function removeOldCachedFiles(): void

@@ -28,6 +28,12 @@ class TagIfchanged extends AbstractBlock
      */
     private $lastValue = '';
 
+    /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     */
     public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
         parent::__construct($template, $markup, $tokens, $fileSystem);

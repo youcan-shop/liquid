@@ -9,7 +9,7 @@
  * @package Liquid
  */
 
-return array(
-	'max' => 5,
-	'post' => ['date' => 'May 28, 2019'],
-);
+return [
+    'max' => 5,
+    'post' => ['date' => 'May 28, 2019'],
+];

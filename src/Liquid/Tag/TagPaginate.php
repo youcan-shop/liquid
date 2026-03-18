@@ -71,6 +71,11 @@ class TagPaginate extends AbstractBlock
 
 
     /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     *
      * @throws ParseException
      */
     public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
@@ -180,7 +185,7 @@ class TagPaginate extends AbstractBlock
     public function currentUrl($context, $queryPart = [])
     {
         // From here we have $url->path and $url->query
-        $url = (object)parse_url($context->get('REQUEST_URI'));
+        $url = (object) parse_url($context->get('REQUEST_URI') ?: '');
 
         // Let's merge the query part
         if (isset($url->query)) {

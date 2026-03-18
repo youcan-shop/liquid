@@ -120,9 +120,9 @@ class TagIncludeTest extends TestCase
         $template = new Template();
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'inner'   => "[{{ other }}]",
-                                          'example' => "({% include 'inner' other:var %})",
-                                      ])
+                'inner'   => "[{{ other }}]",
+                'example' => "({% include 'inner' other:var %})",
+            ]),
         );
 
         $template->parse("{% include 'example' %}");
@@ -138,9 +138,9 @@ class TagIncludeTest extends TestCase
         $template = new Template();
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'inner'   => "[{{ other }}]",
-                                          'example' => "({% include 'inner' other:var %})",
-                                      ])
+                'inner'   => "[{{ other }}]",
+                'example' => "({% include 'inner' other:var %})",
+            ]),
         );
 
         $template->parse("{% include 'example' %}");
@@ -154,9 +154,9 @@ class TagIncludeTest extends TestCase
         $template = new Template();
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'inner'   => "[{{ other[0] }}]",
-                                          'example' => "({% include 'inner' other:var %})",
-                                      ])
+                'inner'   => "[{{ other[0] }}]",
+                'example' => "({% include 'inner' other:var %})",
+            ]),
         );
 
         $template->parse("{% include 'example' %}");
@@ -170,14 +170,14 @@ class TagIncludeTest extends TestCase
         $template = new Template();
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'inner'   => "[{{ other.a }}]",
-                                          'example' => "({% include 'inner' other:var %})",
-                                      ])
+                'inner'   => "[{{ other.a }}]",
+                'example' => "({% include 'inner' other:var %})",
+            ]),
         );
 
         $template->parse("{% include 'example' %}");
 
-        $output = $template->render(["var" => (object)['a' => 'b']]);
+        $output = $template->render(["var" => (object) ['a' => 'b']]);
         $this->assertEquals("([b])", $output);
     }
 
@@ -186,9 +186,9 @@ class TagIncludeTest extends TestCase
         $template = new Template();
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'inner'   => "[{{ other }}]",
-                                          'example' => "{%include inner other:var %} ({{var}})",
-                                      ])
+                'inner'   => "[{{ other }}]",
+                'example' => "{%include inner other:var %} ({{var}})",
+            ]),
         );
 
         $template->parse("{% include example other:var %}");
@@ -210,13 +210,13 @@ class TagIncludeTest extends TestCase
         $template = new Template();
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'outer'         => "{% block content %}Content for outer block{% endblock %} / {% block footer %}Footer for outer block{% endblock %}",
-                                          'content'       => 'Content for {{ name }} block',
-                                          'middle'        => "{% extends 'outer' %}{% block content %}{% include 'content' name:'middle' %}{% endblock %}",
-                                          'main'          => "Main: {% extends 'middle' %}{% block footer %}{% include 'footer-top' hello:message %}{% endblock %}",
-                                          'footer-bottom' => "{{ name }} with message: {{ hello }}",
-                                          'footer-top'    => "Footer top and {% include 'footer-bottom' name:'bottom' %}",
-                                      ])
+                'outer'         => "{% block content %}Content for outer block{% endblock %} / {% block footer %}Footer for outer block{% endblock %}",
+                'content'       => 'Content for {{ name }} block',
+                'middle'        => "{% extends 'outer' %}{% block content %}{% include 'content' name:'middle' %}{% endblock %}",
+                'main'          => "Main: {% extends 'middle' %}{% block footer %}{% include 'footer-top' hello:message %}{% endblock %}",
+                'footer-bottom' => "{{ name }} with message: {{ hello }}",
+                'footer-top'    => "Footer top and {% include 'footer-bottom' name:'bottom' %}",
+            ]),
         );
 
         $template->setCache(new Local());
@@ -242,8 +242,8 @@ class TagIncludeTest extends TestCase
         $content = "[{{ name }}]";
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'example' => &$content,
-                                      ])
+                'example' => &$content,
+            ]),
         );
 
         $template->parse("{% include 'example' %}");
@@ -259,13 +259,13 @@ class TagIncludeTest extends TestCase
     protected function setUp(): void
     {
         $this->fs = TestFileSystem::fromArray([
-                                                  'a'       => "{% include 'b' %}",
-                                                  'b'       => "{% include 'c' %}",
-                                                  'c'       => "{% include 'd' %}",
-                                                  'd'       => '({{ inner }})',
-                                                  'inner'   => "Inner: {{ inner }}{{ other }}",
-                                                  'example' => "Example: {% include 'inner' %}",
-                                              ]);
+            'a'       => "{% include 'b' %}",
+            'b'       => "{% include 'c' %}",
+            'c'       => "{% include 'd' %}",
+            'd'       => '({{ inner }})',
+            'inner'   => "Inner: {{ inner }}{{ other }}",
+            'example' => "Example: {% include 'inner' %}",
+        ]);
     }
 
     protected function tearDown(): void

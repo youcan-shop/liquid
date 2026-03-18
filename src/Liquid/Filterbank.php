@@ -61,10 +61,10 @@ class Filterbank
      * @param mixed $filter Can either be an object, the name of a class (in which case the
      *                        filters will be called statically) or the name of a function.
      *
-     * @return bool
      * @throws \YouCan\Liquid\Exception\WrongArgumentException
+     * @return bool
      */
-    public function addFilter($filter, callable $callback = null)
+    public function addFilter($filter, ?callable $callback = null)
     {
         // If it is a callback, save it as it is
         if (is_string($filter) && $callback) {

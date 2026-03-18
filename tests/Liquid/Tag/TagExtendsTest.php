@@ -74,9 +74,9 @@ class TagExtendsTest extends TestCase
         $template = new Template();
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'outer' => "{% block content %}Content for outer block{% endblock %} / {% block footer %}Footer for outer block{% endblock %}",
-                                          'inner' => "{% extends 'outer' %}{% block content %}Content for inner block{% endblock %}",
-                                      ])
+                'outer' => "{% block content %}Content for outer block{% endblock %} / {% block footer %}Footer for outer block{% endblock %}",
+                'inner' => "{% extends 'outer' %}{% block content %}Content for inner block{% endblock %}",
+            ]),
         );
 
         $contentsWithoutCache = $template->parseFile('inner')->render();
@@ -92,10 +92,10 @@ class TagExtendsTest extends TestCase
         $template = new Template();
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'outer'  => "{% block content %}Outer{{ a }}{% endblock %}Spacer{{ a }}{% block footer %}Footer{{ a }}{% endblock %}",
-                                          'middle' => "{% extends 'outer' %}{% block content %}Middle{{ a }}{% endblock %}",
-                                          'inner'  => "{% extends 'middle' %}{% block content %}Inner{{ a }}{% endblock %}",
-                                      ])
+                'outer'  => "{% block content %}Outer{{ a }}{% endblock %}Spacer{{ a }}{% block footer %}Footer{{ a }}{% endblock %}",
+                'middle' => "{% extends 'outer' %}{% block content %}Middle{{ a }}{% endblock %}",
+                'inner'  => "{% extends 'middle' %}{% block content %}Inner{{ a }}{% endblock %}",
+            ]),
         );
 
         $template->setCache(new Local());
@@ -112,9 +112,9 @@ class TagExtendsTest extends TestCase
         $template = new Template();
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'base'    => "<div>{% block content %}{% endblock %}</div>",
-                                          'extends' => "{% extends 'base' %}{% block content %}{{ test }}{% endblock %}",
-                                      ])
+                'base'    => "<div>{% block content %}{% endblock %}</div>",
+                'extends' => "{% extends 'base' %}{% block content %}{{ test }}{% endblock %}",
+            ]),
         );
 
         $template->setCache(new Local());
@@ -134,9 +134,9 @@ class TagExtendsTest extends TestCase
         $content = "[{{ name }}]";
         $template->setFileSystem(
             TestFileSystem::fromArray([
-                                          'outer' => &$content,
-                                          'inner' => "{% extends 'outer' %}",
-                                      ])
+                'outer' => &$content,
+                'inner' => "{% extends 'outer' %}",
+            ]),
         );
 
         $template->parseFile('inner');
@@ -210,9 +210,9 @@ class TagExtendsTest extends TestCase
     protected function setUp(): void
     {
         $this->fs = TestFileSystem::fromArray([
-                                                  'base'     => "{% block content %}{% endblock %}{% block footer %}{% endblock %}",
-                                                  'sub-base' => "{% extends 'base' %}{% block content %}{% endblock %}{% block footer %} Boo! {% endblock %}",
-                                              ]);
+            'base'     => "{% block content %}{% endblock %}{% block footer %}{% endblock %}",
+            'sub-base' => "{% extends 'base' %}{% block content %}{% endblock %}{% block footer %} Boo! {% endblock %}",
+        ]);
     }
 
     protected function tearDown(): void

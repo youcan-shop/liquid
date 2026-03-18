@@ -54,7 +54,7 @@ class Apc extends Cache
     {
         apc_fetch($this->prefix . $key, $success);
 
-        return (bool)$success;
+        return (bool) $success;
     }
 
     /**

@@ -16,6 +16,4 @@ use YouCan\Liquid\LiquidException;
 /**
  * ParseException class.
  */
-class ParseException extends LiquidException
-{
-}
+class ParseException extends LiquidException {}

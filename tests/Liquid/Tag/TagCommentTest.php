@@ -19,7 +19,7 @@ class TagCommentTest extends TestCase
     {
         $this->assertTemplateResult(
             "the comment block should be removed  .. right?",
-            "the comment block should be removed {%comment%} be gone.. {%endcomment%} .. right?"
+            "the comment block should be removed {%comment%} be gone.. {%endcomment%} .. right?",
         );
 
         $this->assertTemplateResult('', '{%comment%}{%endcomment%}');

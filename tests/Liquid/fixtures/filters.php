@@ -9,11 +9,11 @@
  * @package Liquid
  */
 
-return array(
-	'array' => array('z', 'g', 'n'),
-	'foobar' => "Foo\nBar",
-	'posts' => array(
-		array('id' => 2, 'title'=> 'FooBar', 'tags' => array('foo', 'bar')),
-		array('id' => 1, 'title'=> 'BazBar', 'tags' => array('baz', 'bar')),
-	),
-);
+return [
+    'array' => ['z', 'g', 'n'],
+    'foobar' => "Foo\nBar",
+    'posts' => [
+        ['id' => 2, 'title' => 'FooBar', 'tags' => ['foo', 'bar']],
+        ['id' => 1, 'title' => 'BazBar', 'tags' => ['baz', 'bar']],
+    ],
+];

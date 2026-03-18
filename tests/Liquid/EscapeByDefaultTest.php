@@ -28,8 +28,8 @@ class ObjectWithToString
 
 class EscapeByDefaultTest extends TestCase
 {
-    const XSS = "<script>alert()</script>";
-    const XSS_FAILED = "&lt;script&gt;alert()&lt;/script&gt;";
+    public const XSS = "<script>alert()</script>";
+    public const XSS_FAILED = "&lt;script&gt;alert()&lt;/script&gt;";
     /** System default value for the escape flag */
     private static $escapeDefault;
     protected $assigns = [];

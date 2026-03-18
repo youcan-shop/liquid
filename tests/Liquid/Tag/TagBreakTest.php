@@ -34,17 +34,17 @@ class TagBreakTest extends TestCase
         $this->assertTemplateResult(
             "<tr class=\"row1\">\n</tr>\n",
             '{%tablerow item in array%} {%break%} yo {%endtablerow%}',
-            ['array' => [1, 2, 3, 4]]
+            ['array' => [1, 2, 3, 4]],
         );
         $this->assertTemplateResult(
             "<tr class=\"row1\">\n<td class=\"col1\"> yo </td></tr>\n",
             '{%tablerow item in array%} yo {%break%} {%endtablerow%}',
-            ['array' => [1, 2, 3, 4]]
+            ['array' => [1, 2, 3, 4]],
         );
         $this->assertTemplateResult(
             "<tr class=\"row1\">\n<td class=\"col1\">  1 </td><td class=\"col2\">  2 </td></tr>\n",
             '{%tablerow item in array%} {%if item == 3%} {%break%} {%endif%} {{ item }} {%endtablerow%}',
-            ['array' => [1, 2, 3, 4]]
+            ['array' => [1, 2, 3, 4]],
         );
     }
 }

@@ -34,8 +34,21 @@ abstract class AbstractTag
      */
     protected $attributes = [];
 
+    /**
+     * A cached instance of the config array, for performance reasons.
+     *
+     * @var array
+     */
+    protected $config = [];
+
     protected Template $template;
 
+    /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     */
     public function __construct(
         Template $template,
         string $markup,
@@ -45,6 +58,7 @@ abstract class AbstractTag
         $this->template = $template;
         $this->markup = $markup;
         $this->fileSystem = $fileSystem;
+        $this->config = &Liquid::$config;
 
         $this->parse($tokens);
     }

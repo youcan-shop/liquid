@@ -30,7 +30,7 @@ class FixturesTest extends TestCase
                 if (is_file(__DIR__ . '/fixtures/' . $filename)) {
                     return file_get_contents(__DIR__ . '/fixtures/' . $filename);
                 }
-            })
+            }),
         );
 
         $template->parse(file_get_contents($liquid));

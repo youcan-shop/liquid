@@ -44,6 +44,12 @@ class TagIf extends Decision
      */
     private $nodelistHolders = [];
 
+    /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     */
     public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
         $this->nodelist = &$this->nodelistHolders[count($this->blocks)];
@@ -79,8 +85,8 @@ class TagIf extends Decision
      *
      * @param Context $context
      *
-     * @return string
      * @throws \YouCan\Liquid\Exception\ParseException
+     * @return string
      */
     public function render(Context $context)
     {
@@ -129,18 +135,18 @@ class TagIf extends Decision
                     foreach ($logicalOperators as $k => $logicalOperator) {
                         if ($logicalOperator == 'and') {
                             $display = ($display && $this->interpretCondition(
-                                    $conditions[$k + 1]['left'],
-                                    $conditions[$k + 1]['right'],
-                                    $conditions[$k + 1]['operator'],
-                                    $context
-                                ));
+                                $conditions[$k + 1]['left'],
+                                $conditions[$k + 1]['right'],
+                                $conditions[$k + 1]['operator'],
+                                $context,
+                            ));
                         } else {
                             $display = ($display || $this->interpretCondition(
-                                    $conditions[$k + 1]['left'],
-                                    $conditions[$k + 1]['right'],
-                                    $conditions[$k + 1]['operator'],
-                                    $context
-                                ));
+                                $conditions[$k + 1]['left'],
+                                $conditions[$k + 1]['right'],
+                                $conditions[$k + 1]['operator'],
+                                $context,
+                            ));
                         }
                     }
                 } else {

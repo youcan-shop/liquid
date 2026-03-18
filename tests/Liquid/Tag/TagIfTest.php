@@ -264,7 +264,7 @@ class TagIfTest extends TestCase
     {
         $this->expectException(\YouCan\Liquid\Exception\RenderException::class);
 
-        $this->assertTemplateResult('', '{% if foo == 1 %}true{% endif %}', ['foo' => (object)[]]);
+        $this->assertTemplateResult('', '{% if foo == 1 %}true{% endif %}', ['foo' => (object) []]);
     }
 
     /**

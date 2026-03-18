@@ -50,14 +50,17 @@ class TagCycle extends AbstractTag
     /**
      * Constructor
      *
+     * @param Template $template
      * @param string $markup
      * @param array $tokens
-     * @param FileSystem $fileSystem
+     * @param FileSystem|null $fileSystem
      *
-     * @throws \YouCan\Liquid\Exception\ParseException
+     * @throws ParseException
      */
-    public function __construct(Template $template, $markup, array &$tokens, FileSystem $fileSystem = null)
+    public function __construct(Template $template, $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
+        parent::__construct($template, $markup, $tokens, $fileSystem);
+
         $this->template = $template;
 
         $simpleSyntax = new Regexp("/" . Liquid::get('QUOTED_FRAGMENT') . "/");

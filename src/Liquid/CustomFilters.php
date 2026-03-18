@@ -16,7 +16,6 @@ namespace YouCan\Liquid;
  */
 class CustomFilters
 {
-
     /**
      * Sort an array by key.
      *

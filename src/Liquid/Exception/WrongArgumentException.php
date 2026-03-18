@@ -16,6 +16,4 @@ use YouCan\Liquid\LiquidException;
 /**
  * WrongArgumentException class.
  */
-class WrongArgumentException extends LiquidException
-{
-}
+class WrongArgumentException extends LiquidException {}

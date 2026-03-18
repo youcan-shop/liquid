@@ -70,9 +70,9 @@ class Local implements FileSystem
      *
      * @param string $templatePath
      *
-     * @return string
      * @throws \YouCan\Liquid\Exception\NotFoundException
      * @throws \YouCan\Liquid\Exception\ParseException
+     * @return string
      */
     public function fullPath($templatePath)
     {

@@ -54,19 +54,19 @@ class Decision extends AbstractBlock
      *
      * @param mixed $value
      *
-     * @return string
      * @throws \YouCan\Liquid\Exception\RenderException
+     * @return string
      */
     private function stringValue($value)
     {
         // Objects should have a __toString method to get a value to compare to
         if (is_object($value)) {
             if (method_exists($value, '__toString')) {
-                return (string)$value;
+                return (string) $value;
             }
 
             if ($value instanceof \Generator) {
-                return (string)$value->valid();
+                return (string) $value->valid();
             }
 
             // toLiquid is handled in Context::variable
@@ -90,8 +90,8 @@ class Decision extends AbstractBlock
      * @param string $op
      * @param Context $context
      *
-     * @return bool
      * @throws \YouCan\Liquid\Exception\RenderException
+     * @return bool
      */
     protected function interpretCondition($left, $right, $op, Context $context)
     {

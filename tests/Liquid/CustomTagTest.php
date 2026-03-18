@@ -13,9 +13,7 @@ namespace YouCan\Liquid;
 
 use YouCan\Liquid\Tag\TagComment;
 
-class TagFoo extends TagComment
-{
-}
+class TagFoo extends TagComment {}
 
 class CustomTagTest extends TestCase
 {

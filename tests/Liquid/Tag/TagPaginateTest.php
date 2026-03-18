@@ -16,7 +16,7 @@ use YouCan\Liquid\TestCase;
 
 class TagPaginateTest extends TestCase
 {
-    const PAGINATION_ASSIGNS = [
+    public const PAGINATION_ASSIGNS = [
         'HTTP_HOST' => 'example.com',
         'HTTPS'     => 'on',
         'page'      => 1,
@@ -60,7 +60,7 @@ class TagPaginateTest extends TestCase
                 'HTTPS' => 'on',
                 'page' => 2,
                 'products' => [['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4], ['id' => 5]],
-            ]
+            ],
         );
     }
 

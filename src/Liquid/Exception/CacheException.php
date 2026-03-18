@@ -16,6 +16,4 @@ use YouCan\Liquid\LiquidException;
 /**
  * CacheException class.
  */
-class CacheException extends LiquidException
-{
-}
+class CacheException extends LiquidException {}

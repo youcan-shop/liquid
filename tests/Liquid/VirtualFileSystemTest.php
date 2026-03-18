@@ -56,12 +56,12 @@ class VirtualFileSystemTest extends TestCase
         $template->setFileSystem(
             new Virtual(function ($templatePath) {
                 return '';
-            })
+            }),
         );
         $template->setCache(
             new File([
-                         'cache_dir' => __DIR__,
-                     ])
+                'cache_dir' => __DIR__,
+            ]),
         );
         $template->parse("Hello");
     }
@@ -77,8 +77,8 @@ class VirtualFileSystemTest extends TestCase
         $template->setFileSystem(new Virtual([$this, 'virtualFileSystemCallback'], true));
         $template->setCache(
             new File([
-                         'cache_dir' => __DIR__ . '/cache_dir/',
-                     ])
+                'cache_dir' => __DIR__ . '/cache_dir/',
+            ]),
         );
 
         try {

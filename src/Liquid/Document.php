@@ -20,15 +20,17 @@ use YouCan\Liquid\Tag\TagInclude;
  */
 class Document extends AbstractBlock
 {
+    /**
+     * @param Template $template
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     */
     public function __construct(
         Template $template,
         array &$tokens,
         ?FileSystem $fileSystem = null
     ) {
-        $this->template = $template;
-        $this->fileSystem = $fileSystem;
-
-        $this->parse($tokens);
+        parent::__construct($template, '', $tokens, $fileSystem);
     }
 
     /**
@@ -88,7 +90,5 @@ class Document extends AbstractBlock
     /**
      * Document blocks don't need to be terminated since they are not actually opened
      */
-    protected function assertMissingDelimitation()
-    {
-    }
+    protected function assertMissingDelimitation() {}
 }

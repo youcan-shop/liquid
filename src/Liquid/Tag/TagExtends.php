@@ -44,6 +44,11 @@ class TagExtends extends AbstractTag
     private $document;
 
     /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     *
      * @throws ParseException
      */
     public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
@@ -149,7 +154,14 @@ class TagExtends extends AbstractTag
         $b = [];
         $name = null;
 
-        foreach ($tokens as $token) {
+        for ($i = 0, $n = count($tokens); $i < $n; $i++) {
+            if ($tokens[$i] === null) {
+                continue;
+            }
+
+            $token = $tokens[$i];
+            $tokens[$i] = null;
+
             if ($blockstartRegexp->match($token)) {
                 $name = $blockstartRegexp->matches[1];
                 $b[$name] = [];

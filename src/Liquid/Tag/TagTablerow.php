@@ -47,6 +47,11 @@ class TagTablerow extends AbstractBlock
     public $attributes;
 
     /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     *
      * @throws ParseException
      */
     public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
@@ -70,8 +75,8 @@ class TagTablerow extends AbstractBlock
      *
      * @param Context $context
      *
-     * @return string
      * @throws \YouCan\Liquid\Exception\RenderException
+     * @return string
      */
     public function render(Context $context)
     {
@@ -113,8 +118,8 @@ class TagTablerow extends AbstractBlock
                 'index0'  => $index,
                 'rindex'  => $length - $index,
                 'rindex0' => $length - $index - 1,
-                'first'   => (int)($index == 0),
-                'last'    => (int)($index == $length - 1),
+                'first'   => (int) ($index == 0),
+                'last'    => (int) ($index == $length - 1),
             ]);
 
             $text = $this->renderAll($this->nodelist, $context);

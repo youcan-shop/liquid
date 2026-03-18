@@ -52,11 +52,22 @@ class TagFor extends AbstractBlock
     private $name;
 
     /**
+     * @var string
+     */
+    private $start;
+
+    /**
      * @var string The type of the loop (collection or digit)
      */
     private $type = 'collection';
 
+
     /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     *
      * @throws ParseException
      */
     public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
@@ -133,8 +144,8 @@ class TagFor extends AbstractBlock
                 'index0'  => $index,
                 'rindex'  => $length - $index,
                 'rindex0' => $length - $index - 1,
-                'first'   => (int)($index == 0),
-                'last'    => (int)($index == $length - 1),
+                'first'   => (int) ($index == 0),
+                'last'    => (int) ($index == $length - 1),
             ]);
 
             $result .= $this->renderAll($this->nodelist, $context);
@@ -207,8 +218,8 @@ class TagFor extends AbstractBlock
                 'index0'  => $index,
                 'rindex'  => $length - $index,
                 'rindex0' => $length - $index - 1,
-                'first'   => (int)($index == 0),
-                'last'    => (int)($index == $length - 1),
+                'first'   => (int) ($index == 0),
+                'last'    => (int) ($index == $length - 1),
             ]);
 
             $result .= $this->renderAll($this->nodelist, $context);

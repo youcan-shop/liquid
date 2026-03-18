@@ -26,7 +26,7 @@ use YouCan\Liquid\FileSystem\Local;
  */
 class Template
 {
-    const CLASS_PREFIX = '\YouCan\Liquid\Cache\\';
+    public const CLASS_PREFIX = '\YouCan\Liquid\Cache\\';
     /**
      * @var Cache
      */
@@ -78,7 +78,7 @@ class Template
     }
 
     /**
-     * @param array|Cache $cache
+     * @param array|Cache|null $cache
      *
      * @throws \YouCan\Liquid\Exception\CacheException
      */
@@ -133,8 +133,9 @@ class Template
      * Register the filter
      *
      * @param string $filter
+     * @param callable|null $callback
      */
-    public function registerFilter($filter, callable $callback = null)
+    public function registerFilter($filter, ?callable $callback = null)
     {
         // Store callback for later use
         if ($callback) {

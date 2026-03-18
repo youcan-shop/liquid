@@ -41,12 +41,12 @@ class TagUnlessTest extends TestCase
         $this->assertTemplateResult(
             '0=>yay 0=>yay 1=> ',
             '{% for item in array %}{{ forloop.last }}=>{% unless forloop.last %}yay{% endunless %} {% endfor %}',
-            ['array' => [1, 2, 3]]
+            ['array' => [1, 2, 3]],
         );
         $this->assertTemplateResult(
             '1=> 0=>yay 0=>yay ',
             '{% for item in array %}{{ forloop.first }}=>{% unless forloop.first %}yay{% endunless %} {% endfor %}',
-            ['array' => [1, 2, 3]]
+            ['array' => [1, 2, 3]],
         );
         $this->assertTemplateResult('0=> 0=> 1=>yay ', '{% for item in array %}{{ forloop.last }}=>{% if forloop.last %}yay{% endif %} {% endfor %}', ['array' => [1, 2, 3]]);
     }

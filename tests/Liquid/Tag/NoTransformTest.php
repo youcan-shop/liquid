@@ -19,7 +19,7 @@ class NoTransformTest extends TestCase
     {
         $this->assertTemplateResult(
             'this text should come out of the template without change...',
-            'this text should come out of the template without change...'
+            'this text should come out of the template without change...',
         );
 
         $this->assertTemplateResult('blah', 'blah');

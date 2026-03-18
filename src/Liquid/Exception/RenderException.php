@@ -16,6 +16,4 @@ use YouCan\Liquid\LiquidException;
 /**
  * RenderException class.
  */
-class RenderException extends LiquidException
-{
-}
+class RenderException extends LiquidException {}

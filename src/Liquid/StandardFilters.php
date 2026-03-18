@@ -18,7 +18,6 @@ use YouCan\Liquid\Exception\RenderException;
  */
 class StandardFilters
 {
-
     /**
      * Add one string to another
      *
@@ -46,7 +45,7 @@ class StandardFilters
             $first_char = mb_substr($matches[2], 0, 1);
 
             return $matches[1] . mb_strtoupper($first_char) . mb_substr($matches[2], 1);
-        },                           ucwords($input));
+        }, ucwords($input));
     }
 
 
@@ -57,7 +56,7 @@ class StandardFilters
      */
     public static function ceil($input)
     {
-        return (int)ceil((float)$input);
+        return (int) ceil((float) $input);
     }
 
 
@@ -161,7 +160,7 @@ class StandardFilters
                 'U',
                 '%',
             ],
-            $strftimeFormat
+            $strftimeFormat,
         );
 
         $formatted = $dateTime->format($dateFormat);
@@ -196,7 +195,7 @@ class StandardFilters
      */
     public static function divided_by($input, $operand)
     {
-        return (float)$input / (float)$operand;
+        return (float) $input / (float) $operand;
     }
 
 
@@ -238,6 +237,31 @@ class StandardFilters
         return json_encode($input);
     }
 
+    /**
+     * Creates an array including only the objects with a given property value
+     * @link https://shopify.github.io/liquid/filters/where/
+     *
+     * @param mixed $input
+     * @param string ...$args
+     *
+     * @throws LiquidException
+     * @return mixed
+     */
+    public static function where($input, string ...$args)
+    {
+        if (is_array($input)) {
+            switch (count($args)) {
+                case 1:
+                    return array_values(array_filter($input, fn($v) => !in_array($v[$args[0]] ?? null, [null, false], true)));
+                case 2:
+                    return array_values(array_filter($input, fn($v) => ($v[$args[0]] ?? '') == $args[1]));
+                default:
+                    throw new LiquidException('Wrong number of arguments to function `where`, given ' . count($args) . ', expected 1 or 2');
+            }
+        }
+
+        return $input;
+    }
 
     /**
      * Escape a string
@@ -251,6 +275,10 @@ class StandardFilters
         // Arrays are taken care down the stack with an error
         if (is_array($input)) {
             return $input;
+        }
+
+        if (is_null($input)) {
+            return '';
         }
 
         return htmlentities($input, ENT_QUOTES);
@@ -301,7 +329,7 @@ class StandardFilters
      */
     public static function floor($input)
     {
-        return (int)floor((float)$input);
+        return (int) floor((float) $input);
     }
 
 
@@ -403,7 +431,7 @@ class StandardFilters
      */
     public static function minus($input, $operand)
     {
-        return (float)$input - (float)$operand;
+        return (float) $input - (float) $operand;
     }
 
 
@@ -417,7 +445,7 @@ class StandardFilters
      */
     public static function modulo($input, $operand)
     {
-        return fmod((float)$input, (float)$operand);
+        return fmod((float) $input, (float) $operand);
     }
 
 
@@ -444,7 +472,7 @@ class StandardFilters
      */
     public static function plus($input, $operand)
     {
-        return (float)$input + (float)$operand;
+        return (float) $input + (float) $operand;
     }
 
 
@@ -555,7 +583,7 @@ class StandardFilters
      */
     public static function round($input, $n = 0)
     {
-        return round((float)$input, (int)$n);
+        return round((float) $input, (int) $n);
     }
 
 
@@ -575,8 +603,8 @@ class StandardFilters
      *
      * @param mixed $input
      *
-     * @return int
      * @throws RenderException
+     * @return int
      */
     public static function size($input)
     {
@@ -683,6 +711,10 @@ class StandardFilters
             return [];
         }
 
+        if ($pattern === '') {
+            return mb_str_split($input);
+        }
+
         return explode($pattern, $input);
     }
 
@@ -721,9 +753,9 @@ class StandardFilters
     public static function strip_newlines($input)
     {
         return is_string($input) ? str_replace([
-                                                   "\n",
-                                                   "\r",
-                                               ], '', $input) : $input;
+            "\n",
+            "\r",
+        ], '', $input) : $input;
     }
 
 
@@ -737,7 +769,7 @@ class StandardFilters
      */
     public static function times($input, $operand)
     {
-        return (float)$input * (float)$operand;
+        return (float) $input * (float) $operand;
     }
 
 

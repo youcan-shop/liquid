@@ -78,7 +78,7 @@ class TagAssignTest extends TestCase
         $template = new Template();
 
         $template->parse(
-            '{% assign rows = "one|two|three,one|two|three" | upcase | split: "," %}{% for row in rows %}{% assign cols = row | split: "|" %}{% for col in cols %} {{col}}{%endfor%}{% endfor %}'
+            '{% assign rows = "one|two|three,one|two|three" | upcase | split: "," %}{% for row in rows %}{% assign cols = row | split: "|" %}{% for col in cols %} {{col}}{%endfor%}{% endfor %}',
         );
         $this->assertEquals($template->render(), ' ONE TWO THREE ONE TWO THREE');
 

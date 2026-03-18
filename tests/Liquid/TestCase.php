@@ -13,7 +13,7 @@ namespace YouCan\Liquid;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-    const TEMPLATES_DIR = 'templates';
+    public const TEMPLATES_DIR = 'templates';
 
     /**
      * @var mixed Filters

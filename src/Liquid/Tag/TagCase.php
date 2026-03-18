@@ -57,6 +57,11 @@ class TagCase extends Decision
     public $right;
 
     /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     *
      * @throws ParseException
      */
     public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)

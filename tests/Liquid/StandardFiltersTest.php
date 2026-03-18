@@ -13,6 +13,8 @@ namespace YouCan\Liquid;
 
 class MoneyFilter
 {
+    public Context $context;
+
     public function money($value)
     {
         return sprintf(' %d$ ', $value);
@@ -26,6 +28,8 @@ class MoneyFilter
 
 class CanadianMoneyFilter
 {
+    public Context $context;
+
     public function money($value)
     {
         return sprintf(' %d$ CAD ', $value);
@@ -34,7 +38,7 @@ class CanadianMoneyFilter
 
 class SizeClass
 {
-    const SIZE = 42;
+    public const SIZE = 42;
 
     public function toLiquid()
     {
@@ -84,7 +88,7 @@ class StandardFiltersTest extends TestCase
         $this->expectException(\YouCan\Liquid\LiquidException::class);
         $this->expectExceptionMessage('cannot be estimated');
 
-        StandardFilters::size((object)[]);
+        StandardFilters::size((object) []);
     }
 
     public function testDowncase()
@@ -195,11 +199,30 @@ class StandardFiltersTest extends TestCase
         }
     }
 
+    public function testWhere()
+    {
+        $data = [
+            [
+                'before' => [['model' => 'bmw'], ['model' => 'audi']],
+                'after'  => [['model' => 'bmw']],
+            ],
+            [
+                'before' => ['model' => 'bmw'],
+                'after'  => [],
+            ],
+        ];
+
+        foreach ($data as $testCase) {
+            $this->assertEquals($testCase['after'], StandardFilters::where($testCase['before'], 'model', 'bmw'));
+        }
+    }
+
     public function testEscape()
     {
         $data = [
             "one Word's not" => "one Word&#039;s not",
             "&><\"'"         => "&amp;&gt;&lt;&quot;&#039;",
+            null             => '',
         ];
 
         foreach ($data as $element => $expected) {
@@ -715,18 +738,18 @@ class StandardFiltersTest extends TestCase
             ],
             [
                 new \ArrayIterator([
-                                       function () {
-                                           return 'from function ';
-                                       },
-                                       [
-                                           'b'    => 10,
-                                           'attr' => 'value ',
-                                       ],
-                                       [
-                                           'a'       => 20,
-                                           'no_attr' => 'another value ',
-                                       ],
-                                   ]),
+                    function () {
+                        return 'from function ';
+                    },
+                    [
+                        'b'    => 10,
+                        'attr' => 'value ',
+                    ],
+                    [
+                        'a'       => 20,
+                        'no_attr' => 'another value ',
+                    ],
+                ]),
                 ['from function ', 'value ', null],
             ],
             [
@@ -845,10 +868,30 @@ class StandardFiltersTest extends TestCase
                 'two-one-three',
                 ['two', 'one', 'three'],
             ],
+            [
+                '12301230123',
+                ['123', '123', '123'],
+                '0',
+            ],
+            [
+                'phrase',
+                ['p', 'h', 'r', 'a', 's', 'e'],
+                '',
+            ],
+            [
+                'phrase',
+                ['phrase'],
+                null,
+            ],
+            [
+                '123 123 123',
+                ['123', '123', '123'],
+                ' ',
+            ],
         ];
 
         foreach ($data as $item) {
-            $this->assertEquals($item[1], StandardFilters::split($item[0], '-'));
+            $this->assertEquals($item[1], StandardFilters::split($item[0], $item[2] ?? '-'));
         }
     }
 
