@@ -78,7 +78,7 @@ class Template
     }
 
     /**
-     * @param array|Cache $cache
+     * @param array|Cache|null $cache
      *
      * @throws \YouCan\Liquid\Exception\CacheException
      */
@@ -150,8 +150,8 @@ class Template
      *
      * @param string $templatePath
      *
-     * @throws \YouCan\Liquid\Exception\MissingFilesystemException
      * @return Template
+     * @throws \YouCan\Liquid\Exception\MissingFilesystemException
      */
     public function parseFile($templatePath)
     {

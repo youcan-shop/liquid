@@ -49,6 +49,8 @@ class TagDecrement extends AbstractTag
      */
     public function __construct(Template $template, $markup, array &$tokens, ?FileSystem $fileSystem = null)
     {
+        parent::__construct($template, $markup, $tokens, $fileSystem);
+
         $this->template = $template;
 
         $syntax = new Regexp('/(' . Liquid::get('VARIABLE_NAME') . ')/');

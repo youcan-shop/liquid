@@ -32,6 +32,8 @@ class Document extends AbstractBlock
         array &$tokens,
         ?FileSystem $fileSystem = null
     ) {
+        parent::__construct($template, '', $tokens, $fileSystem);
+
         $this->template = $template;
         $this->fileSystem = $fileSystem;
 

@@ -25,6 +25,15 @@ class AbstractBlock extends AbstractTag
      * @var bool
      */
     protected static $trimWhitespace = false;
+
+    private ?string $whitespaceControl;
+
+    private ?Regexp $startRegexp;
+    private ?Regexp $tagRegexp;
+    private ?Regexp $variableStartRegexp;
+
+    private ?Regexp $variableRegexp;
+
     /**
      * @var AbstractTag[]|Variable[]|string[]
      */
@@ -43,23 +52,31 @@ class AbstractBlock extends AbstractTag
      *
      * @param array $tokens
      *
-     * @throws LiquidException
      * @return void
+     * @throws LiquidException
      */
     public function parse(array &$tokens)
     {
-        $startRegexp = new Regexp('/^' . Liquid::get('TAG_START') . '/');
-        $tagRegexp = new Regexp(
+        $this->startRegexp ??= new Regexp('/^' . Liquid::get('TAG_START') . '/');
+        $this->tagRegexp ??= new Regexp(
             '/^' . Liquid::get('TAG_START') . Liquid::get('WHITESPACE_CONTROL') . '?\s*(\w+)\s*(.*?)' . Liquid::get('WHITESPACE_CONTROL') . '?' . Liquid::get('TAG_END') . '$/s',
         );
-        $variableStartRegexp = new Regexp('/^' . Liquid::get('VARIABLE_START') . '/');
+        $this->variableStartRegexp ??= new Regexp('/^' . Liquid::get('VARIABLE_START') . '/');
+
+        $startRegexp = $this->startRegexp;
+        $tagRegexp = $this->tagRegexp;
+        $variableStartRegexp = $this->variableStartRegexp;
 
         $this->nodelist = [];
 
         $tags = $this->template->getTags();
 
-        while (count($tokens)) {
-            $token = array_shift($tokens);
+        for ($i = 0, $n = count($tokens); $i < $n; $i++) {
+            if ($tokens[$i] === null) {
+                continue;
+            }
+            $token = $tokens[$i];
+            $tokens[$i] = null;
 
             if ($startRegexp->match($token)) {
                 $this->whitespaceHandler($token);
@@ -114,11 +131,13 @@ class AbstractBlock extends AbstractTag
      */
     protected function whitespaceHandler($token)
     {
+        $this->whitespaceControl ??= Liquid::get('WHITESPACE_CONTROL');
+
         /*
          * This assumes that TAG_START is always '{%', and a whitespace control indicator
          * is exactly one character long, on a third position.
          */
-        if (mb_substr($token, 2, 1) === Liquid::get('WHITESPACE_CONTROL')) {
+        if ($token[2] === $this->whitespaceControl) {
             $previousToken = end($this->nodelist);
             if (is_string($previousToken)) { // this can also be a tag or a variable
                 $this->nodelist[key($this->nodelist)] = rtrim($previousToken);
@@ -129,7 +148,7 @@ class AbstractBlock extends AbstractTag
          * This assumes that TAG_END is always '%}', and a whitespace control indicator
          * is exactly one character long, on a third position from the end.
          */
-        self::$trimWhitespace = mb_substr($token, -3, 1) === Liquid::get('WHITESPACE_CONTROL');
+        self::$trimWhitespace = $token[-3] === $this->whitespaceControl;
     }
 
     /**
@@ -188,16 +207,17 @@ class AbstractBlock extends AbstractTag
      *
      * @param string $token
      *
-     * @throws \YouCan\Liquid\Exception\ParseException
      * @return Variable
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     private function createVariable($token)
     {
-        $variableRegexp = new Regexp(
+        $this->variableRegexp ??= new Regexp(
             '/^' . Liquid::get('VARIABLE_START') . Liquid::get('WHITESPACE_CONTROL') . '?(.*?)' . Liquid::get('WHITESPACE_CONTROL') . '?' . Liquid::get('VARIABLE_END') . '$/s',
         );
-        if ($variableRegexp->match($token)) {
-            return new Variable($variableRegexp->matches[1]);
+
+        if ($this->variableRegexp->match($token)) {
+            return new Variable($this->variableRegexp->matches[1]);
         }
 
         throw new ParseException("Variable $token was not properly terminated");
@@ -207,8 +227,8 @@ class AbstractBlock extends AbstractTag
      * This method is called at the end of parsing, and will throw an error unless
      * this method is subclassed, like it is for Document
      *
-     * @throws \YouCan\Liquid\Exception\ParseException
      * @return bool
+     * @throws \YouCan\Liquid\Exception\ParseException
      */
     protected function assertMissingDelimitation()
     {
