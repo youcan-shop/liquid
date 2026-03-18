@@ -872,6 +872,21 @@ class StandardFiltersTest extends TestCase
                 ['123', '123', '123'],
                 '0',
             ],
+            [
+                'phrase',
+                ['p', 'h', 'r', 'a', 's', 'e'],
+                '',
+            ],
+            [
+                'phrase',
+                ['phrase'],
+                null,
+            ],
+            [
+                '123 123 123',
+                ['123', '123', '123'],
+                ' ',
+            ],
         ];
 
         foreach ($data as $item) {
