@@ -16,6 +16,4 @@ use YouCan\Liquid\LiquidException;
 /**
  * FilesystemException class.
  */
-class FilesystemException extends LiquidException
-{
-}
+class FilesystemException extends LiquidException {}

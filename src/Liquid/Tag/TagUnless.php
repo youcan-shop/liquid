@@ -23,8 +23,8 @@ namespace YouCan\Liquid\Tag;
  */
 class TagUnless extends TagIf
 {
-    protected function negateIfUnless($display)
-    {
-        return !$display;
-    }
+	protected function negateIfUnless($display)
+	{
+		return !$display;
+	}
 }

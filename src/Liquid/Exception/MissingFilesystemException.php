@@ -15,6 +15,4 @@ namespace YouCan\Liquid\Exception;
  * Class MissingFilesystemException
  * @package YouCan\Liquid\Exception
  */
-class MissingFilesystemException extends ParseException
-{
-}
+class MissingFilesystemException extends ParseException {}

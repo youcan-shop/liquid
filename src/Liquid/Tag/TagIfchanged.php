@@ -21,34 +21,34 @@ use YouCan\Liquid\Template;
  */
 class TagIfchanged extends AbstractBlock
 {
-    /**
-     * The last value
-     *
-     * @var string
-     */
-    private $lastValue = '';
+	/**
+	 * The last value
+	 *
+	 * @var string
+	 */
+	private $lastValue = '';
 
-    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
-    {
-        parent::__construct($template, $markup, $tokens, $fileSystem);
-    }
+	public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
+	{
+		parent::__construct($template, $markup, $tokens, $fileSystem);
+	}
 
-    /**
-     * Renders the block
-     *
-     * @param Context $context
-     *
-     * @return string
-     */
-    public function render(Context $context)
-    {
-        $output = parent::render($context);
+	/**
+	 * Renders the block
+	 *
+	 * @param Context $context
+	 *
+	 * @return string
+	 */
+	public function render(Context $context)
+	{
+		$output = parent::render($context);
 
-        if ($this->lastValue == $output) {
-            return '';
-        }
-        $this->lastValue = $output;
+		if ($this->lastValue == $output) {
+			return '';
+		}
+		$this->lastValue = $output;
 
-        return $this->lastValue;
-    }
+		return $this->lastValue;
+	}
 }

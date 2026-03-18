@@ -14,6 +14,4 @@ namespace YouCan\Liquid\Exception;
 /**
  * NotFoundException class.
  */
-class NotFoundException extends FilesystemException
-{
-}
+class NotFoundException extends FilesystemException {}
