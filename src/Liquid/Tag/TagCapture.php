@@ -27,44 +27,49 @@ use YouCan\Liquid\Template;
  */
 class TagCapture extends AbstractBlock
 {
-	/**
-	 * The variable to assign to
-	 *
-	 * @var string
-	 */
-	private $to;
+    /**
+     * The variable to assign to
+     *
+     * @var string
+     */
+    private $to;
 
-	/**
-	 * @throws ParseException
-	 */
-	public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
-	{
-		$syntaxRegexp = new Regexp('/(\w+)/');
+    /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     *
+     * @throws ParseException
+     */
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
+    {
+        $syntaxRegexp = new Regexp('/(\w+)/');
 
-		if ($syntaxRegexp->match($markup)) {
-			$this->to = $syntaxRegexp->matches[1];
+        if ($syntaxRegexp->match($markup)) {
+            $this->to = $syntaxRegexp->matches[1];
 
-			parent::__construct($template, $markup, $tokens, $fileSystem);
+            parent::__construct($template, $markup, $tokens, $fileSystem);
 
-			return;
-		}
+            return;
+        }
 
-		throw new ParseException("Syntax Error in 'capture' - Valid syntax: capture [var] [value]");
-	}
+        throw new ParseException("Syntax Error in 'capture' - Valid syntax: capture [var] [value]");
+    }
 
-	/**
-	 * Renders the block
-	 *
-	 * @param Context $context
-	 *
-	 * @return string
-	 */
-	public function render(Context $context)
-	{
-		$output = parent::render($context);
+    /**
+     * Renders the block
+     *
+     * @param Context $context
+     *
+     * @return string
+     */
+    public function render(Context $context)
+    {
+        $output = parent::render($context);
 
-		$context->set($this->to, $output, true);
+        $context->set($this->to, $output, true);
 
-		return '';
-	}
+        return '';
+    }
 }

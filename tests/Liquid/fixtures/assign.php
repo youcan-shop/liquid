@@ -10,7 +10,7 @@
  */
 
 return [
-	'product' => [
-		'description' => 'First<!-- split -->Second',
-	],
+    'product' => [
+        'description' => 'First<!-- split -->Second',
+    ],
 ];

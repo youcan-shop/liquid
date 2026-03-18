@@ -11,276 +11,276 @@
 
 namespace {
 
-	use YouCan\Liquid\Context;
+    use YouCan\Liquid\Context;
 
-	/**
-	 * Global function acts as a filter.
-	 *
-	 * @param $value
-	 *
-	 * @return string
-	 */
-	function functionFilter($value)
-	{
-		return 'worked';
-	}
+    /**
+     * Global function acts as a filter.
+     *
+     * @param $value
+     *
+     * @return string
+     */
+    function functionFilter($value)
+    {
+        return 'worked';
+    }
 
-	/**
-	 * Global filter class
-	 */
-	class ClassFilter
-	{
-		public Context $context;
+    /**
+     * Global filter class
+     */
+    class ClassFilter
+    {
+        public Context $context;
 
-		private $variable = 'not set';
+        private $variable = 'not set';
 
-		public function __construct() {}
+        public function __construct() {}
 
-		public static function static_test()
-		{
-			return "worked";
-		}
+        public static function static_test()
+        {
+            return "worked";
+        }
 
-		public function instance_test_one()
-		{
-			$this->variable = 'set';
+        public function instance_test_one()
+        {
+            $this->variable = 'set';
 
-			return 'set';
-		}
+            return 'set';
+        }
 
-		public function instance_test_two()
-		{
-			return $this->variable;
-		}
-	}
+        public function instance_test_two()
+        {
+            return $this->variable;
+        }
+    }
 } // global namespace
 
 namespace YouCan\Liquid {
 
-	use YouCan\Liquid\Cache\File;
+    use YouCan\Liquid\Cache\File;
 
-	class NamespacedClassFilter
-	{
-		public Context $context;
+    class NamespacedClassFilter
+    {
+        public Context $context;
 
-		public static function static_test2($var)
-		{
-			return "good {$var}";
-		}
-	}
+        public static function static_test2($var)
+        {
+            return "good {$var}";
+        }
+    }
 
-	class Invokable implements InvokableFilter
-	{
-		private Template $template;
+    class Invokable implements InvokableFilter
+    {
+        private Template $template;
 
-		public function __construct(Template $template)
-		{
-			$this->template = $template;
-		}
+        public function __construct(Template $template)
+        {
+            $this->template = $template;
+        }
 
-		public function __invoke(...$args): string
-		{
-			$this->template->parse($args[0]);
+        public function __invoke(...$args): string
+        {
+            $this->template->parse($args[0]);
 
-			return $this->template->render();
-		}
+            return $this->template->render();
+        }
 
-		public function name(): string
-		{
-			return 'invokable';
-		}
-	}
+        public function name(): string
+        {
+            return 'invokable';
+        }
+    }
 
-	class FilterbankTest extends TestCase
-	{
-		/** @var FilterBank */
-		private $filterBank;
+    class FilterbankTest extends TestCase
+    {
+        /** @var FilterBank */
+        private $filterBank;
 
-		/** @var Context */
-		private $context;
+        /** @var Context */
+        private $context;
 
-		/**
-		 */
-		public function testAddFilterNotObjectAndString()
-		{
-			$this->expectException(\YouCan\Liquid\Exception\WrongArgumentException::class);
+        /**
+         */
+        public function testAddFilterNotObjectAndString()
+        {
+            $this->expectException(\YouCan\Liquid\Exception\WrongArgumentException::class);
 
-			$this->filterBank->addFilter([]);
-		}
+            $this->filterBank->addFilter([]);
+        }
 
-		/**
-		 */
-		public function testAddFilterNoFunctionOrClass()
-		{
-			$this->expectException(\YouCan\Liquid\Exception\WrongArgumentException::class);
+        /**
+         */
+        public function testAddFilterNoFunctionOrClass()
+        {
+            $this->expectException(\YouCan\Liquid\Exception\WrongArgumentException::class);
 
-			$this->filterBank->addFilter('no_such_function_or_class');
-		}
+            $this->filterBank->addFilter('no_such_function_or_class');
+        }
 
-		public function testTypeErrorExceptionAndCallDateFilterWithoutArguments()
-		{
-			if (\PHP_VERSION_ID < 70100) {
-				$this->markTestSkipped('TypeError is not thrown in PHP 7.0');
-			}
+        public function testTypeErrorExceptionAndCallDateFilterWithoutArguments()
+        {
+            if (\PHP_VERSION_ID < 70100) {
+                $this->markTestSkipped('TypeError is not thrown in PHP 7.0');
+            }
 
-			$var = new Variable('var | date');
-			$this->context->set('var', []);
+            $var = new Variable('var | date');
+            $this->context->set('var', []);
 
-			$this->expectException(\YouCan\Liquid\LiquidException::class);
-			$var->render($this->context);
-		}
+            $this->expectException(\YouCan\Liquid\LiquidException::class);
+            $var->render($this->context);
+        }
 
-		public function testInvokeNoFilter()
-		{
-			$value = 'value';
-			$this->assertEquals($value, $this->filterBank->invoke('non_existing_filter', $value));
-		}
+        public function testInvokeNoFilter()
+        {
+            $value = 'value';
+            $this->assertEquals($value, $this->filterBank->invoke('non_existing_filter', $value));
+        }
 
-		/**
-		 * Test using a simple function
-		 */
-		public function testFunctionFilter()
-		{
-			$var = new Variable('var | functionFilter');
-			$this->context->set('var', 1000);
-			$this->context->addFilters('functionFilter');
-			$this->assertEquals('worked', $var->render($this->context));
-		}
+        /**
+         * Test using a simple function
+         */
+        public function testFunctionFilter()
+        {
+            $var = new Variable('var | functionFilter');
+            $this->context->set('var', 1000);
+            $this->context->addFilters('functionFilter');
+            $this->assertEquals('worked', $var->render($this->context));
+        }
 
-		/**
-		 * Test using a namespaced static class
-		 */
-		public function testNamespacedStaticClassFilter()
-		{
-			$var = new Variable('var | static_test2');
-			$this->context->set('var', 1000);
-			$this->context->addFilters(NamespacedClassFilter::class);
-			$this->assertEquals('good 1000', $var->render($this->context));
-		}
+        /**
+         * Test using a namespaced static class
+         */
+        public function testNamespacedStaticClassFilter()
+        {
+            $var = new Variable('var | static_test2');
+            $this->context->set('var', 1000);
+            $this->context->addFilters(NamespacedClassFilter::class);
+            $this->assertEquals('good 1000', $var->render($this->context));
+        }
 
-		/**
-		 * Test using an invokable filter
-		 */
-		public function testInvokableFilter()
-		{
-			$var = new Variable("'gooba' | invokable");
-			$this->context->addFilters(Invokable::class);
-			$this->assertEquals('gooba', $var->render($this->context));
-		}
+        /**
+         * Test using an invokable filter
+         */
+        public function testInvokableFilter()
+        {
+            $var = new Variable("'gooba' | invokable");
+            $this->context->addFilters(Invokable::class);
+            $this->assertEquals('gooba', $var->render($this->context));
+        }
 
-		/**
-		 * Test using a static class
-		 */
-		public function testStaticClassFilter()
-		{
-			$var = new Variable('var | static_test');
-			$this->context->set('var', 1000);
-			$this->context->addFilters(\ClassFilter::class);
-			$this->assertEquals('worked', $var->render($this->context));
-		}
+        /**
+         * Test using a static class
+         */
+        public function testStaticClassFilter()
+        {
+            $var = new Variable('var | static_test');
+            $this->context->set('var', 1000);
+            $this->context->addFilters(\ClassFilter::class);
+            $this->assertEquals('worked', $var->render($this->context));
+        }
 
-		/**
-		 * Test with instance method on a static class
-		 */
-		public function testStaticMixedClassFilter()
-		{
-			$var = new Variable('var | instance_test_one');
-			$this->context->set('var', 'foo');
-			$this->context->addFilters(\ClassFilter::class);
-			$this->assertEquals('foo', $var->render($this->context));
-		}
+        /**
+         * Test with instance method on a static class
+         */
+        public function testStaticMixedClassFilter()
+        {
+            $var = new Variable('var | instance_test_one');
+            $this->context->set('var', 'foo');
+            $this->context->addFilters(\ClassFilter::class);
+            $this->assertEquals('foo', $var->render($this->context));
+        }
 
-		/**
-		 * Test using an object as a filter; an object fiter will retain its state
-		 * between calls to its filters.
-		 */
-		public function testObjectFilter()
-		{
-			$var = new Variable('var | instance_test_one');
-			$this->context->set('var', 1000);
-			$this->context->addFilters(new \ClassFilter());
-			$this->assertEquals('set', $var->render($this->context));
+        /**
+         * Test using an object as a filter; an object fiter will retain its state
+         * between calls to its filters.
+         */
+        public function testObjectFilter()
+        {
+            $var = new Variable('var | instance_test_one');
+            $this->context->set('var', 1000);
+            $this->context->addFilters(new \ClassFilter());
+            $this->assertEquals('set', $var->render($this->context));
 
-			$var = new Variable('var | instance_test_two');
-			$this->assertEquals('set', $var->render($this->context));
+            $var = new Variable('var | instance_test_two');
+            $this->assertEquals('set', $var->render($this->context));
 
-			$var = new Variable('var | static_test');
-			$this->assertEquals('worked', $var->render($this->context));
+            $var = new Variable('var | static_test');
+            $this->assertEquals('worked', $var->render($this->context));
 
-			$var = new Variable('var | __construct');
-			$this->assertEquals('1000', $var->render($this->context));
-		}
+            $var = new Variable('var | __construct');
+            $this->assertEquals('1000', $var->render($this->context));
+        }
 
-		public function testObjectFilterDontCallConstruct()
-		{
-			$this->context->set('var', 1000);
-			$this->context->addFilters(new \ClassFilter());
+        public function testObjectFilterDontCallConstruct()
+        {
+            $this->context->set('var', 1000);
+            $this->context->addFilters(new \ClassFilter());
 
-			$filterbankReflectionClass = new \ReflectionClass(Context::class);
-			$methodMapProperty = $filterbankReflectionClass->getProperty('filterbank');
-			$methodMapProperty->setAccessible(true);
-			$filterbank = $methodMapProperty->getValue($this->context);
+            $filterbankReflectionClass = new \ReflectionClass(Context::class);
+            $methodMapProperty = $filterbankReflectionClass->getProperty('filterbank');
+            $methodMapProperty->setAccessible(true);
+            $filterbank = $methodMapProperty->getValue($this->context);
 
-			$filterbankReflectionClass = new \ReflectionClass(Filterbank::class);
-			$methodMapProperty = $filterbankReflectionClass->getProperty('methodMap');
-			$methodMapProperty->setAccessible(true);
-			$methodMap = $methodMapProperty->getValue($filterbank);
+            $filterbankReflectionClass = new \ReflectionClass(Filterbank::class);
+            $methodMapProperty = $filterbankReflectionClass->getProperty('methodMap');
+            $methodMapProperty->setAccessible(true);
+            $methodMap = $methodMapProperty->getValue($filterbank);
 
-			$this->assertArrayNotHasKey('__construct', $methodMap);
+            $this->assertArrayNotHasKey('__construct', $methodMap);
 
-			$var = new Variable('var | __construct');
-			$this->assertEquals('1000', $var->render($this->context));
-		}
+            $var = new Variable('var | __construct');
+            $this->assertEquals('1000', $var->render($this->context));
+        }
 
-		public function testCallbackFilter()
-		{
-			$var = new Variable('var | my_callback');
-			$this->context->set('var', 1000);
-			$this->context->addFilters('my_callback', function ($var) {
-				return $var * 2;
-			});
-			$this->assertEquals('2000', $var->render($this->context));
-		}
+        public function testCallbackFilter()
+        {
+            $var = new Variable('var | my_callback');
+            $this->context->set('var', 1000);
+            $this->context->addFilters('my_callback', function ($var) {
+                return $var * 2;
+            });
+            $this->assertEquals('2000', $var->render($this->context));
+        }
 
-		/**
-		 * Closures are not to be serialized. Let's check that.
-		 */
-		public function testWithSerializingCache()
-		{
-			$template = new Template();
+        /**
+         * Closures are not to be serialized. Let's check that.
+         */
+        public function testWithSerializingCache()
+        {
+            $template = new Template();
 
-			$template->registerFilter('foo', function ($arg) {
-				return "Foo $arg";
-			});
+            $template->registerFilter('foo', function ($arg) {
+                return "Foo $arg";
+            });
 
-			$template->setCache(
-				new File(['cache_dir' => __DIR__ . '/cache_dir/']),
-			);
+            $template->setCache(
+                new File(['cache_dir' => __DIR__ . '/cache_dir/']),
+            );
 
-			$template->parse("{{'test' | foo }}");
+            $template->parse("{{'test' | foo }}");
 
-			$this->assertEquals('Foo test', $template->render());
+            $this->assertEquals('Foo test', $template->render());
 
-			$template->parse("{{'bar' | foo }}");
+            $template->parse("{{'bar' | foo }}");
 
-			$this->assertEquals('Foo bar', $template->render());
-		}
+            $this->assertEquals('Foo bar', $template->render());
+        }
 
-		protected function setUp(): void
-		{
-			parent::setUp();
+        protected function setUp(): void
+        {
+            parent::setUp();
 
-			$template = new Template();
+            $template = new Template();
 
-			$this->context = new Context($template);
-			$this->filterBank = new FilterBank($template, $this->context);
-		}
+            $this->context = new Context($template);
+            $this->filterBank = new FilterBank($template, $this->context);
+        }
 
-		protected function tearDown(): void
-		{
-			// have to destroy these else PHP goes nuts
-			unset($this->context);
-			unset($this->filterBank);
-		}
-	}
+        protected function tearDown(): void
+        {
+            // have to destroy these else PHP goes nuts
+            unset($this->context);
+            unset($this->filterBank);
+        }
+    }
 } // Liquid namespace

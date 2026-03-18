@@ -10,13 +10,13 @@
  */
 
 return [
-	'array' => range(1, 5),
-	'item' => [
-		'quantity' => 5,
-	],
-	'articles' => [
-		['title' => 1],
-		['title' => 2],
-		['title' => 3],
-	],
+    'array' => range(1, 5),
+    'item' => [
+        'quantity' => 5,
+    ],
+    'articles' => [
+        ['title' => 1],
+        ['title' => 2],
+        ['title' => 3],
+    ],
 ];

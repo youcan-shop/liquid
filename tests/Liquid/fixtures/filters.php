@@ -10,10 +10,10 @@
  */
 
 return [
-	'array' => ['z', 'g', 'n'],
-	'foobar' => "Foo\nBar",
-	'posts' => [
-		['id' => 2, 'title' => 'FooBar', 'tags' => ['foo', 'bar']],
-		['id' => 1, 'title' => 'BazBar', 'tags' => ['baz', 'bar']],
-	],
+    'array' => ['z', 'g', 'n'],
+    'foobar' => "Foo\nBar",
+    'posts' => [
+        ['id' => 2, 'title' => 'FooBar', 'tags' => ['foo', 'bar']],
+        ['id' => 1, 'title' => 'BazBar', 'tags' => ['baz', 'bar']],
+    ],
 ];

@@ -10,9 +10,9 @@
  */
 
 return [
-	'name' => 'Harald',
-	'company' => 'DELACAP',
-	'user' => [
-		'name' => 'Superuser',
-	],
+    'name' => 'Harald',
+    'company' => 'DELACAP',
+    'user' => [
+        'name' => 'Superuser',
+    ],
 ];

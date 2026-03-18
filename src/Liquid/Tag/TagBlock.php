@@ -26,28 +26,33 @@ use YouCan\Liquid\Template;
  */
 class TagBlock extends AbstractBlock
 {
-	/**
-	 * The variable to assign to
-	 *
-	 * @var string
-	 */
-	private string $block;
+    /**
+     * The variable to assign to
+     *
+     * @var string
+     */
+    private string $block;
 
-	/**
-	 * @throws ParseException
-	 */
-	public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
-	{
-		$syntaxRegexp = new Regexp('/(\w+)/');
+    /**
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     *
+     * @throws ParseException
+     */
+    public function __construct(Template $template, string $markup, array &$tokens, ?FileSystem $fileSystem = null)
+    {
+        $syntaxRegexp = new Regexp('/(\w+)/');
 
-		if ($syntaxRegexp->match($markup)) {
-			$this->block = $syntaxRegexp->matches[1];
+        if ($syntaxRegexp->match($markup)) {
+            $this->block = $syntaxRegexp->matches[1];
 
-			parent::__construct($template, $markup, $tokens, $fileSystem);
+            parent::__construct($template, $markup, $tokens, $fileSystem);
 
-			return;
-		}
+            return;
+        }
 
-		throw new ParseException("Syntax Error in 'block' - Valid syntax: block [name]");
-	}
+        throw new ParseException("Syntax Error in 'block' - Valid syntax: block [name]");
+    }
 }

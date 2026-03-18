@@ -10,9 +10,9 @@
  */
 
 return [
-	'generator' => call_user_func(function () {
-		yield 'a';
-		yield 'b';
-		yield 'c';
-	}),
+    'generator' => call_user_func(function () {
+        yield 'a';
+        yield 'b';
+        yield 'c';
+    }),
 ];

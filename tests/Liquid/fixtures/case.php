@@ -10,6 +10,6 @@
  */
 
 return [
-	'max' => 5,
-	'post' => ['date' => 'May 28, 2019'],
+    'max' => 5,
+    'post' => ['date' => 'May 28, 2019'],
 ];

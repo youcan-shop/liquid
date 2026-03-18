@@ -11,7 +11,6 @@
 
 namespace YouCan\Liquid\Tag;
 
-use SebastianBergmann\Template\Exception;
 use YouCan\Liquid\AbstractTag;
 use YouCan\Liquid\Context;
 use YouCan\Liquid\Exception\ParseException;
@@ -30,50 +29,51 @@ use YouCan\Liquid\Variable;
  */
 class TagAssign extends AbstractTag
 {
-	/**
-	 * @var string The variable to assign from
-	 */
-	private $from;
+    /**
+     * @var string The variable to assign from
+     */
+    private $from;
 
-	/**
-	 * @var string The variable to assign to
-	 */
-	private $to;
+    /**
+     * @var string The variable to assign to
+     */
+    private $to;
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $markup
-	 * @param array $tokens
-	 * @param FileSystem $fileSystem
-	 *
-	 * @throws \YouCan\Liquid\Exception\ParseException
-	 */
-	public function __construct(Template $template, $markup, array &$tokens, FileSystem $fileSystem = null)
-	{
-		$this->template = $template;
+    /**
+     * Constructor
+     *
+     * @param Template $template
+     * @param string $markup
+     * @param array $tokens
+     * @param FileSystem|null $fileSystem
+     *
+     * @throws ParseException
+     */
+    public function __construct(Template $template, $markup, array &$tokens, ?FileSystem $fileSystem = null)
+    {
+        $this->template = $template;
 
-		$syntaxRegexp = new Regexp('/(\w+)\s*=\s*(.*)\s*/');
+        $syntaxRegexp = new Regexp('/(\w+)\s*=\s*(.*)\s*/');
 
-		if ($syntaxRegexp->match($markup)) {
-			$this->to = $syntaxRegexp->matches[1];
-			$this->from = new Variable($syntaxRegexp->matches[2]);
-		} else {
-			throw new ParseException("Syntax Error in 'assign' - Valid syntax: assign [var] = [source]");
-		}
-	}
+        if ($syntaxRegexp->match($markup)) {
+            $this->to = $syntaxRegexp->matches[1];
+            $this->from = new Variable($syntaxRegexp->matches[2]);
+        } else {
+            throw new ParseException("Syntax Error in 'assign' - Valid syntax: assign [var] = [source]");
+        }
+    }
 
-	/**
-	 * Renders the tag
-	 *
-	 * @param Context $context
-	 *
-	 * @return string|void
-	 */
-	public function render(Context $context)
-	{
-		$output = $this->from->render($context);
+    /**
+     * Renders the tag
+     *
+     * @param Context $context
+     *
+     * @return string|void
+     */
+    public function render(Context $context)
+    {
+        $output = $this->from->render($context);
 
-		$context->set($this->to, $output, true);
-	}
+        $context->set($this->to, $output, true);
+    }
 }
