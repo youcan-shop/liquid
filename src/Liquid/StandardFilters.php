@@ -494,13 +494,13 @@ class StandardFilters
      * Remove a substring
      *
      * @param string $input
-     * @param string $string
+     * @param string|null $string
      *
      * @return string
      */
     public static function remove($input, $string)
     {
-        return str_replace($string, '', $input);
+        return self::replace($input, $string);
     }
 
 
@@ -525,15 +525,19 @@ class StandardFilters
     /**
      * Replace occurrences of a string with another
      *
-     * @param string $input
-     * @param string $string
-     * @param string $replacement
+     * @param string|array|null $input
+     * @param string|null $string
+     * @param string|null $replacement
      *
      * @return string
      */
     public static function replace($input, $string, $replacement = '')
     {
-        return str_replace($string, $replacement, $input);
+        if ($string === null) {
+            return $input;
+        }
+
+        return str_replace($string, (string) $replacement, is_array($input) ? $input : (string) $input);
     }
 
 
