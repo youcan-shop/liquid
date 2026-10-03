@@ -59,7 +59,7 @@ class AbstractBlock extends AbstractTag
     {
         $this->startRegexp ??= new Regexp('/^' . Liquid::get('TAG_START') . '/');
         $this->tagRegexp ??= new Regexp(
-            '/^' . Liquid::get('TAG_START') . Liquid::get('WHITESPACE_CONTROL') . '?\s*(\w+)\s*(.*?)' . Liquid::get('WHITESPACE_CONTROL') . '?' . Liquid::get('TAG_END') . '$/s',
+            '/^' . Liquid::get('TAG_START') . Liquid::get('WHITESPACE_CONTROL') . '?\s*(\w+|#)\s*(.*?)' . Liquid::get('WHITESPACE_CONTROL') . '?' . Liquid::get('TAG_END') . '$/s',
         );
         $this->variableStartRegexp ??= new Regexp('/^' . Liquid::get('VARIABLE_START') . '/');
 
@@ -81,6 +81,10 @@ class AbstractBlock extends AbstractTag
             if ($startRegexp->match($token)) {
                 $this->whitespaceHandler($token);
                 if ($tagRegexp->match($token)) {
+                    if ($tagRegexp->matches[1] === '#') {
+                        continue;
+                    }
+
                     // If we found the proper block delimitor just end parsing here and let the outer block proceed
                     if ($tagRegexp->matches[1] == $this->blockDelimiter()) {
                         $this->endTag();
