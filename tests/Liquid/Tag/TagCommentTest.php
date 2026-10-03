@@ -40,4 +40,14 @@ class TagCommentTest extends TestCase
 
         $this->assertTemplateResult('foobar', 'foo{%comment%} {%endcomment%}bar');
     }
+
+    public function testInlineCommentRendersNothing()
+    {
+        $this->assertTemplateResult('foobar', 'foo{% # a comment %}bar');
+        $this->assertTemplateResult('foobar', 'foo{%# a comment %}bar');
+        $this->assertTemplateResult('foobar', "foo {%- # a comment -%}\n bar");
+        $this->assertTemplateResult('foobar', "foo{% # one\n  # two %}bar");
+        $this->assertTemplateResult('foo', '{% # {{ x }} %}foo');
+        $this->assertTemplateResult('yes', '{% if true %}{% # inside a block %}yes{% endif %}');
+    }
 }
