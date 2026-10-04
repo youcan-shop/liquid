@@ -59,6 +59,10 @@ class Decision extends AbstractBlock
      */
     private function stringValue($value)
     {
+        if ($value instanceof \JsonSerializable) {
+            return json_decode(json_encode($value), true);
+        }
+
         // Objects should have a __toString method to get a value to compare to
         if (is_object($value)) {
             if (method_exists($value, '__toString')) {
