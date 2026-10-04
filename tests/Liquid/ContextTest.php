@@ -355,6 +355,21 @@ class ContextTest extends TestCase
         $this->assertEquals('2', $template->render(['lists' => [$menu('Main'), $menu('Footer')], 'main' => $menu('Main')]));
     }
 
+    public function testJsonSerializableValuesAreTruthyWithoutSerializing()
+    {
+        $drop = new class () extends Drop implements \JsonSerializable {
+            public function jsonSerialize(): array
+            {
+                throw new \LogicException('serialized');
+            }
+        };
+
+        $template = new Template();
+        $template->parse('{% if product %}yes{% endif %}{% unless product %}no{% endunless %}');
+
+        $this->assertEquals('yes', $template->render(['product' => $drop]));
+    }
+
     public function testOverrideFirst()
     {
         $this->context->set('array', [11, 'jack', 43, 'first' => 74, 5, 'tom']);

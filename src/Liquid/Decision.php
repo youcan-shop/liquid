@@ -100,9 +100,9 @@ class Decision extends AbstractBlock
     protected function interpretCondition($left, $right, $op, Context $context)
     {
         if (is_null($op)) {
-            $value = $this->stringValue($context->get($left));
+            $value = $context->get($left);
 
-            return $value;
+            return $value instanceof \JsonSerializable ? true : $this->stringValue($value);
         }
 
         // values of 'empty' have a special meaning in array comparisons
