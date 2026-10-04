@@ -32,16 +32,18 @@ class ApcTest extends TestCase
     {
         $this->assertTrue($this->cache->write('test', 'example'), "Failed to set value.");
         $this->assertSame('example', $this->cache->read('test'));
+        apcu_store('other_key', 'kept');
         $this->assertTrue($this->cache->flush());
         $this->assertFalse($this->cache->read('test'));
+        $this->assertSame('kept', apcu_fetch('other_key'));
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        if (!function_exists('apc_fetch')) {
-            $this->markTestSkipped("Alternative PHP Cache (APC) not available");
+        if (!function_exists('apcu_fetch')) {
+            $this->markTestSkipped("APCu not available");
         }
 
         if (!ini_get('apc.enable_cli')) {
