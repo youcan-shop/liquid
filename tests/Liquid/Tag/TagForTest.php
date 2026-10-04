@@ -221,4 +221,12 @@ XPCTD;
         $assigns = ['variable' => 100];
         $this->assertTemplateResult('9596979899100', '{%for i in (95..variable)%}{{i}}{%endfor%}', $assigns);
     }
+
+    public function testForWithBracketPath()
+    {
+        $assigns = ['c' => ['all' => [['n' => 'a'], ['n' => 'b']], 'L' => [[1, 2], [3, 4]]], 'i' => 1];
+
+        $this->assertTemplateResult('ab', "{% for x in c['all'] %}{{ x.n }}{% endfor %}", $assigns);
+        $this->assertTemplateResult('34', '{% for x in c.L[i] %}{{ x }}{% endfor %}', $assigns);
+    }
 }
