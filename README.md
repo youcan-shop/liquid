@@ -71,7 +71,7 @@ To release, run `./release.sh -p` (or `-m`, `-M`), then create the GitHub releas
 
 ## Credits
 
-Forked from [kalimatas/php-liquid](https://github.com/kalimatas/php-liquid).
+Originally based on [kalimatas/php-liquid](https://github.com/kalimatas/php-liquid).
 
 ## License
 
