@@ -102,7 +102,7 @@ class Decision extends AbstractBlock
         if (is_null($op)) {
             $value = $context->get($left);
 
-            return $value instanceof Drop && $value instanceof \JsonSerializable ? true : $this->stringValue($value);
+            return $value instanceof Drop ? true : $this->stringValue($value);
         }
 
         // values of 'empty' have a special meaning in array comparisons
