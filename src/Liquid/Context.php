@@ -202,13 +202,15 @@ class Context
 
             if (is_array($object)) {
                 // if the last part of the context variable is .first we return the first array element
-                if ($nextPartName == 'first' && count($parts) == 0 && !array_key_exists('first', $object)) {
-                    return StandardFilters::first($object);
+                if ($nextPartName == 'first' && !array_key_exists('first', $object)) {
+                    $object = StandardFilters::first($object);
+                    continue;
                 }
 
                 // if the last part of the context variable is .last we return the last array element
-                if ($nextPartName == 'last' && count($parts) == 0 && !array_key_exists('last', $object)) {
-                    return StandardFilters::last($object);
+                if ($nextPartName == 'last' && !array_key_exists('last', $object)) {
+                    $object = StandardFilters::last($object);
+                    continue;
                 }
 
                 // if the last part of the context variable is .size we just return the count
