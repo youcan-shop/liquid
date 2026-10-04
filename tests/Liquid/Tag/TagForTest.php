@@ -228,5 +228,6 @@ XPCTD;
 
         $this->assertTemplateResult('ab', "{% for x in c['all'] %}{{ x.n }}{% endfor %}", $assigns);
         $this->assertTemplateResult('34', '{% for x in c.L[i] %}{{ x }}{% endfor %}', $assigns);
+        $this->assertTemplateResult('ab', "{% for x in c[ 'all' ] %}{{ x.n }}{% endfor %}", $assigns);
     }
 }

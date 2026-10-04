@@ -59,4 +59,13 @@ class TagTablerowTest extends TestCase
 
         $this->assertTemplateResult('', '{%tablerow item in array%} yo {%endtablerow%}', ['array' => true]);
     }
+
+    public function testBracketPath()
+    {
+        $this->assertTemplateResult(
+            '<tr class="row1">' . "\n" . '<td class="col1">1</td><td class="col2">2</td></tr>' . "\n",
+            "{% tablerow x in c['L'] cols:2 %}{{ x }}{% endtablerow %}",
+            ['c' => ['L' => [1, 2]]],
+        );
+    }
 }

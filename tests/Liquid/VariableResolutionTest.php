@@ -69,6 +69,7 @@ class VariableResolutionTest extends TestCase
         $this->assertTemplateResult('A', '{{ c["all"].n }}', $assigns);
         $this->assertTemplateResult('X', "{{ c['my-x'].n }}", $assigns);
         $this->assertTemplateResult('X', '{{ c[k].n }}', $assigns);
+        $this->assertTemplateResult('X', "{{ c[ 'my-x' ].n }}", $assigns);
         $this->assertTemplateResult('one', "{{ c['L'][i].n }}", $assigns);
         $this->assertTemplateResult('AX', "{{ c['all'].n | append: c['my-x'].n }}", $assigns);
         $this->assertTemplateResult('y', "{% if c['all'].n == 'A' %}y{% endif %}", $assigns);
