@@ -59,6 +59,10 @@ class Decision extends AbstractBlock
      */
     private function stringValue($value)
     {
+        if ($value instanceof \JsonSerializable) {
+            return json_decode(json_encode($value), true);
+        }
+
         // Objects should have a __toString method to get a value to compare to
         if (is_object($value)) {
             if (method_exists($value, '__toString')) {
@@ -96,9 +100,9 @@ class Decision extends AbstractBlock
     protected function interpretCondition($left, $right, $op, Context $context)
     {
         if (is_null($op)) {
-            $value = $this->stringValue($context->get($left));
+            $value = $context->get($left);
 
-            return $value;
+            return $value instanceof \JsonSerializable ? true : $this->stringValue($value);
         }
 
         // values of 'empty' have a special meaning in array comparisons

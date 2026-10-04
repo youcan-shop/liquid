@@ -336,6 +336,40 @@ class ContextTest extends TestCase
         $this->assertNull($this->context->get('products.first.missing'));
     }
 
+    public function testJsonSerializableValuesCompareByValue()
+    {
+        $menu = fn(string $title) => new class ($title) extends Drop implements \JsonSerializable {
+            public function __construct(private string $title)
+            {
+            }
+
+            public function jsonSerialize(): array
+            {
+                return ['title' => $this->title];
+            }
+        };
+
+        $template = new Template();
+        $template->parse('{% for list in lists %}{% if list != main %}{{ forloop.index }}{% endif %}{% endfor %}');
+
+        $this->assertEquals('2', $template->render(['lists' => [$menu('Main'), $menu('Footer')], 'main' => $menu('Main')]));
+    }
+
+    public function testJsonSerializableValuesAreTruthyWithoutSerializing()
+    {
+        $drop = new class () extends Drop implements \JsonSerializable {
+            public function jsonSerialize(): array
+            {
+                throw new \LogicException('serialized');
+            }
+        };
+
+        $template = new Template();
+        $template->parse('{% if product %}yes{% endif %}{% unless product %}no{% endunless %}');
+
+        $this->assertEquals('yes', $template->render(['product' => $drop]));
+    }
+
     public function testOverrideFirst()
     {
         $this->context->set('array', [11, 'jack', 43, 'first' => 74, 5, 'tom']);
