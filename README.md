@@ -1,60 +1,84 @@
-# Liquid template engine for PHP [![CI](https://github.com/kalimatas/php-liquid/actions/workflows/tests.yaml/badge.svg)](https://github.com/kalimatas/php-liquid/actions/workflows/tests.yaml) [![Coverage Status](https://coveralls.io/repos/github/kalimatas/php-liquid/badge.svg?branch=master)](https://coveralls.io/github/kalimatas/php-liquid?branch=master) [![Total Downloads](https://poser.pugx.org/liquid/liquid/downloads.svg)](https://packagist.org/packages/liquid/liquid)
+# YouCan Liquid
 
-A PHP version of Ruby's Liquid Template Engine for YouCan Shop theme development.<br> Liquid allows you to create flexible and dynamic themes for [e-commerce stores](https://youcan.shop/en).
+The Liquid template engine that renders YouCan themes, in PHP.
 
-## Why Use Liquid?
+Theme developers write Liquid, not PHP. The theme docs are at [developer.youcan.shop/themes](https://developer.youcan.shop/themes/introduction).
 
-- Seperate compiling and rendering stages for improved performance.
-- Simple syntax for creating dynamic templates.
-- Create reusable components
+## Install
 
-
-## Installation
-
-Install via Composer:
+Requires PHP 8.0 or later.
 
 ```sh
-composer require liquid/liquid
+composer require youcanshop/liquid
 ```
 
-### Example Usage 
+## Usage
 
 ```php
-require 'vendor/autoload.php';
-use Liquid\Template;
+use YouCan\Liquid\Template;
 
 $template = new Template();
-$template->parse('Hello, {{ name }}!');
-echo $template->render(['name' => 'world']);
+$template->parse('Hello, {{ customer.name }}!');
+
+echo $template->render(['customer' => ['name' => 'Ada']]);
 ```
 
-## Creating YouCan Themes 
+A parsed template can be rendered many times with different data.
 
-Liquid uses a combination of [objects](https://developer.youcan.shop/themes/objects/introduction), [tags](https://developer.youcan.shop/themes/tags/if), and [filters](https://developer.youcan.shop/themes/filters/currency/money) inside template files to display dynamic content.
+Custom tags and filters are registered on the template:
 
-
-### What does it look like?
-
-  ```liquid
-    {% if user %}
-      <p>Welcome back, {{ user.name }}!</p> <!-- Outputs a welcome message if the user is logged in -->
-    {% else %}
-      <p>Welcome to our store!</p> <!-- Outputs a generic welcome message if the user is not logged in -->
-    {% endif %}
-  </header>
-
-  <main>
-    <h1>{{ product.title }}</h1> <!-- Outputs the product title -->
-    <p>{{ product.description }}</p> <!-- Outputs the product description -->
-    <p>Price: {{ product.price | money }}</p> <!-- Outputs the product price formatted as money -->
-  </main>
+```php
+$template->registerTag('section', SectionTag::class);
+$template->registerFilter('money', fn($amount) => number_format($amount, 2));
 ```
 
-1. **Output Tags `({{ }})`**: used to display content.
-2. **Logic Tags `({% %})`**: used to perform actions such as conditions and loops. 
-3. **Filters `(|)`**: used to format the output of variables 
-4. **Variables**: used to store data that can be rendered in templates.
+## Drops
 
+A drop is an object that computes its fields when a template reads them. A field that is never read is never loaded.
 
+```php
+use YouCan\Liquid\Drop;
 
-For more information, visit the [YouCan Theme Documentation](https://developer.youcan.shop/themes/introduction).
+class ProductDrop extends Drop
+{
+    public function __construct(private Product $product) {}
+
+    public function name(): string
+    {
+        return $this->product->name;
+    }
+
+    public function reviews(): array
+    {
+        return Review::forProduct($this->product->id);
+    }
+}
+```
+
+`hasKey()` and `invokeDrop()` can be overridden for drops whose keys are dynamic, such as a lookup by handle.
+
+## Behavior
+
+On top of standard Liquid:
+
+- `first` and `last` work inside a path: `collection.products.first.name`.
+- Keys can be quoted, numeric or variables: `collections['all']`, `products[0]`, `all_products[handle]`.
+- `map`, `sort` and `where` read fields of drops and of objects with `toLiquid()`.
+- Two drops compare equal when their values are equal, which needs the drop to implement `JsonSerializable`. Every drop is truthy.
+
+## Development
+
+```sh
+composer test
+vendor/bin/php-cs-fixer fix --dry-run --diff
+```
+
+Releases are git tags. `./release.sh -p`, `-m` or `-M` tags the next patch, minor or major version and pushes only that tag. Packagist picks the tag up, and a GitHub release is created for it with `gh release create <tag> --generate-notes`.
+
+## Credits
+
+This library started as a fork of [kalimatas/php-liquid](https://github.com/kalimatas/php-liquid).
+
+## License
+
+MIT, see [LICENSE](LICENSE).
