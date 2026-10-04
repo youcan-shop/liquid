@@ -95,7 +95,7 @@ else
   # 4) Push the new tag
 
   echo "Push the tag"
-  git push --tags origin main
+  git push origin "v$next_version"
 
   echo -e "\e[32mRelease done: $next_version\e[0m"
 fi
