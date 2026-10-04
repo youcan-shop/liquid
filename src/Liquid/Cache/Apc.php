@@ -34,8 +34,8 @@ class Apc extends Cache
     {
         parent::__construct($options);
 
-        if (!function_exists('apc_fetch')) {
-            throw new LiquidException(get_class($this) . ' requires PHP apc extension or similar to be loaded.');
+        if (!function_exists('apcu_fetch') || !apcu_enabled()) {
+            throw new LiquidException(get_class($this) . ' requires the PHP apcu extension to be loaded and enabled.');
         }
     }
 
@@ -44,7 +44,7 @@ class Apc extends Cache
      */
     public function read($key, $unserialize = true)
     {
-        return apc_fetch($this->prefix . $key);
+        return apcu_fetch($this->prefix . $key);
     }
 
     /**
@@ -52,9 +52,7 @@ class Apc extends Cache
      */
     public function exists($key)
     {
-        apc_fetch($this->prefix . $key, $success);
-
-        return (bool) $success;
+        return apcu_exists($this->prefix . $key);
     }
 
     /**
@@ -62,7 +60,7 @@ class Apc extends Cache
      */
     public function write($key, $value, $serialize = true)
     {
-        return apc_store($this->prefix . $key, $value, $this->expire);
+        return apcu_store($this->prefix . $key, $value, $this->expire);
     }
 
     /**
@@ -70,6 +68,6 @@ class Apc extends Cache
      */
     public function flush($expiredOnly = false)
     {
-        return apc_clear_cache('user');
+        return apcu_delete(new \APCUIterator('/^' . preg_quote($this->prefix, '/') . '/', APC_ITER_KEY)) !== false;
     }
 }
