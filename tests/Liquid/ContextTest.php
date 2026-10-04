@@ -370,6 +370,30 @@ class ContextTest extends TestCase
         $this->assertEquals('yes', $template->render(['product' => $drop]));
     }
 
+    public function testContainsOnSerializableCollectionsKeepsStringSemantics()
+    {
+        $blocks = new class ([['type' => 'title'], ['type' => 'buy_button']]) implements \JsonSerializable {
+            public function __construct(private array $items)
+            {
+            }
+
+            public function jsonSerialize(): array
+            {
+                return $this->items;
+            }
+
+            public function __toString(): string
+            {
+                return json_encode($this->items);
+            }
+        };
+
+        $template = new Template();
+        $template->parse("{% if blocks contains 'buy_button' %}yes{% else %}no{% endif %}");
+
+        $this->assertEquals('yes', $template->render(['blocks' => $blocks]));
+    }
+
     public function testOverrideFirst()
     {
         $this->context->set('array', [11, 'jack', 43, 'first' => 74, 5, 'tom']);
