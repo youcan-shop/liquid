@@ -878,7 +878,7 @@ class StandardFilters
      *
      * @return mixed
      */
-    private static function property($item, string $name)
+    public static function property($item, string $name)
     {
         if (is_object($item) && !$item instanceof Drop && method_exists($item, 'toLiquid')) {
             $item = $item->toLiquid();
