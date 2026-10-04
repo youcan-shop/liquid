@@ -17,7 +17,6 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - '7.4'
           - '8.0'
           - '8.1'
           - '8.2'
@@ -25,7 +24,7 @@ jobs:
           - '8.4'
           - '8.5'
         include:
-          - { php-version: '7.4', dependencies: '--prefer-lowest', legend: 'with lowest dependencies' }
+          - { php-version: '8.0', dependencies: '--prefer-lowest', legend: 'with lowest dependencies' }
 
     name: PHP ${{ matrix.php-version }} ${{ matrix.legend }}
 

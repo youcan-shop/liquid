@@ -326,6 +326,16 @@ class ContextTest extends TestCase
         $this->assertEquals(11, $this->context->get('array.first'));
     }
 
+    public function testFirstAndLastReadNestedProperties()
+    {
+        $this->context->set('products', [['name' => 'Tee', 'tags' => ['a', 'b']], ['name' => 'Cap', 'tags' => ['c']]]);
+
+        $this->assertEquals('Tee', $this->context->get('products.first.name'));
+        $this->assertEquals('Cap', $this->context->get('products.last.name'));
+        $this->assertEquals('b', $this->context->get('products.first.tags.last'));
+        $this->assertNull($this->context->get('products.first.missing'));
+    }
+
     public function testOverrideFirst()
     {
         $this->context->set('array', [11, 'jack', 43, 'first' => 74, 5, 'tom']);

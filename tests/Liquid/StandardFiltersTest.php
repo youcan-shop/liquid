@@ -1236,4 +1236,45 @@ class StandardFiltersTest extends TestCase
 
         $this->context = new Context(new Template());
     }
+
+    public function testPropertyFiltersReadLazyValuesAndDrops()
+    {
+        $lazy = fn($value) => new class ($value) {
+            public function __construct(private $value)
+            {
+            }
+
+            public function toLiquid()
+            {
+                return $this->value;
+            }
+        };
+
+        $drop = fn(array $fields) => new class ($fields) extends Drop {
+            public function __construct(private array $fields)
+            {
+            }
+
+            public function hasKey($name)
+            {
+                return array_key_exists($name, $this->fields);
+            }
+
+            public function invokeDrop($method)
+            {
+                return $this->fields[$method];
+            }
+        };
+
+        $items = [
+            ['name' => 'b', 'rating' => $lazy(4)],
+            $lazy(['name' => 'a', 'rating' => $lazy(5)]),
+            $drop(['name' => 'c', 'rating' => 1]),
+        ];
+
+        $this->assertSame(['b', 'a', 'c'], StandardFilters::map($items, 'name'));
+        $this->assertSame([4, 5, 1], StandardFilters::map($items, 'rating'));
+        $this->assertSame(['c', 'b', 'a'], StandardFilters::map(array_values(StandardFilters::sort($items, 'rating')), 'name'));
+        $this->assertSame(['a'], StandardFilters::map(StandardFilters::where($items, 'rating', '5'), 'name'));
+    }
 }
