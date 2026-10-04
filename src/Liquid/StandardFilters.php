@@ -252,9 +252,9 @@ class StandardFilters
         if (is_array($input)) {
             switch (count($args)) {
                 case 1:
-                    return array_values(array_filter($input, fn($v) => !in_array($v[$args[0]] ?? null, [null, false], true)));
+                    return array_values(array_filter($input, fn($v) => !in_array(self::property($v, $args[0]), [null, false], true)));
                 case 2:
-                    return array_values(array_filter($input, fn($v) => ($v[$args[0]] ?? '') == $args[1]));
+                    return array_values(array_filter($input, fn($v) => (self::property($v, $args[0]) ?? '') == $args[1]));
                 default:
                     throw new LiquidException('Wrong number of arguments to function `where`, given ' . count($args) . ', expected 1 or 2');
             }
@@ -412,11 +412,9 @@ class StandardFilters
         return array_map(function ($elem) use ($property) {
             if (is_callable($elem)) {
                 return $elem();
-            } elseif (is_array($elem) && array_key_exists($property, $elem)) {
-                return $elem[$property];
             }
 
-            return null;
+            return self::property($elem, $property);
         }, $input);
     }
 
@@ -675,13 +673,12 @@ class StandardFilters
             asort($input);
         } else {
             $first = reset($input);
-            if ($first !== false && is_array($first) && array_key_exists($property, $first)) {
+            if ($first !== false && self::property($first, $property) !== null) {
                 uasort($input, function ($a, $b) use ($property) {
-                    if (($a[$property] ?? 0) == ($b[$property] ?? 0)) {
-                        return 0;
-                    }
+                    $a = self::property($a, $property) ?? 0;
+                    $b = self::property($b, $property) ?? 0;
 
-                    return ($a[$property] ?? 0) < ($b[$property] ?? 0) ? -1 : 1;
+                    return $a == $b ? 0 : ($a < $b ? -1 : 1);
                 });
             }
         }
@@ -873,5 +870,28 @@ class StandardFilters
     public static function url_decode($input)
     {
         return urldecode($input);
+    }
+
+    /**
+     * @param mixed $item
+     * @param string $name
+     *
+     * @return mixed
+     */
+    private static function property($item, string $name)
+    {
+        if (is_object($item) && !$item instanceof Drop && method_exists($item, 'toLiquid')) {
+            $item = $item->toLiquid();
+        }
+
+        if ($item instanceof Drop) {
+            $value = $item->hasKey($name) ? $item->invokeDrop($name) : null;
+        } elseif (is_array($item) || $item instanceof \ArrayAccess) {
+            $value = $item[$name] ?? null;
+        } else {
+            $value = null;
+        }
+
+        return is_object($value) && !$value instanceof Drop && method_exists($value, 'toLiquid') ? $value->toLiquid() : $value;
     }
 }
