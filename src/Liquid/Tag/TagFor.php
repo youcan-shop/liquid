@@ -74,7 +74,7 @@ class TagFor extends AbstractBlock
     {
         parent::__construct($template, $markup, $tokens, $fileSystem);
 
-        $syntaxRegexp = new Regexp('/(\w+)\s+in\s+(' . Liquid::get('VARIABLE_NAME') . ')/');
+        $syntaxRegexp = new Regexp('/(\w+)\s+in\s+(' . Liquid::get('VARIABLE_PATH') . ')/');
 
         if ($syntaxRegexp->match($markup)) {
             $this->variableName = $syntaxRegexp->matches[1];

@@ -149,14 +149,21 @@ class Context
      */
     private function variable($key)
     {
-        // Support numeric and variable array indicies
-        if (preg_match("|\[[0-9]+\]|", $key)) {
-            $key = preg_replace("|\[([0-9]+)\]|", ".$1", $key);
-        } elseif (preg_match("|\[[0-9a-z._]+\]|", $key, $matches)) {
-            $index = $this->get(str_replace(["[", "]"], "", $matches[0]));
-            if (strlen($index)) {
-                $key = preg_replace("|\[([0-9a-z._]+)\]|", ".$index", $key);
-            }
+        // Support quoted, numeric and variable array indicies
+        if (str_contains($key, '[')) {
+            $key = preg_replace_callback('/\[([^\[\]]+)\]/', function (array $matches) {
+                $index = trim($matches[1]);
+
+                if (preg_match('/^([\'"])(.*)\1$/', $index, $quoted)) {
+                    return '.' . $quoted[2];
+                }
+
+                if (!preg_match('/^\d+$/', $index)) {
+                    $index = (string) $this->get($index);
+                }
+
+                return strlen($index) ? '.' . $index : $matches[0];
+            }, $key);
         }
 
         $parts = explode(Liquid::get('VARIABLE_ATTRIBUTE_SEPARATOR'), $key);
