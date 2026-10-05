@@ -92,7 +92,7 @@ class TagIf extends Decision
     {
         $context->push();
 
-        $logicalRegex = new Regexp('/\s+(and|or)\s+/');
+        $logicalRegex = new Regexp('/' . Liquid::get('QUOTED_STRING') . '(*SKIP)(*FAIL)|\s+(and|or)\s+/');
         $conditionalRegex = new Regexp('/(' . Liquid::get('QUOTED_FRAGMENT') . ')\s*([=!<>a-z_]+)?\s*(' . Liquid::get('QUOTED_FRAGMENT') . ')?/');
 
         $result = '';

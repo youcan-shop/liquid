@@ -94,6 +94,17 @@ HERE;
         $this->assertTemplateResult(' 0  0  1 ', '{%for item in array offset:1 limit:3%} {{forloop.last}} {%endfor%}', $assigns);
     }
 
+    public function testForElse()
+    {
+        $this->assertTemplateResult('123', '{%for i in a%}{{i}}{%else%}E{%endfor%}', ['a' => [1, 2, 3]]);
+        $this->assertTemplateResult('E', '{%for i in a%}{{i}}{%else%}E{%endfor%}', ['a' => []]);
+        $this->assertTemplateResult('E', '{%for i in a%}{{i}}{%else%}E{%endfor%}');
+        $this->assertTemplateResult('E', '{%for i in a offset:3%}{{i}}{%else%}E{%endfor%}', ['a' => [1, 2, 3]]);
+        $this->assertTemplateResult('E', '{%for i in (3..1)%}{{i}}{%else%}E{%endfor%}');
+        $this->assertTemplateResult('12', '{%for i in (1..2)%}{{i}}{%else%}E{%endfor%}');
+        $this->assertTemplateResult('EE', '{%for i in a%}{%for j in b%}{{j}}{%else%}E{%endfor%}{%else%}F{%endfor%}', ['a' => [1, 2], 'b' => []]);
+    }
+
     public function testForAndIf()
     {
         $assigns = ['array' => [1, 2, 3]];

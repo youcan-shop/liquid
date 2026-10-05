@@ -213,6 +213,13 @@ class TagIfTest extends TestCase
         $this->assertTemplateResult('true', '{% if 10 == 10 or "h" == "k" or "k" == "k" %}true{% else %}false{% endif %}');
     }
 
+    public function testLogicalOperatorsInsideStrings()
+    {
+        $this->assertTemplateResult('true', '{% assign x = "art and design" %}{% if x == "art and design" %}true{% else %}false{% endif %}');
+        $this->assertTemplateResult('true', "{% if 'a or b' == x and 1 == 1 %}true{% else %}false{% endif %}", ['x' => 'a or b']);
+        $this->assertTemplateResult('false', '{% unless x == "art and design" %}true{% else %}false{% endunless %}', ['x' => 'art and design']);
+    }
+
     public function testContains()
     {
         $this->assertTemplateResult('true', '{% if foo contains "h" %}true{% else %}false{% endif %}', ['foo' => ['k', 'h', 'z']]);

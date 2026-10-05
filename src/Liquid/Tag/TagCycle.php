@@ -64,7 +64,7 @@ class TagCycle extends AbstractTag
         $this->template = $template;
 
         $simpleSyntax = new Regexp("/" . Liquid::get('QUOTED_FRAGMENT') . "/");
-        $namedSyntax = new Regexp("/(" . Liquid::get('QUOTED_FRAGMENT') . ")\s*\:\s*(.*)/");
+        $namedSyntax = new Regexp("/^\s*(" . Liquid::get('QUOTED_FRAGMENT') . ")\s*\:\s*(.*)/");
 
         if ($namedSyntax->match($markup)) {
             $this->variables = $this->variablesFromString($namedSyntax->matches[2]);

@@ -177,7 +177,7 @@ class StandardFilters
      *
      * @return string
      */
-    public static function _default($input, $default_value)
+    public static function _default($input, $default_value = '')
     {
         $isBlank = $input == '' || $input === false || $input === null;
 
@@ -771,6 +771,26 @@ class StandardFilters
     public static function times($input, $operand)
     {
         return (float) $input * (float) $operand;
+    }
+
+
+    /**
+     * @param array|\Traversable $input
+     * @param string|null $property
+     *
+     * @return int|float
+     */
+    public static function sum($input, $property = null)
+    {
+        if ($input instanceof \Traversable) {
+            $input = iterator_to_array($input);
+        }
+
+        $values = $property === null
+            ? Liquid::arrayFlatten((array) $input)
+            : array_map(fn($item) => self::property($item, $property), (array) $input);
+
+        return array_sum(array_map(fn($value) => is_numeric($value) ? $value + 0 : 0, $values));
     }
 
 
