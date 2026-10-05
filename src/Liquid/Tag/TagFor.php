@@ -61,6 +61,7 @@ class TagFor extends AbstractBlock
      */
     private $type = 'collection';
 
+    private ?array $elseNodelist = null;
 
     /**
      * @param Template $template
@@ -94,6 +95,28 @@ class TagFor extends AbstractBlock
                 throw new ParseException("Syntax Error in 'for loop' - Valid syntax: for [item] in [collection]");
             }
         }
+    }
+
+    protected function unknownTag($tag, $params, array $tokens)
+    {
+        if ($tag != 'else') {
+            parent::unknownTag($tag, $params, $tokens);
+        }
+
+        $this->elseNodelist = $this->nodelist;
+        $this->nodelist = [];
+    }
+
+    protected function endTag()
+    {
+        if ($this->elseNodelist !== null) {
+            [$this->nodelist, $this->elseNodelist] = [$this->elseNodelist, $this->nodelist];
+        }
+    }
+
+    private function renderElse(Context $context)
+    {
+        return $this->renderAll($this->elseNodelist ?? [], $context);
     }
 
     /**
@@ -130,6 +153,10 @@ class TagFor extends AbstractBlock
         }
 
         $range = [$start, $end];
+
+        if ($range[0] > $range[1]) {
+            return $this->renderElse($context);
+        }
 
         $context->push();
         $result = '';
@@ -171,7 +198,7 @@ class TagFor extends AbstractBlock
         $collection = $context->get($this->collectionName);
 
         if ($collection instanceof \Generator && !$collection->valid()) {
-            return '';
+            return $this->renderElse($context);
         }
 
         if ($collection instanceof \Traversable) {
@@ -179,7 +206,7 @@ class TagFor extends AbstractBlock
         }
 
         if (is_null($collection) || !is_array($collection) || count($collection) == 0) {
-            return '';
+            return $this->renderElse($context);
         }
 
         $range = [0, count($collection)];
@@ -201,7 +228,7 @@ class TagFor extends AbstractBlock
         $result = '';
         $segment = array_slice($collection, $range[0], $range[1]);
         if (!count($segment)) {
-            return null;
+            return $this->renderElse($context);
         }
 
         $context->push();
