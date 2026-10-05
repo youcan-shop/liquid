@@ -788,9 +788,9 @@ class StandardFilters
 
         $values = $property === null
             ? Liquid::arrayFlatten((array) $input)
-            : array_map(fn ($item) => self::property($item, $property), (array) $input);
+            : array_map(fn($item) => self::property($item, $property), (array) $input);
 
-        return array_sum(array_map(fn ($value) => is_numeric($value) ? $value + 0 : 0, $values));
+        return array_sum(array_map(fn($value) => is_numeric($value) ? $value + 0 : 0, $values));
     }
 
 
