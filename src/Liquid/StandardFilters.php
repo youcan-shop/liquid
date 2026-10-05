@@ -177,7 +177,7 @@ class StandardFilters
      *
      * @return string
      */
-    public static function _default($input, $default_value)
+    public static function _default($input, $default_value = '')
     {
         $isBlank = $input == '' || $input === false || $input === null;
 

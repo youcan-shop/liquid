@@ -643,6 +643,8 @@ class StandardFiltersTest extends TestCase
         $this->assertEquals('world', StandardFilters::_default('world', 'hello'));
         // check that our workaround for 'default' works as it should
         $this->assertTemplateResult('something', '{{ nothing | default: "something" }}');
+        $this->assertTemplateResult('x', '{{ "x" | default }}');
+        $this->assertTemplateResult('', '{{ nothing | default }}');
     }
 
     /*
