@@ -225,6 +225,10 @@ class Context
                     return count($object);
                 }
 
+                if (preg_match('/^-\d+$/', $nextPartName) && !array_key_exists($nextPartName, $object)) {
+                    $nextPartName = count($object) + $nextPartName;
+                }
+
                 // no key - no value
                 if (!array_key_exists($nextPartName, $object)) {
                     return null;

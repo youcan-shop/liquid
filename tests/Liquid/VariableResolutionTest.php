@@ -61,6 +61,14 @@ class VariableResolutionTest extends TestCase
         $this->assertEquals('Mon Tue Wed Thu Fri Sat Sun ', $template->render());
     }
 
+    public function testNegativeArrayIndices()
+    {
+        $assigns = ['a' => [1, 2, 3], 'i' => -2, 'h' => ['-1' => 'x']];
+
+        $this->assertTemplateResult('3|2|2|1|', '{{ a[-1] }}|{{ a[-2] }}|{{ a[i] }}|{{ a[-3] }}|{{ a[-4] }}', $assigns);
+        $this->assertTemplateResult('x', '{{ h[-1] }}', $assigns);
+    }
+
     public function testQuotedArrayKeys()
     {
         $assigns = ['c' => ['all' => ['n' => 'A'], 'my-x' => ['n' => 'X'], 'L' => [['n' => 'zero'], ['n' => 'one']]], 'k' => 'my-x', 'i' => 1];
