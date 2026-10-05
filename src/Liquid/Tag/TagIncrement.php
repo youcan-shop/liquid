@@ -67,23 +67,13 @@ class TagIncrement extends AbstractTag
      *
      * @param Context $context
      *
-     * @return string|void
+     * @return int
      */
     public function render(Context $context)
     {
-        // If the value is not set in the environment check to see if it
-        // exists in the context, and if not set it to -1
-        if (!isset($context->environments[0][$this->toIncrement])) {
-            // check for a context value
-            $from_context = $context->get($this->toIncrement);
+        $value = $context->environments[0][$this->toIncrement] ?? 0;
+        $context->environments[0][$this->toIncrement] = $value + 1;
 
-            // we already have a value in the context
-            $context->environments[0][$this->toIncrement] = (null !== $from_context) ? $from_context : -1;
-        }
-
-        // Increment the value
-        $context->environments[0][$this->toIncrement]++;
-
-        return '';
+        return $value;
     }
 }

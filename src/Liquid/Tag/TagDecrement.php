@@ -67,23 +67,10 @@ class TagDecrement extends AbstractTag
      *
      * @param Context $context
      *
-     * @return string|void
+     * @return int
      */
     public function render(Context $context)
     {
-        // if the value is not set in the environment check to see if it
-        // exists in the context, and if not set it to 0
-        if (!isset($context->environments[0][$this->toDecrement])) {
-            // check for a context value
-            $fromContext = $context->get($this->toDecrement);
-
-            // we already have a value in the context
-            $context->environments[0][$this->toDecrement] = (null !== $fromContext) ? $fromContext : 0;
-        }
-
-        // decrement the environment value
-        $context->environments[0][$this->toDecrement]--;
-
-        return '';
+        return $context->environments[0][$this->toDecrement] = ($context->environments[0][$this->toDecrement] ?? 0) - 1;
     }
 }

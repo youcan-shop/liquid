@@ -325,14 +325,7 @@ class Context
      */
     private function fetch($key)
     {
-        // TagDecrement depends on environments being checked before assigns
-        foreach ($this->environments as $environment) {
-            if (array_key_exists($key, $environment)) {
-                return $environment[$key];
-            }
-        }
-
-        foreach ($this->assigns as $scope) {
+        foreach ([$this->environments[1], ...$this->assigns, $this->environments[0]] as $scope) {
             if (array_key_exists($key, $scope)) {
                 $obj = $scope[$key];
 

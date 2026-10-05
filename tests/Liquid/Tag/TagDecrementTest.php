@@ -24,26 +24,24 @@ class TagDecrementTest extends TestCase
         $this->assertTemplateResult('', '{% decrement %}');
     }
 
-    /**
-     * Undefined variable will become -1
-     */
     public function testDecrementNonExistingVariable()
     {
-        $this->assertTemplateResult(-1, '{% decrement no_such_var %}{{ no_such_var }}');
+        $this->assertTemplateResult('-1-1', '{% decrement no_such_var %}{{ no_such_var }}');
+        $this->assertTemplateResult('-1 -2 -2', '{% decrement var %} {% decrement var %} {{ var }}');
     }
 
-    public function testDecrementVariable()
+    public function testDecrementSeparateFromAssign()
     {
-        $this->assertTemplateResult(42, '{% decrement var %}{{ var }}', ['var' => 43]);
+        $this->assertTemplateResult('-1-243', '{% assign var = 43 %}{% decrement var %}{% decrement var %}{{ var }}');
     }
 
     public function testDecrementNestedVariable()
     {
-        $this->assertTemplateResult(42, '{% for var in vars %}{% decrement var %}{{ var }}{% endfor %}', ['vars' => [43]]);
+        $this->assertTemplateResult('-143', '{% for var in vars %}{% decrement var %}{{ var }}{% endfor %}', ['vars' => [43]]);
     }
 
     public function testVariableNameContainingNumber()
     {
-        $this->assertTemplateResult(42, '{% decrement var123 %}{{ var123 }}', ['var123' => 43]);
+        $this->assertTemplateResult('-1-2', '{% decrement var123 %}{% decrement var123 %}');
     }
 }
