@@ -103,7 +103,9 @@ class AbstractBlock extends AbstractTag
                         }
 
                         if ($tagName !== null) {
-                            $this->nodelist[] = new $tagName($this->template, $tagRegexp->matches[2], $tokens, $this->fileSystem);
+                            $node = new $tagName($this->template, $tagRegexp->matches[2], $tokens, $this->fileSystem);
+                            $node->templateLine = $line;
+                            $this->nodelist[] = $node;
                             if ($tagRegexp->matches[1] == 'extends') {
                                 return;
                             }
@@ -115,7 +117,7 @@ class AbstractBlock extends AbstractTag
                     }
                 } elseif ($variableStartRegexp->match($token)) {
                     $this->whitespaceHandler($token);
-                    $this->nodelist[] = $this->createVariable($token);
+                    $this->nodelist[] = $this->createVariable($token, $line);
                 } else {
                     // This is neither a tag or a variable, proceed with an ltrim
                     if (self::$trimWhitespace) {
@@ -215,18 +217,19 @@ class AbstractBlock extends AbstractTag
      * Create a variable for the given token
      *
      * @param string $token
+     * @param int|null $line
      *
      * @return Variable
      * @throws \YouCan\Liquid\Exception\ParseException
      */
-    private function createVariable($token)
+    private function createVariable($token, ?int $line)
     {
         $this->variableRegexp ??= new Regexp(
             '/^' . Liquid::get('VARIABLE_START') . Liquid::get('WHITESPACE_CONTROL') . '?(.*?)' . Liquid::get('WHITESPACE_CONTROL') . '?' . Liquid::get('VARIABLE_END') . '$/s',
         );
 
         if ($this->variableRegexp->match($token)) {
-            return new Variable($this->variableRegexp->matches[1]);
+            return new Variable($this->variableRegexp->matches[1], $line);
         }
 
         throw new ParseException("Variable $token was not properly terminated");
@@ -270,7 +273,11 @@ class AbstractBlock extends AbstractTag
 
         foreach ($list as $token) {
             if (is_object($token) && method_exists($token, 'render')) {
-                $value = $token->render($context);
+                try {
+                    $value = $token->render($context);
+                } catch (LiquidException $e) {
+                    throw $e->setTemplateLine($token->getTemplateLine());
+                }
             } else {
                 $value = $token;
             }

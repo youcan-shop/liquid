@@ -43,6 +43,8 @@ abstract class AbstractTag
 
     protected Template $template;
 
+    protected ?int $templateLine = null;
+
     /**
      * @param Template $template
      * @param string $markup
@@ -61,6 +63,11 @@ abstract class AbstractTag
         $this->config = &Liquid::$config;
 
         $this->parse($tokens);
+    }
+
+    public function getTemplateLine(): ?int
+    {
+        return $this->templateLine;
     }
 
     /**
