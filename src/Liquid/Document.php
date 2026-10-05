@@ -30,7 +30,20 @@ class Document extends AbstractBlock
         array &$tokens,
         ?FileSystem $fileSystem = null
     ) {
-        parent::__construct($template, '', $tokens, $fileSystem);
+        $line = 1;
+        $lines = [];
+        foreach ($tokens as $i => $token) {
+            $lines[$i] = $line;
+            $line += substr_count((string) $token, "\n");
+        }
+
+        $previous = $template->swapLines($lines);
+
+        try {
+            parent::__construct($template, '', $tokens, $fileSystem);
+        } finally {
+            $template->swapLines($previous);
+        }
     }
 
     /**

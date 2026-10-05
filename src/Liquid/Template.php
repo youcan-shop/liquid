@@ -52,6 +52,8 @@ class Template
      */
     private $tickFunction = null;
 
+    private array $lines = [];
+
     /**
      * Constructor.
      *
@@ -99,6 +101,18 @@ class Template
         if (is_null($cache)) {
             self::$cache = null;
         }
+    }
+
+    public function swapLines(array $lines): array
+    {
+        [$previous, $this->lines] = [$this->lines, $lines];
+
+        return $previous;
+    }
+
+    public function getTokenLine(int $index): ?int
+    {
+        return $this->lines[$index] ?? null;
     }
 
     public function getTags(): array

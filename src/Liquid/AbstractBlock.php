@@ -77,51 +77,56 @@ class AbstractBlock extends AbstractTag
             }
             $token = $tokens[$i];
             $tokens[$i] = null;
+            $line = $this->template->getTokenLine($i);
 
-            if ($startRegexp->match($token)) {
-                $this->whitespaceHandler($token);
-                if ($tagRegexp->match($token)) {
-                    if ($tagRegexp->matches[1] === '#') {
-                        continue;
-                    }
+            try {
+                if ($startRegexp->match($token)) {
+                    $this->whitespaceHandler($token);
+                    if ($tagRegexp->match($token)) {
+                        if ($tagRegexp->matches[1] === '#') {
+                            continue;
+                        }
 
-                    // If we found the proper block delimitor just end parsing here and let the outer block proceed
-                    if ($tagRegexp->matches[1] == $this->blockDelimiter()) {
-                        $this->endTag();
+                        // If we found the proper block delimitor just end parsing here and let the outer block proceed
+                        if ($tagRegexp->matches[1] == $this->blockDelimiter()) {
+                            $this->endTag();
 
-                        return;
-                    }
-
-                    $tagName = null;
-                    if (array_key_exists($tagRegexp->matches[1], $tags)) {
-                        $tagName = $tags[$tagRegexp->matches[1]];
-                    } else {
-                        $tagName = self::TAG_PREFIX . ucwords($tagRegexp->matches[1]);
-                        $tagName = (class_exists($tagName) === true) ? $tagName : null;
-                    }
-
-                    if ($tagName !== null) {
-                        $this->nodelist[] = new $tagName($this->template, $tagRegexp->matches[2], $tokens, $this->fileSystem);
-                        if ($tagRegexp->matches[1] == 'extends') {
                             return;
                         }
-                    } else {
-                        $this->unknownTag($tagRegexp->matches[1], $tagRegexp->matches[2], $tokens);
-                    }
-                } else {
-                    throw new ParseException("Tag $token was not properly terminated (won't match $tagRegexp)");
-                }
-            } elseif ($variableStartRegexp->match($token)) {
-                $this->whitespaceHandler($token);
-                $this->nodelist[] = $this->createVariable($token);
-            } else {
-                // This is neither a tag or a variable, proceed with an ltrim
-                if (self::$trimWhitespace) {
-                    $token = ltrim($token);
-                }
 
-                self::$trimWhitespace = false;
-                $this->nodelist[] = $token;
+                        $tagName = null;
+                        if (array_key_exists($tagRegexp->matches[1], $tags)) {
+                            $tagName = $tags[$tagRegexp->matches[1]];
+                        } else {
+                            $tagName = self::TAG_PREFIX . ucwords($tagRegexp->matches[1]);
+                            $tagName = (class_exists($tagName) === true) ? $tagName : null;
+                        }
+
+                        if ($tagName !== null) {
+                            $this->nodelist[] = new $tagName($this->template, $tagRegexp->matches[2], $tokens, $this->fileSystem);
+                            if ($tagRegexp->matches[1] == 'extends') {
+                                return;
+                            }
+                        } else {
+                            $this->unknownTag($tagRegexp->matches[1], $tagRegexp->matches[2], $tokens);
+                        }
+                    } else {
+                        throw new ParseException("Tag $token was not properly terminated (won't match $tagRegexp)");
+                    }
+                } elseif ($variableStartRegexp->match($token)) {
+                    $this->whitespaceHandler($token);
+                    $this->nodelist[] = $this->createVariable($token);
+                } else {
+                    // This is neither a tag or a variable, proceed with an ltrim
+                    if (self::$trimWhitespace) {
+                        $token = ltrim($token);
+                    }
+
+                    self::$trimWhitespace = false;
+                    $this->nodelist[] = $token;
+                }
+            } catch (LiquidException $e) {
+                throw $e->setTemplateLine($line);
             }
         }
 
