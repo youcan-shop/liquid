@@ -189,11 +189,26 @@ class StandardFilters
      * @param float $input
      * @param float $operand
      *
-     * @return float
+     * @return int|float
      */
     public static function divided_by($input, $operand)
     {
+        if (self::isInteger($input) && self::isInteger($operand)) {
+            return (int) floor((int) $input / (int) $operand);
+        }
+
         return (float) $input / (float) $operand;
+    }
+
+
+    /**
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    private static function isInteger($value)
+    {
+        return is_int($value) || is_string($value) && !str_contains($value, '.');
     }
 
 

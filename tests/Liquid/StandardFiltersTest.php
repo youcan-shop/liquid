@@ -1070,7 +1070,7 @@ class StandardFiltersTest extends TestCase
             ],
             [
                 10,
-                20,
+                20.0,
                 0.5,
             ],
             [
@@ -1088,6 +1088,17 @@ class StandardFiltersTest extends TestCase
         foreach ($data as $item) {
             $this->assertEqualsWithDelta($item[2], StandardFilters::divided_by($item[0], $item[1]), 0.00001);
         }
+    }
+
+    public function testDivideByIntegers()
+    {
+        $this->assertSame(3, StandardFilters::divided_by(7, 2));
+        $this->assertSame(-4, StandardFilters::divided_by(-7, 2));
+        $this->assertSame(3, StandardFilters::divided_by('7', '2'));
+        $this->assertSame(3.5, StandardFilters::divided_by(7, 2.0));
+        $this->assertSame(3.5, StandardFilters::divided_by('7.0', 2));
+        $this->assertSame(3.5, StandardFilters::divided_by(7, '2.0'));
+        $this->assertTemplateResult('3|-4|3.5|0', '{{ 7 | divided_by: 2 }}|{{ -7 | divided_by: 2 }}|{{ 7 | divided_by: 2.0 }}|{{ 1 | divided_by: 3 }}');
     }
 
     public function testModulo()
