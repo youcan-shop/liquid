@@ -767,6 +767,18 @@ class StandardFiltersTest extends TestCase
                 ['from function ', 'value ', null],
             ],
             [
+                ['attr' => 'value '],
+                ['value '],
+            ],
+            [
+                new \ArrayIterator(['attr' => 'value ']),
+                ['value '],
+            ],
+            [
+                [3 => ['attr' => 'value ']],
+                [3 => 'value '],
+            ],
+            [
                 0,
                 0,
             ],
@@ -779,6 +791,8 @@ class StandardFiltersTest extends TestCase
             }
             $this->assertEquals($item[1], $actual);
         }
+
+        $this->assertTemplateResult('1', '{{ h | map: "a" }}', ['h' => ['a' => 1]]);
     }
 
     public function testFirst()

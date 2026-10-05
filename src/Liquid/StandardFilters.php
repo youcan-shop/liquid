@@ -421,6 +421,9 @@ class StandardFilters
         if (!is_array($input)) {
             return $input;
         }
+        if (array_filter(array_keys($input), 'is_string')) {
+            $input = [$input];
+        }
 
         return array_map(function ($elem) use ($property) {
             if (is_callable($elem)) {
