@@ -627,6 +627,16 @@ class StandardFiltersTest extends TestCase
         $this->assertEquals($expected, array_values(StandardFilters::sort(new \ArrayIterator($original), 'b')));
     }
 
+    public function testSum()
+    {
+        $this->assertTemplateResult('6', '{{ a | sum }}', ['a' => [1, 2, 3]]);
+        $this->assertTemplateResult('6', '{{ a | sum }}', ['a' => [1, [2, [3]]]]);
+        $this->assertTemplateResult('3.5', '{{ a | sum }}', ['a' => [1, '2.5', 'x', null, true]]);
+        $this->assertTemplateResult('3', '{{ p | sum: "n" }}', ['p' => [['n' => 1], ['n' => 2], ['m' => 5], ['n' => 'x']]]);
+        $this->assertTemplateResult('3', '{{ p | sum: "n" }}', ['p' => new \ArrayIterator([['n' => 1], ['n' => 2]])]);
+        $this->assertTemplateResult('0', '{{ nothing | sum }}');
+    }
+
     public function testDefault()
     {
         $this->assertEquals('hello', StandardFilters::_default('', 'hello'));

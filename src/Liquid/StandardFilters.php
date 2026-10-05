@@ -775,6 +775,26 @@ class StandardFilters
 
 
     /**
+     * @param array|\Traversable $input
+     * @param string|null $property
+     *
+     * @return int|float
+     */
+    public static function sum($input, $property = null)
+    {
+        if ($input instanceof \Traversable) {
+            $input = iterator_to_array($input);
+        }
+
+        $values = $property === null
+            ? Liquid::arrayFlatten((array) $input)
+            : array_map(fn ($item) => self::property($item, $property), (array) $input);
+
+        return array_sum(array_map(fn ($value) => is_numeric($value) ? $value + 0 : 0, $values));
+    }
+
+
+    /**
      * Truncate a string down to x characters
      *
      * @param string $input
