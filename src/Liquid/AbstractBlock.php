@@ -271,7 +271,7 @@ class AbstractBlock extends AbstractTag
             }
 
             if (is_array($value)) {
-                $value = htmlspecialchars(implode($value));
+                $value = htmlspecialchars(implode(Liquid::arrayFlatten($value)));
             }
 
             $result .= $value;

@@ -80,6 +80,12 @@ class OutputTest extends TestCase
         $this->assertTemplateResult($expected, $text, $this->assigns);
     }
 
+    public function testNestedArray()
+    {
+        $this->assertTemplateResult('12', '{{ n }}', ['n' => [[1], [2]]]);
+        $this->assertTemplateResult('123', '{{ n }}', ['n' => [1, [2, [3]]]]);
+    }
+
     public function testVariableTrasversing()
     {
         $text = " {{car.bmw}} {{car.gm}} {{car.bmw}} ";
