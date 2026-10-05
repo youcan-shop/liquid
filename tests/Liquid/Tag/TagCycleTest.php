@@ -55,4 +55,10 @@ class TagCycleTest extends TestCase
             $assigns,
         );
     }
+
+    public function testColonInsideQuotedValue()
+    {
+        $this->assertTemplateResult('a:b c a:b', '{%cycle "a:b", "c"%} {%cycle "a:b", "c"%} {%cycle "a:b", "c"%}');
+        $this->assertTemplateResult('a:b a:b', '{%cycle 1: "a:b", "c"%} {%cycle 2: "a:b", "c"%}');
+    }
 }
