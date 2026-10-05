@@ -122,11 +122,13 @@ class StandardFiltersTest extends TestCase
     public function testCapitalize()
     {
         $data = [
-            'one Word not'          => 'One Word Not',
-            '1test'                 => '1Test',
+            'one Word not'          => 'One word not',
+            'hELLO wORLD'           => 'Hello world',
+            '1test'                 => '1test',
             ''                      => '',
             // UTF-8
-            'владимир владимирович' => 'Владимир Владимирович',
+            'владимир ВЛАДИМИРОВИЧ' => 'Владимир владимирович',
+            'éTÉ'                   => 'Été',
         ];
 
         foreach ($data as $element => $expected) {
@@ -378,7 +380,7 @@ class StandardFiltersTest extends TestCase
 
     public function testSlice()
     {
-        // Slice up to the end
+        // Slice one element by default
         $data = [
             [
                 [],
@@ -394,15 +396,15 @@ class StandardFiltersTest extends TestCase
             ],
             [
                 [1, 2, 3, 4, 5],
-                [3, 4, 5],
+                [3],
             ],
             [
                 new \ArrayIterator([1, 2, 3, 4, 5]),
-                [3, 4, 5],
+                [3],
             ],
             [
                 '12345',
-                '345',
+                '3',
             ],
             [
                 100,
@@ -463,6 +465,11 @@ class StandardFiltersTest extends TestCase
         }
 
         $this->assertEquals('Владимир', StandardFilters::slice('Владимир Владимирович', 0, 8));
+        $this->assertEquals('ui', StandardFilters::slice('Liquid', -3, 2));
+        $this->assertEquals([3, 4], StandardFilters::slice([1, 2, 3, 4], -2, 2));
+        $this->assertEquals('d', StandardFilters::slice('Liquid', -1));
+        $this->assertEquals('', StandardFilters::slice('Liquid', 10));
+        $this->assertTemplateResult('H|ui|4', '{{ "Hello" | slice: 0 }}|{{ "Liquid" | slice: -3, 2 }}|{{ a | slice: -1 | join: "," }}', ['a' => [1, 2, 3, 4]]);
     }
 
     public function testTruncate()
@@ -470,7 +477,8 @@ class StandardFiltersTest extends TestCase
         // Truncate with default ending
         $data = [
             ''                   => '',
-            str_repeat('a', 150) => str_repeat('a', 100) . '...',
+            str_repeat('a', 150) => str_repeat('a', 97) . '...',
+            str_repeat('a', 100) => str_repeat('a', 100),
             'test'               => 'test',
             3                    => 3,
         ];
@@ -480,13 +488,18 @@ class StandardFiltersTest extends TestCase
         }
 
         // Custom length
-        $this->assertEquals('abc...', StandardFilters::truncate('abcdef', 3));
+        $this->assertEquals('abc...', StandardFilters::truncate('abcdefg', 6));
+        $this->assertEquals('...', StandardFilters::truncate('abcdef', 2));
 
         // Custom ending
-        $this->assertEquals('abcend', StandardFilters::truncate('abcdef', 3, 'end'));
+        $this->assertEquals('abend', StandardFilters::truncate('abcdef', 5, 'end'));
+        $this->assertEquals('abcde', StandardFilters::truncate('abcdef', 5, ''));
 
         // UTF-8
-        $this->assertEquals('Влад...', StandardFilters::truncate('Владимир Владимирович', 4));
+        $this->assertEquals('Влад...', StandardFilters::truncate('Владимир Владимирович', 7));
+        $this->assertEquals('Владимир', StandardFilters::truncate('Владимир', 8));
+
+        $this->assertTemplateResult('Ground control to...', '{{ "Ground control to Major Tom." | truncate: 20 }}');
     }
 
     public function testTruncateWords()
@@ -645,6 +658,13 @@ class StandardFiltersTest extends TestCase
         $this->assertTemplateResult('something', '{{ nothing | default: "something" }}');
         $this->assertTemplateResult('x', '{{ "x" | default }}');
         $this->assertTemplateResult('', '{{ nothing | default }}');
+
+        $this->assertSame('hello', StandardFilters::_default(false, 'hello'));
+        $this->assertFalse(StandardFilters::_default(false, 'hello', ['allow_false' => true]));
+        $this->assertSame('hello', StandardFilters::_default(null, 'hello', ['allow_false' => true]));
+        $this->assertSame('hello', StandardFilters::_default('', 'hello', ['allow_false' => true]));
+        $this->assertTemplateResult('kept', '{% assign v = false | default: "x", allow_false: true %}{% if v == false %}kept{% endif %}');
+        $this->assertTemplateResult('x', '{{ false | default: "x", allow_false: false }}');
     }
 
     /*
@@ -765,6 +785,18 @@ class StandardFiltersTest extends TestCase
                 ['from function ', 'value ', null],
             ],
             [
+                ['attr' => 'value '],
+                ['value '],
+            ],
+            [
+                new \ArrayIterator(['attr' => 'value ']),
+                ['value '],
+            ],
+            [
+                [3 => ['attr' => 'value ']],
+                [3 => 'value '],
+            ],
+            [
                 0,
                 0,
             ],
@@ -777,6 +809,8 @@ class StandardFiltersTest extends TestCase
             }
             $this->assertEquals($item[1], $actual);
         }
+
+        $this->assertTemplateResult('1', '{{ h | map: "a" }}', ['h' => ['a' => 1]]);
     }
 
     public function testFirst()
@@ -1068,7 +1102,7 @@ class StandardFiltersTest extends TestCase
             ],
             [
                 10,
-                20,
+                20.0,
                 0.5,
             ],
             [
@@ -1086,6 +1120,17 @@ class StandardFiltersTest extends TestCase
         foreach ($data as $item) {
             $this->assertEqualsWithDelta($item[2], StandardFilters::divided_by($item[0], $item[1]), 0.00001);
         }
+    }
+
+    public function testDivideByIntegers()
+    {
+        $this->assertSame(3, StandardFilters::divided_by(7, 2));
+        $this->assertSame(-4, StandardFilters::divided_by(-7, 2));
+        $this->assertSame(3, StandardFilters::divided_by('7', '2'));
+        $this->assertSame(3.5, StandardFilters::divided_by(7, 2.0));
+        $this->assertSame(3.5, StandardFilters::divided_by('7.0', 2));
+        $this->assertSame(3.5, StandardFilters::divided_by(7, '2.0'));
+        $this->assertTemplateResult('3|-4|3.5|0', '{{ 7 | divided_by: 2 }}|{{ -7 | divided_by: 2 }}|{{ 7 | divided_by: 2.0 }}|{{ 1 | divided_by: 3 }}');
     }
 
     public function testModulo()

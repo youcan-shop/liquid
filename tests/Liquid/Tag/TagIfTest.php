@@ -136,6 +136,21 @@ class TagIfTest extends TestCase
         $this->assertTemplateResult($expected, $text, ['array' => [1, 2, 3]]);
     }
 
+    public function testEmpty()
+    {
+        $text = '{% if v == empty %}true{% else %}false{% endif %}';
+
+        $this->assertTemplateResult('false', $text);
+        $this->assertTemplateResult('false', $text, ['v' => null]);
+        $this->assertTemplateResult('true', $text, ['v' => '']);
+        $this->assertTemplateResult('true', $text, ['v' => []]);
+        $this->assertTemplateResult('true', $text, ['v' => new \ArrayObject()]);
+        $this->assertTemplateResult('false', $text, ['v' => 'a']);
+        $this->assertTemplateResult('false', $text, ['v' => ['a' => 1]]);
+        $this->assertTemplateResult('true', '{% if v != empty %}true{% else %}false{% endif %}', ['v' => null]);
+        $this->assertTemplateResult('false', '{% if empty != v %}true{% else %}false{% endif %}', ['v' => '']);
+    }
+
     public function testNil()
     {
         $text = " {% if var == null %} true {% else %} false {% endif %} ";
@@ -211,6 +226,14 @@ class TagIfTest extends TestCase
         $this->assertTemplateResult('true', '{% if 8 == 10 or "h" == "h" %}true{% else %}false{% endif %}');
         $this->assertTemplateResult('false', '{% if 8 == 10 and "h" == "h" %}true{% else %}false{% endif %}');
         $this->assertTemplateResult('true', '{% if 10 == 10 or "h" == "k" or "k" == "k" %}true{% else %}false{% endif %}');
+    }
+
+    public function testLogicalOperatorsRightToLeft()
+    {
+        $this->assertTemplateResult('true', '{% if true or false and false %}true{% else %}false{% endif %}');
+        $this->assertTemplateResult('false', '{% if false and false or true %}true{% else %}false{% endif %}');
+        $this->assertTemplateResult('true', '{% if true and false or true %}true{% else %}false{% endif %}');
+        $this->assertTemplateResult('false', '{% if false %}{% elsif false and false or true %}{% else %}false{% endif %}');
     }
 
     public function testLogicalOperatorsInsideStrings()

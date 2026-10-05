@@ -33,7 +33,7 @@ class StandardFilters
 
 
     /**
-     * Capitalize words in the input sentence
+     * Capitalize the first character and lowercase the rest
      *
      * @param string $input
      *
@@ -41,11 +41,9 @@ class StandardFilters
      */
     public static function capitalize($input)
     {
-        return preg_replace_callback("/(^|[^\p{L}'])([\p{Ll}])/u", function ($matches) {
-            $first_char = mb_substr($matches[2], 0, 1);
+        $input = (string) $input;
 
-            return $matches[1] . mb_strtoupper($first_char) . mb_substr($matches[2], 1);
-        }, ucwords($input));
+        return mb_strtoupper(mb_substr($input, 0, 1)) . mb_strtolower(mb_substr($input, 1));
     }
 
 
@@ -174,12 +172,13 @@ class StandardFilters
      *
      * @param string $input
      * @param string $default_value
+     * @param array $options
      *
      * @return string
      */
-    public static function _default($input, $default_value = '')
+    public static function _default($input, $default_value = '', $options = [])
     {
-        $isBlank = $input == '' || $input === false || $input === null;
+        $isBlank = $input === false ? empty($options['allow_false']) : $input == '';
 
         return $isBlank ? $default_value : $input;
     }
@@ -191,11 +190,26 @@ class StandardFilters
      * @param float $input
      * @param float $operand
      *
-     * @return float
+     * @return int|float
      */
     public static function divided_by($input, $operand)
     {
+        if (self::isInteger($input) && self::isInteger($operand)) {
+            return (int) floor((int) $input / (int) $operand);
+        }
+
         return (float) $input / (float) $operand;
+    }
+
+
+    /**
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    private static function isInteger($value)
+    {
+        return is_int($value) || is_string($value) && !str_contains($value, '.');
     }
 
 
@@ -407,6 +421,9 @@ class StandardFilters
         }
         if (!is_array($input)) {
             return $input;
+        }
+        if (array_filter(array_keys($input), 'is_string')) {
+            $input = [$input];
         }
 
         return array_map(function ($elem) use ($property) {
@@ -641,15 +658,15 @@ class StandardFilters
      *
      * @return array|\Iterator|string
      */
-    public static function slice($input, $offset, $length = null)
+    public static function slice($input, $offset, $length = 1)
     {
         if ($input instanceof \Iterator) {
             $input = iterator_to_array($input);
         }
         if (is_array($input)) {
-            $input = array_slice($input, $offset, $length);
+            $input = array_slice($input, $offset, $length ?? 1);
         } elseif (is_string($input)) {
-            $input = mb_substr($input, $offset, $length);
+            $input = mb_substr($input, $offset, $length ?? 1);
         }
 
         return $input;
@@ -806,8 +823,8 @@ class StandardFilters
     public static function truncate($input, $characters = 100, $ending = '...')
     {
         if (is_string($input) || is_numeric($input)) {
-            if (strlen($input) > $characters) {
-                return mb_substr($input, 0, $characters) . $ending;
+            if (mb_strlen($input) > $characters) {
+                return mb_substr($input, 0, max(0, $characters - mb_strlen($ending))) . $ending;
             }
         }
 

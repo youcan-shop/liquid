@@ -129,29 +129,11 @@ class TagIf extends Decision
                         throw new ParseException("Syntax Error in tag 'if' - Valid syntax: if [condition]");
                     }
                 }
-                if (count($logicalOperators)) {
-                    // If statement contains and/or
-                    $display = $this->interpretCondition($conditions[0]['left'], $conditions[0]['right'], $conditions[0]['operator'], $context);
-                    foreach ($logicalOperators as $k => $logicalOperator) {
-                        if ($logicalOperator == 'and') {
-                            $display = ($display && $this->interpretCondition(
-                                $conditions[$k + 1]['left'],
-                                $conditions[$k + 1]['right'],
-                                $conditions[$k + 1]['operator'],
-                                $context,
-                            ));
-                        } else {
-                            $display = ($display || $this->interpretCondition(
-                                $conditions[$k + 1]['left'],
-                                $conditions[$k + 1]['right'],
-                                $conditions[$k + 1]['operator'],
-                                $context,
-                            ));
-                        }
-                    }
-                } else {
-                    // If statement is a single condition
-                    $display = $this->interpretCondition($conditions[0]['left'], $conditions[0]['right'], $conditions[0]['operator'], $context);
+                $k = count($conditions) - 1;
+                $display = $this->interpretCondition($conditions[$k]['left'], $conditions[$k]['right'], $conditions[$k]['operator'], $context);
+                while ($k--) {
+                    $condition = $this->interpretCondition($conditions[$k]['left'], $conditions[$k]['right'], $conditions[$k]['operator'], $context);
+                    $display = $logicalOperators[$k] == 'and' ? $condition && $display : $condition || $display;
                 }
 
                 // hook for unless tag

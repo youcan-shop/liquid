@@ -38,7 +38,7 @@ Second element is: {{ array | slice: 2 | first }}
 {{ 'barbar' | replace_first:'bar','foo' }} #=> 'foobar'
 {{ 'foobarfoobar' | remove:'foo' }} #=> 'barbar'
 {{ 'barbar' | remove_first:'bar' }} #=> 'bar'
-{{ 'tests' | truncate:4 }} #=> 'test...'
+{{ 'tests' | truncate:4 }} #=> 't...'
 {{ 'Foo bar bar' | truncatewords:2 }} #=> 'Foo bar...'
 {{ 'Foo bar bar' | split: " " | first }} #=> 'Foo'
 {{ 'Foo bar bar' | split: " " | uniq | join: " " }} #=> 'Foo bar'

@@ -36,6 +36,11 @@ class TagUnlessTest extends TestCase
         $this->assertTemplateResult($expected, $text, ['variable' => true]);
     }
 
+    public function testLogicalOperatorsRightToLeft()
+    {
+        $this->assertTemplateResult('true', '{% unless false and false or true %}true{% endunless %}');
+    }
+
     public function testForAndUnless()
     {
         $this->assertTemplateResult(
