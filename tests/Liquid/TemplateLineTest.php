@@ -56,6 +56,48 @@ class TemplateLineTest extends TestCase
         $this->assertSame(3, $this->renderErrorLine("\n\n\n\n{% include 'boom' %}", $fs));
     }
 
+    public function testErrorHandlerReplacesFailingNode()
+    {
+        $this->assertSame("a\n[nope@2]\nb", $this->renderWithHandler("a\n{{ x | fail }}\nb"));
+    }
+
+    public function testErrorHandlerGetsIncludedFileLine()
+    {
+        $fs = TestFileSystem::fromArray(['inner' => "x\n{{ y | fail }}"]);
+
+        $this->assertSame("\n\n\nx\n[nope@2]|z", $this->renderWithHandler("\n\n\n{% include 'inner' %}|z", $fs));
+    }
+
+    public function testErrorHandlerKeepsBreakAndContinue()
+    {
+        $source = "{% for i in (1..4) %}{% if i == 2 %}{% continue %}{% endif %}{% if i == 4 %}{% break %}{% endif %}{{ i }}{% endfor %}\n{{ x | fail }}";
+
+        $this->assertSame("13\n[nope@2]", $this->renderWithHandler($source));
+    }
+
+    public function testFailingNodeThrowsWithoutHandler()
+    {
+        $template = new Template();
+        $template->registerFilter('fail', fn() => throw new \RuntimeException('nope'));
+        $template->parse("a\n{{ x | fail }}");
+        $template->render([], null, ['error_handler' => fn() => '']);
+
+        $this->expectException(\RuntimeException::class);
+        $template->render();
+    }
+
+    private function renderWithHandler(string $source, ?FileSystem $fs = null): string
+    {
+        $template = new Template();
+        if ($fs) {
+            $template->setFileSystem($fs);
+        }
+        $template->registerFilter('fail', fn() => throw new \RuntimeException('nope'));
+        $template->parse($source);
+
+        return $template->render([], null, ['error_handler' => fn(\Throwable $e, ?int $line) => "[{$e->getMessage()}@$line]"]);
+    }
+
     private function renderErrorLine(string $source, ?FileSystem $fs = null): ?int
     {
         $template = new Template();
