@@ -33,7 +33,7 @@ class StandardFilters
 
 
     /**
-     * Capitalize words in the input sentence
+     * Capitalize the first character and lowercase the rest
      *
      * @param string $input
      *
@@ -41,11 +41,9 @@ class StandardFilters
      */
     public static function capitalize($input)
     {
-        return preg_replace_callback("/(^|[^\p{L}'])([\p{Ll}])/u", function ($matches) {
-            $first_char = mb_substr($matches[2], 0, 1);
+        $input = (string) $input;
 
-            return $matches[1] . mb_strtoupper($first_char) . mb_substr($matches[2], 1);
-        }, ucwords($input));
+        return mb_strtoupper(mb_substr($input, 0, 1)) . mb_strtolower(mb_substr($input, 1));
     }
 
 
