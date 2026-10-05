@@ -68,7 +68,7 @@ class StandardFilters
      *
      * @return string
      */
-    public static function date($input, $strftimeFormat = '%A, %B %e, %Y at %l:%S %P %z')
+    public static function date($input, $strftimeFormat = '%A, %B %e, %Y at %l:%M %P %z')
     {
         if (!$strftimeFormat) {
             return $input;
