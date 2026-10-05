@@ -233,6 +233,25 @@ XPCTD;
         $this->assertTemplateResult('9596979899100', '{%for i in (95..variable)%}{{i}}{%endfor%}', $assigns);
     }
 
+    public function testForWithRangesLimitAndOffset()
+    {
+        $this->assertTemplateResult('45', '{%for i in (1..6) limit:2 offset:3%}{{i}}{%endfor%}');
+        $this->assertTemplateResult('12|3456', '{%for i in (1..6) limit:2%}{{i}}{%endfor%}|{%for i in (1..6) offset:continue%}{{i}}{%endfor%}');
+        $this->assertTemplateResult('1/3/0 2/3/0 3/3/1 ', '{%for i in (1..3)%}{{forloop.index}}/{{forloop.length}}/{{forloop.last}} {%endfor%}');
+    }
+
+    public function testForReversed()
+    {
+        $assigns = ['a' => [1, 2, 3, 4], 'reversed' => [7, 8]];
+
+        $this->assertTemplateResult('4321', '{%for i in a reversed%}{{i}}{%endfor%}', $assigns);
+        $this->assertTemplateResult('4321', '{%for i in (1..4) reversed%}{{i}}{%endfor%}');
+        $this->assertTemplateResult('32', '{%for i in a reversed limit:2 offset:1%}{{i}}{%endfor%}', $assigns);
+        $this->assertTemplateResult('54', '{%for i in (1..6) reversed limit:2 offset:3%}{{i}}{%endfor%}');
+        $this->assertTemplateResult('1221', '{%for i in a reversed limit:2%}{{forloop.index}}{{i}}{%endfor%}', $assigns);
+        $this->assertTemplateResult('78', '{%for i in reversed%}{{i}}{%endfor%}', $assigns);
+    }
+
     public function testForWithBracketPath()
     {
         $assigns = ['c' => ['all' => [['n' => 'a'], ['n' => 'b']], 'L' => [[1, 2], [3, 4]]], 'i' => 1];

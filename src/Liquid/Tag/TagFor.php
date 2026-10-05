@@ -63,6 +63,8 @@ class TagFor extends AbstractBlock
 
     private ?array $elseNodelist = null;
 
+    private bool $reversed;
+
     /**
      * @param Template $template
      * @param string $markup
@@ -75,6 +77,7 @@ class TagFor extends AbstractBlock
     {
         parent::__construct($template, $markup, $tokens, $fileSystem);
 
+        $this->reversed = (bool) preg_match('/\s+in\s+(?:\(.*?\)|\S+)\s+reversed\b/', $markup);
         $syntaxRegexp = new Regexp('/(\w+)\s+in\s+(' . Liquid::get('VARIABLE_PATH') . ')/');
 
         if ($syntaxRegexp->match($markup)) {
@@ -152,50 +155,16 @@ class TagFor extends AbstractBlock
             $end = $context->get($this->collectionName);
         }
 
-        $range = [$start, $end];
-
-        if ($range[0] > $range[1]) {
+        if ($start > $end) {
             return $this->renderElse($context);
         }
 
-        $context->push();
-        $result = '';
-        $index = 0;
-        $length = $range[1] - $range[0];
-        for ($i = $range[0]; $i <= $range[1]; $i++) {
-            $context->set($this->variableName, $i);
-            $context->set('forloop', [
-                'name'    => $this->name,
-                'length'  => $length,
-                'index'   => $index + 1,
-                'index0'  => $index,
-                'rindex'  => $length - $index,
-                'rindex0' => $length - $index - 1,
-                'first'   => (int) ($index == 0),
-                'last'    => (int) ($index == $length - 1),
-            ]);
-
-            $result .= $this->renderAll($this->nodelist, $context);
-
-            $index++;
-
-            if (isset($context->registers['break'])) {
-                unset($context->registers['break']);
-                break;
-            }
-            if (isset($context->registers['continue'])) {
-                unset($context->registers['continue']);
-            }
-        }
-
-        $context->pop();
-
-        return $result;
+        return $this->renderCollection($context, range((int) $start, (int) $end));
     }
 
-    private function renderCollection(Context $context)
+    private function renderCollection(Context $context, $collection = null)
     {
-        $collection = $context->get($this->collectionName);
+        $collection ??= $context->get($this->collectionName);
 
         if ($collection instanceof \Generator && !$collection->valid()) {
             return $this->renderElse($context);
@@ -229,6 +198,9 @@ class TagFor extends AbstractBlock
         $segment = array_slice($collection, $range[0], $range[1]);
         if (!count($segment)) {
             return $this->renderElse($context);
+        }
+        if ($this->reversed) {
+            $segment = array_reverse($segment);
         }
 
         $context->push();
