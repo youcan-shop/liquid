@@ -35,8 +35,9 @@ class Variable
      * Constructor
      *
      * @param string $markup
+     * @param int|null $templateLine
      */
-    public function __construct($markup)
+    public function __construct($markup, private ?int $templateLine = null)
     {
         $this->markup = $markup;
 
@@ -129,6 +130,11 @@ class Variable
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getTemplateLine(): ?int
+    {
+        return $this->templateLine;
     }
 
     /**
