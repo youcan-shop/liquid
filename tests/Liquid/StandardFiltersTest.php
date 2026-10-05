@@ -380,7 +380,7 @@ class StandardFiltersTest extends TestCase
 
     public function testSlice()
     {
-        // Slice up to the end
+        // Slice one element by default
         $data = [
             [
                 [],
@@ -396,15 +396,15 @@ class StandardFiltersTest extends TestCase
             ],
             [
                 [1, 2, 3, 4, 5],
-                [3, 4, 5],
+                [3],
             ],
             [
                 new \ArrayIterator([1, 2, 3, 4, 5]),
-                [3, 4, 5],
+                [3],
             ],
             [
                 '12345',
-                '345',
+                '3',
             ],
             [
                 100,
@@ -465,6 +465,11 @@ class StandardFiltersTest extends TestCase
         }
 
         $this->assertEquals('Владимир', StandardFilters::slice('Владимир Владимирович', 0, 8));
+        $this->assertEquals('ui', StandardFilters::slice('Liquid', -3, 2));
+        $this->assertEquals([3, 4], StandardFilters::slice([1, 2, 3, 4], -2, 2));
+        $this->assertEquals('d', StandardFilters::slice('Liquid', -1));
+        $this->assertEquals('', StandardFilters::slice('Liquid', 10));
+        $this->assertTemplateResult('H|ui|4', '{{ "Hello" | slice: 0 }}|{{ "Liquid" | slice: -3, 2 }}|{{ a | slice: -1 | join: "," }}', ['a' => [1, 2, 3, 4]]);
     }
 
     public function testTruncate()

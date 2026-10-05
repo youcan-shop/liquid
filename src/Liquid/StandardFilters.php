@@ -657,15 +657,15 @@ class StandardFilters
      *
      * @return array|\Iterator|string
      */
-    public static function slice($input, $offset, $length = null)
+    public static function slice($input, $offset, $length = 1)
     {
         if ($input instanceof \Iterator) {
             $input = iterator_to_array($input);
         }
         if (is_array($input)) {
-            $input = array_slice($input, $offset, $length);
+            $input = array_slice($input, $offset, $length ?? 1);
         } elseif (is_string($input)) {
-            $input = mb_substr($input, $offset, $length);
+            $input = mb_substr($input, $offset, $length ?? 1);
         }
 
         return $input;
