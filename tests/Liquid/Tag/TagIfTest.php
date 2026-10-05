@@ -136,6 +136,21 @@ class TagIfTest extends TestCase
         $this->assertTemplateResult($expected, $text, ['array' => [1, 2, 3]]);
     }
 
+    public function testEmpty()
+    {
+        $text = '{% if v == empty %}true{% else %}false{% endif %}';
+
+        $this->assertTemplateResult('false', $text);
+        $this->assertTemplateResult('false', $text, ['v' => null]);
+        $this->assertTemplateResult('true', $text, ['v' => '']);
+        $this->assertTemplateResult('true', $text, ['v' => []]);
+        $this->assertTemplateResult('true', $text, ['v' => new \ArrayObject()]);
+        $this->assertTemplateResult('false', $text, ['v' => 'a']);
+        $this->assertTemplateResult('false', $text, ['v' => ['a' => 1]]);
+        $this->assertTemplateResult('true', '{% if v != empty %}true{% else %}false{% endif %}', ['v' => null]);
+        $this->assertTemplateResult('false', '{% if empty != v %}true{% else %}false{% endif %}', ['v' => '']);
+    }
+
     public function testNil()
     {
         $text = " {% if var == null %} true {% else %} false {% endif %} ";
