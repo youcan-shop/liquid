@@ -275,8 +275,18 @@ class AbstractBlock extends AbstractTag
             if (is_object($token) && method_exists($token, 'render')) {
                 try {
                     $value = $token->render($context);
-                } catch (LiquidException $e) {
-                    throw $e->setTemplateLine($token->getTemplateLine());
+                } catch (\Throwable $e) {
+                    $line = $token->getTemplateLine();
+                    if ($e instanceof LiquidException) {
+                        $line = $e->setTemplateLine($line)->getTemplateLine();
+                    }
+
+                    $handler = $context->registers['error_handler'] ?? null;
+                    if ($handler === null) {
+                        throw $e;
+                    }
+
+                    $value = $handler($e, $line);
                 }
             } else {
                 $value = $token;
