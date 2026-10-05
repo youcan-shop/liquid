@@ -172,12 +172,13 @@ class StandardFilters
      *
      * @param string $input
      * @param string $default_value
+     * @param array $options
      *
      * @return string
      */
-    public static function _default($input, $default_value = '')
+    public static function _default($input, $default_value = '', $options = [])
     {
-        $isBlank = $input == '' || $input === false || $input === null;
+        $isBlank = $input === false ? empty($options['allow_false']) : $input == '';
 
         return $isBlank ? $default_value : $input;
     }

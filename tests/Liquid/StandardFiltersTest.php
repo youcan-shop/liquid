@@ -658,6 +658,13 @@ class StandardFiltersTest extends TestCase
         $this->assertTemplateResult('something', '{{ nothing | default: "something" }}');
         $this->assertTemplateResult('x', '{{ "x" | default }}');
         $this->assertTemplateResult('', '{{ nothing | default }}');
+
+        $this->assertSame('hello', StandardFilters::_default(false, 'hello'));
+        $this->assertSame(false, StandardFilters::_default(false, 'hello', ['allow_false' => true]));
+        $this->assertSame('hello', StandardFilters::_default(null, 'hello', ['allow_false' => true]));
+        $this->assertSame('hello', StandardFilters::_default('', 'hello', ['allow_false' => true]));
+        $this->assertTemplateResult('kept', '{% assign v = false | default: "x", allow_false: true %}{% if v == false %}kept{% endif %}');
+        $this->assertTemplateResult('x', '{{ false | default: "x", allow_false: false }}');
     }
 
     /*
