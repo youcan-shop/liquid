@@ -14,4 +14,19 @@ namespace YouCan\Liquid;
 /**
  * LiquidException class.
  */
-class LiquidException extends \Exception {}
+class LiquidException extends \Exception
+{
+    private ?int $templateLine = null;
+
+    public function getTemplateLine(): ?int
+    {
+        return $this->templateLine;
+    }
+
+    public function setTemplateLine(?int $line): static
+    {
+        $this->templateLine ??= $line;
+
+        return $this;
+    }
+}
