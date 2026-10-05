@@ -822,8 +822,8 @@ class StandardFilters
     public static function truncate($input, $characters = 100, $ending = '...')
     {
         if (is_string($input) || is_numeric($input)) {
-            if (strlen($input) > $characters) {
-                return mb_substr($input, 0, $characters) . $ending;
+            if (mb_strlen($input) > $characters) {
+                return mb_substr($input, 0, max(0, $characters - mb_strlen($ending))) . $ending;
             }
         }
 

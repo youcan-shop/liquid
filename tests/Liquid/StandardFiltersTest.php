@@ -472,7 +472,8 @@ class StandardFiltersTest extends TestCase
         // Truncate with default ending
         $data = [
             ''                   => '',
-            str_repeat('a', 150) => str_repeat('a', 100) . '...',
+            str_repeat('a', 150) => str_repeat('a', 97) . '...',
+            str_repeat('a', 100) => str_repeat('a', 100),
             'test'               => 'test',
             3                    => 3,
         ];
@@ -482,13 +483,18 @@ class StandardFiltersTest extends TestCase
         }
 
         // Custom length
-        $this->assertEquals('abc...', StandardFilters::truncate('abcdef', 3));
+        $this->assertEquals('abc...', StandardFilters::truncate('abcdefg', 6));
+        $this->assertEquals('...', StandardFilters::truncate('abcdef', 2));
 
         // Custom ending
-        $this->assertEquals('abcend', StandardFilters::truncate('abcdef', 3, 'end'));
+        $this->assertEquals('abend', StandardFilters::truncate('abcdef', 5, 'end'));
+        $this->assertEquals('abcde', StandardFilters::truncate('abcdef', 5, ''));
 
         // UTF-8
-        $this->assertEquals('Влад...', StandardFilters::truncate('Владимир Владимирович', 4));
+        $this->assertEquals('Влад...', StandardFilters::truncate('Владимир Владимирович', 7));
+        $this->assertEquals('Владимир', StandardFilters::truncate('Владимир', 8));
+
+        $this->assertTemplateResult('Ground control to...', '{{ "Ground control to Major Tom." | truncate: 20 }}');
     }
 
     public function testTruncateWords()
