@@ -239,18 +239,28 @@ class Template
      */
     public function render(array $assigns = [], $filters = null, array $registers = []): string
     {
-        $context = new Context($this, $assigns, $registers);
-
-        if ($this->tickFunction) {
-            $context->setTickFunction($this->tickFunction);
-        }
-
         if (!is_null($filters)) {
             if (is_array($filters)) {
                 $this->filters = array_merge($this->filters, $filters);
             } else {
                 $this->filters[] = $filters;
             }
+        }
+
+        return $this->root->render($this->context($assigns, $registers));
+    }
+
+    public function hasFilter(string $name): bool
+    {
+        return $this->context()->hasFilter($name);
+    }
+
+    private function context(array $assigns = [], array $registers = []): Context
+    {
+        $context = new Context($this, $assigns, $registers);
+
+        if ($this->tickFunction) {
+            $context->setTickFunction($this->tickFunction);
         }
 
         foreach ($this->filters as $filter) {
@@ -262,7 +272,7 @@ class Template
             }
         }
 
-        return $this->root->render($context);
+        return $context;
     }
 
     public function setTickFunction(callable $tickFunction)
