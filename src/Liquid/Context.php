@@ -372,6 +372,11 @@ class Context
         $this->filterbank->addFilter($filter, $callback);
     }
 
+    public function hasFilter(string $name): bool
+    {
+        return $this->filterbank->has($name);
+    }
+
     /**
      * Invoke the filter that matches given name
      *

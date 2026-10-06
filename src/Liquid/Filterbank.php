@@ -118,6 +118,11 @@ class Filterbank
         return true;
     }
 
+    public function has(string $name): bool
+    {
+        return isset($this->methodMap[$name === 'default' ? '_default' : $name]);
+    }
+
     /**
      * Invokes the filter with the given name
      *

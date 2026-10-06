@@ -166,4 +166,15 @@ class TemplateTest extends TestCase
         // Remove tmp cache files
         array_map('unlink', glob($this->cacheDir . DIRECTORY_SEPARATOR . '*'));
     }
+
+    public function testHasFilter()
+    {
+        $template = new Template();
+        $template->registerFilter('shout', fn($value) => strtoupper($value));
+
+        $this->assertTrue($template->hasFilter('upcase'));
+        $this->assertTrue($template->hasFilter('default'));
+        $this->assertTrue($template->hasFilter('shout'));
+        $this->assertFalse($template->hasFilter('img_url'));
+    }
 }
