@@ -24,4 +24,9 @@ class TagDocTest extends TestCase
     {
         $this->assertTemplateResult('ab', "a{% doc %}\n@example\n{% render 'card', title: 'x' %}\n{% unknowntag %}\n{% enddoc %}b");
     }
+
+    public function testTrimmedTags()
+    {
+        $this->assertTemplateResult('ab', "a\n{%- doc -%}\n  @param {string} [class]\n{%- enddoc -%}\nb");
+    }
 }
