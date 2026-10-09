@@ -32,7 +32,7 @@ class TagRaw extends AbstractBlock
      */
     public function parse(array &$tokens)
     {
-        $tagRegexp = new Regexp('/^' . Liquid::get('TAG_START') . '\s*(\w+)\s*(.*)?' . Liquid::get('TAG_END') . '$/');
+        $tagRegexp = new Regexp('/^' . Liquid::get('TAG_START') . Liquid::get('WHITESPACE_CONTROL') . '?\s*(\w+)\s*(.*?)' . Liquid::get('WHITESPACE_CONTROL') . '?' . Liquid::get('TAG_END') . '$/s');
 
         $this->nodelist = [];
 
@@ -46,6 +46,8 @@ class TagRaw extends AbstractBlock
             if ($tagRegexp->match($token)) {
                 // If we found the proper block delimiter just end parsing here and let the outer block proceed
                 if ($tagRegexp->matches[1] == $this->blockDelimiter()) {
+                    self::$trimWhitespace = $token[-3] === Liquid::get('WHITESPACE_CONTROL');
+
                     break;
                 }
             }

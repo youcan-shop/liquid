@@ -25,4 +25,9 @@ class TagRawTest extends TestCase
 
         $this->assertTemplateResult('', '{% raw %}{% endraw %}');
     }
+
+    public function testTrimmedTags()
+    {
+        $this->assertTemplateResult('a{{ x }}b', "a {%- raw -%}{{ x }}{%- endraw -%} b");
+    }
 }
