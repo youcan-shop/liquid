@@ -77,6 +77,13 @@ class VariableTest extends TestCase
         $this->assertEquals([['textileze', []], ['paragraph', []]], $var->getFilters());
     }
 
+    public function testFiltersOnSeveralLines()
+    {
+        $var = new Variable("\n  image\n  | image_url: width: 100\n  | image_tag:\n    width: 10,\n    class: 'x'\n");
+        $this->assertEquals('image', $var->getName());
+        $this->assertEquals([['image_url', [['width' => '100']]], ['image_tag', [['width' => '10', 'class' => "'x'"]]]], $var->getFilters());
+    }
+
     public function testSymbol()
     {
         $var = new Variable("http://disney.com/logo.gif | image: 'med' ");
