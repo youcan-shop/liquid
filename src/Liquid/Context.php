@@ -47,6 +47,8 @@ class Context
      */
     private $tickFunction = null;
 
+    private int $sealed = 0;
+
     private Template $template;
 
     public function __construct(Template $template, array $assigns = [], array $registers = [])
@@ -410,6 +412,13 @@ class Context
      *
      * @return bool
      */
+    public function seal(?int $sealed = null): int
+    {
+        [$previous, $this->sealed] = [$this->sealed, $sealed ?? count($this->assigns) - 1];
+
+        return $previous;
+    }
+
     public function push()
     {
         array_unshift($this->assigns, []);
@@ -442,7 +451,7 @@ class Context
     public function set($key, $value, $global = false)
     {
         if ($global) {
-            for ($i = 0; $i < count($this->assigns); $i++) {
+            for ($i = 0; $i < count($this->assigns) - $this->sealed; $i++) {
                 $this->assigns[$i][$key] = $value;
             }
         } else {
