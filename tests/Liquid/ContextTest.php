@@ -482,6 +482,28 @@ class ContextTest extends TestCase
         $this->assertNull($this->context->get('test'));
     }
 
+    public function testSealedScopeKeepsGlobalAssignsInside()
+    {
+        $this->context->set('order', 'a,b');
+        $this->context->push();
+        $sealed = $this->context->seal();
+        $this->context->set('order', ['a', 'b'], true);
+        $this->assertEquals(['a', 'b'], $this->context->get('order'));
+        $this->context->seal($sealed);
+        $this->context->pop();
+        $this->assertEquals('a,b', $this->context->get('order'));
+    }
+
+    public function testSealedScopeReadsOuterScopes()
+    {
+        $this->context->set('product', 'hat');
+        $this->context->push();
+        $sealed = $this->context->seal();
+        $this->assertEquals('hat', $this->context->get('product'));
+        $this->context->seal($sealed);
+        $this->context->pop();
+    }
+
     public function testMerge()
     {
         $this->context->merge(['test' => 'test']);
