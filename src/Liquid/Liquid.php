@@ -167,72 +167,17 @@ class Liquid
             return $value;
         }
 
-        if (is_object($value) && method_exists($value, '__toString')) {
-            $value = (string) $value;
-        }
-
-        if (!is_string($value)) {
-            return 0;
-        }
-
-        if (preg_match('/^\s*-?\d+\.\d+\s*$/', $value)) {
-            return (float) $value;
-        }
-
-        return preg_match('/^\s*[-+]?\d+/', $value, $m) ? (int) $m[0] : 0;
-    }
-
-    public static function formatFloat(float $value): string
-    {
-        $text = json_encode($value, JSON_PRESERVE_ZERO_FRACTION);
-
-        if (!str_contains($text, 'e')) {
-            return $text;
-        }
-
-        [$mantissa, $exponent] = explode('e', $text);
-
-        return (str_contains($mantissa, '.') ? $mantissa : $mantissa . '.0') . 'e' . ($exponent[0] === '-' ? '-' : '+') . str_pad(ltrim($exponent, '+-'), 2, '0', STR_PAD_LEFT);
+        return is_numeric($value) ? $value + 0 : (int) (is_scalar($value) || $value instanceof \Stringable ? (string) $value : 0);
     }
 
     /**
-     * @param int|float $left
-     * @param int|float $right
+     * @param int|float $value
      *
      * @return int|float
      */
-    public static function arithmetic($left, $right, string $operator)
+    public static function exact($value)
     {
-        if (is_int($left) && is_int($right)) {
-            return match ($operator) {
-                '+' => $left + $right,
-                '-' => $left - $right,
-                '*' => $left * $right,
-            };
-        }
-
-        [$a, $b] = [self::decimal($left), self::decimal($right)];
-
-        if ($a === null || $b === null) {
-            return match ($operator) {
-                '+' => $left + $right,
-                '-' => $left - $right,
-                '*' => $left * $right,
-            };
-        }
-
-        return (float) match ($operator) {
-            '+' => bcadd($a, $b, 40),
-            '-' => bcsub($a, $b, 40),
-            '*' => bcmul($a, $b, 40),
-        };
-    }
-
-    private static function decimal(int|float $value): ?string
-    {
-        $text = is_int($value) ? (string) $value : json_encode($value);
-
-        return preg_match('/^-?\d+(\.\d+)?$/', $text) ? $text : null;
+        return is_float($value) ? (float) sprintf('%.15g', $value) : $value;
     }
 
     public static function shortName(object $object): string

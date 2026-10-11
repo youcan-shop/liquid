@@ -279,7 +279,7 @@ class AbstractBlock extends AbstractTag
 
         return match (true) {
             is_bool($value)                                       => $value ? 'true' : 'false',
-            is_float($value) && is_finite($value)                 => Liquid::formatFloat($value),
+            is_float($value) && is_finite($value)                 => strtolower(var_export($value, true)),
             is_object($value) && !method_exists($value, '__toString') => Liquid::shortName($value),
             default                                               => (string) $value,
         };

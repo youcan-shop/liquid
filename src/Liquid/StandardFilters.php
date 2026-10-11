@@ -508,7 +508,7 @@ class StandardFilters
      */
     public static function minus($input, $operand)
     {
-        return Liquid::arithmetic(Liquid::number($input), Liquid::number($operand), '-');
+        return Liquid::exact(Liquid::number($input) - Liquid::number($operand));
     }
 
 
@@ -557,7 +557,7 @@ class StandardFilters
      */
     public static function plus($input, $operand)
     {
-        return Liquid::arithmetic(Liquid::number($input), Liquid::number($operand), '+');
+        return Liquid::exact(Liquid::number($input) + Liquid::number($operand));
     }
 
 
@@ -859,7 +859,7 @@ class StandardFilters
      */
     public static function times($input, $operand)
     {
-        return Liquid::arithmetic(Liquid::number($input), Liquid::number($operand), '*');
+        return Liquid::exact(Liquid::number($input) * Liquid::number($operand));
     }
 
 
