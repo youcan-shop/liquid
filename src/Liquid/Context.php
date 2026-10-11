@@ -181,6 +181,10 @@ class Context
             }
 
             // first try to cast an object to an array or value
+            if ($object instanceof Drop) {
+                $object->setContext($this);
+            }
+
             if (is_object($object)) {
                 if (method_exists($object, 'toLiquid')) {
                     $object = $object->toLiquid();
@@ -301,6 +305,10 @@ class Context
         // lastly, try to get an embedded value of an object
         // value could be of any type, not just string, so we have to do this
         // conversion here, not later in AbstractBlock::renderAll
+        if ($object instanceof Drop) {
+            $object->setContext($this);
+        }
+
         if (is_object($object) && method_exists($object, 'toLiquid')) {
             $object = $object->toLiquid();
         }
