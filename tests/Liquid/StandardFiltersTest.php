@@ -1201,12 +1201,12 @@ class StandardFiltersTest extends TestCase
             [
                 10,
                 3,
-                10.000,
+                10,
             ],
             [
                 8,
                 0,
-                8.0,
+                8,
             ],
         ];
 

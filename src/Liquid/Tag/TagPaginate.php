@@ -116,7 +116,7 @@ class TagPaginate extends AbstractBlock
 
         // How many pages are there?
         $this->collectionSize = count($this->collection);
-        $this->totalPages = ceil($this->collectionSize / $this->numberItems);
+        $this->totalPages = (int) ceil($this->collectionSize / $this->numberItems);
 
         // Whatever there is in the context, we need a number
         $this->currentPage = intval($context->get(Liquid::get('PAGINATION_CONTEXT_KEY')));

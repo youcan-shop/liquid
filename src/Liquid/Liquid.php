@@ -156,6 +156,30 @@ class Liquid
      *
      * @return array
      */
+    /**
+     * @param mixed $value
+     *
+     * @return int|float
+     */
+    public static function number($value)
+    {
+        if (is_int($value) || is_float($value)) {
+            return $value;
+        }
+
+        return is_numeric($value) ? $value + 0 : (int) (is_scalar($value) || $value instanceof \Stringable ? (string) $value : 0);
+    }
+
+    /**
+     * @param int|float $value
+     *
+     * @return int|float
+     */
+    public static function exact($value)
+    {
+        return is_float($value) ? (float) sprintf('%.15g', $value) : $value;
+    }
+
     public static function shortName(object $object): string
     {
         return substr(strrchr('\\' . get_class($object), '\\'), 1);
