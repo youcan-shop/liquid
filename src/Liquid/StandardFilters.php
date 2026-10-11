@@ -205,17 +205,6 @@ class StandardFilters
 
 
     /**
-     * @param mixed $value
-     *
-     * @return bool
-     */
-    private static function isInteger($value)
-    {
-        return is_int($value) || is_string($value) && !str_contains($value, '.');
-    }
-
-
-    /**
      * Convert an input to lowercase
      *
      * @param string $input
@@ -685,7 +674,7 @@ class StandardFilters
     {
         [$input, $n] = [Liquid::number($input), (int) Liquid::number($n)];
 
-        return is_int($input) || $n === 0 ? (int) round($input) : round($input, $n);
+        return is_int($input) || $n === 0 ? (int) round($input, min($n, 0)) : round($input, $n);
     }
 
 
