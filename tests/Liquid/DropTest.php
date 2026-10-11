@@ -155,4 +155,12 @@ class DropTest extends TestCase
         $this->expectExceptionMessage('invalid arguments for the `split` filter');
         $template->parse('{{ "a" | split: list }}')->render(['list' => ['b']]);
     }
+
+    public function testNumbersAndBooleansPrintAsInLiquid()
+    {
+        $template = new Template();
+        $template->parse('{{ 1 | plus: 1 }}|{{ 1.5 | plus: 0.5 }}|{{ 0.1 | plus: 0.2 }}|{{ 7 | divided_by: 2 }}|{{ -7 | modulo: 3 }}|{{ 2.5 | round }}|{{ 3.14159 | round: 2 }}|{{ t }}|{{ f }}|{{ n }}');
+
+        $this->assertSame('2|2.0|0.3|3|2|3|3.14|true|false|', $template->render(['t' => true, 'f' => false, 'n' => null]));
+    }
 }

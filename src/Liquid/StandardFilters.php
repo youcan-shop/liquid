@@ -54,7 +54,7 @@ class StandardFilters
      */
     public static function ceil($input)
     {
-        return (int) ceil((float) $input);
+        return (int) ceil(Liquid::number($input));
     }
 
 
@@ -194,11 +194,13 @@ class StandardFilters
      */
     public static function divided_by($input, $operand)
     {
-        if (self::isInteger($input) && self::isInteger($operand)) {
-            return (int) floor((int) $input / (int) $operand);
+        [$input, $operand] = [Liquid::number($input), Liquid::number($operand)];
+
+        if ($operand == 0) {
+            throw new LiquidException('divided by 0');
         }
 
-        return (float) $input / (float) $operand;
+        return is_int($input) && is_int($operand) ? intdiv($input - (($input % $operand + $operand) % $operand), $operand) : $input / $operand;
     }
 
 
@@ -414,7 +416,7 @@ class StandardFilters
      */
     public static function floor($input)
     {
-        return (int) floor((float) $input);
+        return (int) floor(Liquid::number($input));
     }
 
 
@@ -517,7 +519,7 @@ class StandardFilters
      */
     public static function minus($input, $operand)
     {
-        return (float) $input - (float) $operand;
+        return Liquid::arithmetic(Liquid::number($input), Liquid::number($operand), '-');
     }
 
 
@@ -531,7 +533,15 @@ class StandardFilters
      */
     public static function modulo($input, $operand)
     {
-        return fmod((float) $input, (float) $operand);
+        [$input, $operand] = [Liquid::number($input), Liquid::number($operand)];
+
+        if ($operand == 0) {
+            throw new LiquidException('divided by 0');
+        }
+
+        $result = is_int($input) && is_int($operand) ? $input % $operand : fmod($input, $operand);
+
+        return $result != 0 && ($result < 0) !== ($operand < 0) ? $result + $operand : $result;
     }
 
 
@@ -558,7 +568,7 @@ class StandardFilters
      */
     public static function plus($input, $operand)
     {
-        return (float) $input + (float) $operand;
+        return Liquid::arithmetic(Liquid::number($input), Liquid::number($operand), '+');
     }
 
 
@@ -673,7 +683,9 @@ class StandardFilters
      */
     public static function round($input, $n = 0)
     {
-        return round((float) $input, (int) $n);
+        [$input, $n] = [Liquid::number($input), (int) Liquid::number($n)];
+
+        return is_int($input) || $n === 0 ? (int) round($input) : round($input, $n);
     }
 
 
@@ -858,7 +870,7 @@ class StandardFilters
      */
     public static function times($input, $operand)
     {
-        return (float) $input * (float) $operand;
+        return Liquid::arithmetic(Liquid::number($input), Liquid::number($operand), '*');
     }
 
 
