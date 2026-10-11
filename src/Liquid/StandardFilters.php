@@ -858,17 +858,36 @@ class StandardFilters
     /**
      * Remove duplicate elements from an array
      *
-     * @param array|\Traversable $input
+     * @param mixed $input
+     * @param string|null $property
      *
      * @return array
      */
-    public static function uniq($input)
+    public static function uniq($input, $property = null)
     {
         if ($input instanceof \Traversable) {
             $input = iterator_to_array($input);
         }
 
-        return array_unique($input);
+        if ($input === null) {
+            return [];
+        }
+
+        if (!is_array($input)) {
+            return [$input];
+        }
+
+        if ($property === null) {
+            return array_unique($input, SORT_REGULAR);
+        }
+
+        $seen = [];
+
+        return array_filter($input, function ($item) use ($property, &$seen) {
+            $key = serialize(self::property($item, $property));
+
+            return !isset($seen[$key]) && $seen[$key] = true;
+        });
     }
 
 
