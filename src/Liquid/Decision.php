@@ -59,8 +59,12 @@ class Decision extends AbstractBlock
      */
     private function stringValue($value)
     {
-        if ($value instanceof Drop && $value instanceof \JsonSerializable) {
-            return json_decode(json_encode($value), true);
+        if ($value instanceof Drop && Drop::identity($value) === $value) {
+            return (string) $value;
+        }
+
+        if ($value instanceof Drop) {
+            return $value instanceof \JsonSerializable ? json_decode(json_encode($value), true) : Drop::identity($value);
         }
 
         // Objects should have a __toString method to get a value to compare to

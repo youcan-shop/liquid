@@ -155,4 +155,27 @@ class DropTest extends TestCase
         $this->expectExceptionMessage('invalid arguments for the `split` filter');
         $template->parse('{{ "a" | split: list }}')->render(['list' => ['b']]);
     }
+
+    public function testADropIsNotBlankInConditions()
+    {
+        $template = new Template();
+        $template->parse('{% if drop != blank %}a{% endif %}{% if drop == "" %}b{% endif %}{% assign d = drop | default: "x" %}{% if d == "x" %}c{% endif %}');
+
+        $this->assertSame('a', $template->render(['drop' => new ProductDrop()]));
+    }
+
+    public function testADropWithItsOwnStringIsComparedByIt()
+    {
+        $drop = new class () extends Drop {
+            public function __toString()
+            {
+                return 'product';
+            }
+        };
+
+        $template = new Template();
+        $template->parse('{% if drop == "product" %}a{% endif %}');
+
+        $this->assertSame('a', $template->render(['drop' => $drop]));
+    }
 }

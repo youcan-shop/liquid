@@ -104,4 +104,18 @@ abstract class Drop
     {
         return '';
     }
+
+    /**
+     * Returns a value for comparisons, which is never printed
+     *
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    public static function identity($value)
+    {
+        return $value instanceof self && (new \ReflectionMethod($value, '__toString'))->class === self::class
+            ? get_class($value)
+            : $value;
+    }
 }
