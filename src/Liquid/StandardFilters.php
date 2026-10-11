@@ -178,7 +178,7 @@ class StandardFilters
      */
     public static function _default($input, $default_value = '', $options = [])
     {
-        $isBlank = $input === false ? empty($options['allow_false']) : Drop::identity($input) == '';
+        $isBlank = $input === false ? empty($options['allow_false']) : $input == '';
 
         return $isBlank ? $default_value : $input;
     }

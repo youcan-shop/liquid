@@ -54,17 +54,12 @@ class Decision extends AbstractBlock
      *
      * @param mixed $value
      *
-     * @throws \YouCan\Liquid\Exception\RenderException
      * @return string
      */
     private function stringValue($value)
     {
-        if ($value instanceof Drop && Drop::identity($value) === $value) {
-            return (string) $value;
-        }
-
-        if ($value instanceof Drop) {
-            return $value instanceof \JsonSerializable ? json_decode(json_encode($value), true) : Drop::identity($value);
+        if ($value instanceof Drop && $value instanceof \JsonSerializable) {
+            return json_decode(json_encode($value), true);
         }
 
         // Objects should have a __toString method to get a value to compare to
@@ -77,7 +72,7 @@ class Decision extends AbstractBlock
                 return (string) $value->valid();
             }
 
-            throw new RenderException('this value cannot be compared');
+            return Liquid::shortName($value);
         }
 
         // Arrays simply return true

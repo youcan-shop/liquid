@@ -141,9 +141,7 @@ class TagCaseTest extends TestCase
      */
     public function testObject()
     {
-        $this->expectException(\YouCan\Liquid\Exception\RenderException::class);
-
-        $this->assertTemplateResult('', '{% case variable %}{% when 5 %}{% endcase %}', ['variable' => (object) []]);
+        $this->assertTemplateResult('hit', '{% case variable %}{% when 5 %}{% when "stdClass" %}hit{% endcase %}', ['variable' => (object) []]);
     }
 
     public function testStringable()

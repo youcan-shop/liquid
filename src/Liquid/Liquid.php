@@ -156,6 +156,11 @@ class Liquid
      *
      * @return array
      */
+    public static function shortName(object $object): string
+    {
+        return substr(strrchr('\\' . get_class($object), '\\'), 1);
+    }
+
     public static function arrayFlatten($array)
     {
         $return = [];
