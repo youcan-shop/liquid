@@ -219,6 +219,21 @@ class StandardFiltersTest extends TestCase
         }
     }
 
+    public function testFindRejectAndHas()
+    {
+        $cars = [['model' => 'bmw', 'new' => true], ['model' => 'audi', 'new' => false], ['model' => 'kia', 'new' => true]];
+
+        $this->assertSame(['model' => 'audi', 'new' => false], StandardFilters::find($cars, 'model', 'audi'));
+        $this->assertSame(1, StandardFilters::find_index($cars, 'model', 'audi'));
+        $this->assertSame(0, StandardFilters::find_index($cars, 'new'));
+        $this->assertNull(StandardFilters::find($cars, 'model', 'fiat'));
+        $this->assertNull(StandardFilters::find_index(null, 'model'));
+        $this->assertSame([['model' => 'audi', 'new' => false]], StandardFilters::reject($cars, 'new'));
+        $this->assertSame([$cars[0], $cars[2]], StandardFilters::reject($cars, 'model', 'audi'));
+        $this->assertTrue(StandardFilters::has($cars, 'model', 'kia'));
+        $this->assertFalse(StandardFilters::has($cars, 'model', 'fiat'));
+    }
+
     public function testEscape()
     {
         $data = [
