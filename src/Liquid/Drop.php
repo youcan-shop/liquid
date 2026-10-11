@@ -102,6 +102,6 @@ abstract class Drop
      */
     public function __toString()
     {
-        return '';
+        return Liquid::shortName($this);
     }
 }

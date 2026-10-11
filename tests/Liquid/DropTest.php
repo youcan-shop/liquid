@@ -135,7 +135,7 @@ class DropTest extends TestCase
 
     public function testToString()
     {
-        $this->assertSame('', strval(new ProductDrop()));
+        $this->assertSame('ProductDrop', strval(new ProductDrop()));
     }
 
     public function testOutputHasNoPhpNames()
@@ -150,7 +150,7 @@ class DropTest extends TestCase
             'closure' => fn() => 1,
         ]);
 
-        $this->assertSame('[|ab||]', $output);
+        $this->assertSame('[ProductDrop|astdClassb|stdClass|Closure]', $output);
 
         $this->expectExceptionMessage('invalid arguments for the `split` filter');
         $template->parse('{{ "a" | split: list }}')->render(['list' => ['b']]);

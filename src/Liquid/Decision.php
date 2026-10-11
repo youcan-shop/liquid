@@ -54,7 +54,6 @@ class Decision extends AbstractBlock
      *
      * @param mixed $value
      *
-     * @throws \YouCan\Liquid\Exception\RenderException
      * @return string
      */
     private function stringValue($value)
@@ -73,7 +72,7 @@ class Decision extends AbstractBlock
                 return (string) $value->valid();
             }
 
-            throw new RenderException('this value cannot be compared');
+            return Liquid::shortName($value);
         }
 
         // Arrays simply return true

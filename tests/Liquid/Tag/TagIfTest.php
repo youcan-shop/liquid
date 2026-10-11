@@ -292,8 +292,6 @@ class TagIfTest extends TestCase
      */
     public function testIncomparable()
     {
-        $this->expectException(\YouCan\Liquid\Exception\RenderException::class);
-
         $this->assertTemplateResult('', '{% if foo == 1 %}true{% endif %}', ['foo' => (object) []]);
     }
 
