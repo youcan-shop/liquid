@@ -263,18 +263,89 @@ class StandardFilters
      */
     public static function where($input, string ...$args)
     {
-        if (is_array($input)) {
-            switch (count($args)) {
-                case 1:
-                    return array_values(array_filter($input, fn($v) => !in_array(self::property($v, $args[0]), [null, false], true)));
-                case 2:
-                    return array_values(array_filter($input, fn($v) => (self::property($v, $args[0]) ?? '') == $args[1]));
-                default:
-                    throw new LiquidException('Wrong number of arguments to function `where`, given ' . count($args) . ', expected 1 or 2');
+        return is_array($input) ? array_values(array_filter($input, self::matcher('where', $args))) : $input;
+    }
+
+    /**
+     * Creates an array without the objects with a given property value
+     *
+     * @param mixed $input
+     * @param string ...$args
+     *
+     * @throws LiquidException
+     * @return mixed
+     */
+    public static function reject($input, string ...$args)
+    {
+        $match = self::matcher('reject', $args);
+
+        return is_array($input) ? array_values(array_filter($input, fn($v) => !$match($v))) : $input;
+    }
+
+    /**
+     * Returns the first object with a given property value
+     *
+     * @param mixed $input
+     * @param string ...$args
+     *
+     * @throws LiquidException
+     * @return mixed
+     */
+    public static function find($input, string ...$args)
+    {
+        $index = self::find_index($input, ...$args);
+
+        return $index === null ? null : array_values($input)[$index];
+    }
+
+    /**
+     * Returns the index of the first object with a given property value
+     *
+     * @param mixed $input
+     * @param string ...$args
+     *
+     * @throws LiquidException
+     * @return int|null
+     */
+    public static function find_index($input, string ...$args)
+    {
+        $match = self::matcher('find', $args);
+
+        foreach (is_array($input) ? array_values($input) : [] as $index => $item) {
+            if ($match($item)) {
+                return $index;
             }
         }
 
-        return $input;
+        return null;
+    }
+
+    /**
+     * Returns true when an object has a given property value
+     *
+     * @param mixed $input
+     * @param string ...$args
+     *
+     * @throws LiquidException
+     * @return bool
+     */
+    public static function has($input, string ...$args)
+    {
+        return self::find_index($input, ...$args) !== null;
+    }
+
+    /**
+     * @param list<string> $args
+     *
+     * @throws LiquidException
+     */
+    private static function matcher(string $filter, array $args): \Closure
+    {
+        return match (count($args)) {
+            1       => fn($v) => !in_array(self::property($v, $args[0]), [null, false], true),
+            2       => fn($v) => (self::property($v, $args[0]) ?? '') == $args[1],
+            default => throw new LiquidException("Wrong number of arguments to function `$filter`, given " . count($args) . ', expected 1 or 2'),
+        };
     }
 
     /**
