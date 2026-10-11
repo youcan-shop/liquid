@@ -267,6 +267,19 @@ class AbstractBlock extends AbstractTag
      *
      * @return string
      */
+    private static function output($value): string
+    {
+        if ($value instanceof \Traversable) {
+            $value = iterator_to_array($value);
+        }
+
+        if (is_array($value)) {
+            return htmlspecialchars(implode(array_map(fn($v) => self::output($v), Liquid::arrayFlatten($value))));
+        }
+
+        return is_object($value) && !method_exists($value, '__toString') ? '' : (string) $value;
+    }
+
     protected function renderAll(array $list, Context $context)
     {
         $result = '';
@@ -292,11 +305,7 @@ class AbstractBlock extends AbstractTag
                 $value = $token;
             }
 
-            if (is_array($value)) {
-                $value = htmlspecialchars(implode(Liquid::arrayFlatten($value)));
-            }
-
-            $result .= $value;
+            $result .= self::output($value);
 
             if (isset($context->registers['break'])) {
                 break;

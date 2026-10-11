@@ -135,6 +135,24 @@ class DropTest extends TestCase
 
     public function testToString()
     {
-        $this->assertEquals(ProductDrop::class, strval(new ProductDrop()));
+        $this->assertSame('', strval(new ProductDrop()));
+    }
+
+    public function testOutputHasNoPhpNames()
+    {
+        $template = new Template();
+        $template->parse('[{{ drop }}|{{ list }}|{{ object }}|{{ closure }}]');
+
+        $output = $template->render([
+            'drop'    => new ProductDrop(),
+            'list'    => new \ArrayObject(['a', new \stdClass(), 'b']),
+            'object'  => new \stdClass(),
+            'closure' => fn() => 1,
+        ]);
+
+        $this->assertSame('[|ab||]', $output);
+
+        $this->expectExceptionMessage('invalid arguments for the `split` filter');
+        $template->parse('{{ "a" | split: list }}')->render(['list' => ['b']]);
     }
 }

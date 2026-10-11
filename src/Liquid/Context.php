@@ -401,7 +401,7 @@ class Context
         try {
             return $this->filterbank->invoke($name, $value, $args);
         } catch (\TypeError $typeError) {
-            throw new LiquidException($typeError->getMessage(), 0, $typeError);
+            throw new LiquidException("invalid arguments for the `$name` filter", 0, $typeError);
         }
     }
 
