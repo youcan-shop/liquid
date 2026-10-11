@@ -713,6 +713,13 @@ class StandardFiltersTest extends TestCase
         foreach ($data as $item) {
             $this->assertEquals($item[1], array_values(StandardFilters::uniq($item[0])));
         }
+
+        $this->assertSame([], StandardFilters::uniq(null));
+        $this->assertSame(['a'], StandardFilters::uniq('a'));
+        $this->assertSame(
+            [['id' => 1, 'n' => 'a'], ['id' => 2, 'n' => 'c']],
+            array_values(StandardFilters::uniq([['id' => 1, 'n' => 'a'], ['id' => 1, 'n' => 'b'], ['id' => 2, 'n' => 'c']], 'id')),
+        );
     }
 
     public function testReverse()
