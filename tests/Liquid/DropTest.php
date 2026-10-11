@@ -135,6 +135,6 @@ class DropTest extends TestCase
 
     public function testToString()
     {
-        $this->assertEquals(ProductDrop::class, strval(new ProductDrop()));
+        $this->assertSame('', strval(new ProductDrop()));
     }
 }
