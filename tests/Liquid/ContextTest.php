@@ -355,6 +355,21 @@ class ContextTest extends TestCase
         $this->assertEquals('2', $template->render(['lists' => [$menu('Main'), $menu('Footer')], 'main' => $menu('Main')]));
     }
 
+    public function testDropHasTheContextInToLiquid()
+    {
+        $drop = fn() => new class () extends Drop {
+            public function toLiquid()
+            {
+                return $this->context->get('title');
+            }
+        };
+
+        $template = new Template();
+        $template->parse('{{ heading }}|{{ data.heading }}|{{ data.nested.size }}');
+
+        $this->assertEquals('Shoes|Shoes|5', $template->render(['title' => 'Shoes', 'heading' => $drop(), 'data' => ['heading' => $drop(), 'nested' => $drop()]]));
+    }
+
     public function testJsonSerializableValuesAreTruthyWithoutSerializing()
     {
         $drop = new class () extends Drop implements \JsonSerializable {
