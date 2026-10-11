@@ -274,7 +274,7 @@ class AbstractBlock extends AbstractTag
         }
 
         if (is_array($value)) {
-            return htmlspecialchars(implode(array_map(self::output(...), Liquid::arrayFlatten($value))));
+            return htmlspecialchars(implode(array_map(fn($v) => self::output($v), Liquid::arrayFlatten($value))));
         }
 
         return is_object($value) && !method_exists($value, '__toString') ? '' : (string) $value;
