@@ -277,6 +277,7 @@ class AbstractBlock extends AbstractTag
             return htmlspecialchars(implode(array_map(fn($v) => self::output($v), Liquid::arrayFlatten($value))));
         }
 
+        // floats are printed short only when serialize_precision is -1, the PHP default
         return match (true) {
             is_bool($value)                                       => $value ? 'true' : 'false',
             is_float($value) && is_finite($value)                 => strtolower(var_export($value, true)),
