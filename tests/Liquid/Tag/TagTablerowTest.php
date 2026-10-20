@@ -24,7 +24,7 @@ class TagTablerowTest extends TestCase
         );
 
         $this->assertTemplateResult(
-            '<tr class="row1">' . "\n" . '<td class="col1"> item 1 </td></tr>' . "\n" . '<tr class="row2">' . "\n" . '<td class="col1"> item 2 </td></tr>' . "\n",
+            '<tr class="row1">' . "\n" . '<td class="col1"> item 1 </td></tr>' . "\n" . '<tr class="row2"><td class="col1"> item 2 </td></tr>' . "\n",
             '{% tablerow item in array cols:1 %} item {{ item }} {% endtablerow %}',
             ['array' => [1, 2]],
         );
@@ -40,6 +40,31 @@ class TagTablerowTest extends TestCase
             '{%tablerow item in array%} yo {%endtablerow%}',
             ['array' => new \ArrayIterator([1, 2])],
         );
+    }
+
+    public function testRange()
+    {
+        $this->assertTemplateResult(
+            '<tr class="row1">' . "\n" . '<td class="col1">1</td><td class="col2">2</td></tr>' . "\n" . '<tr class="row2"><td class="col1">3</td></tr>' . "\n",
+            '{% tablerow i in (1..n) cols:2 %}{{ i }}{% endtablerow %}',
+            ['n' => 3],
+        );
+
+        $this->assertTemplateResult('<tr class="row1">' . "\n" . '</tr>' . "\n", '{% tablerow i in (3..1) %}{{ i }}{% endtablerow %}');
+    }
+
+    public function testLoopFields()
+    {
+        $this->assertTemplateResult(
+            '<tr class="row1">' . "\n" . '<td class="col1">1 0 1 true false true false</td><td class="col2">1 1 2 false true false false</td></tr>' . "\n"
+            . '<tr class="row2"><td class="col1">2 0 1 true false false true</td></tr>' . "\n",
+            '{% tablerow i in (1..3) cols:2 %}{{ tablerowloop.row }} {{ tablerowloop.col0 }} {{ tablerowloop.col }} {{ tablerowloop.col_first }} {{ tablerowloop.col_last }} {{ tablerowloop.first }} {{ tablerowloop.last }}{% endtablerow %}',
+        );
+    }
+
+    public function testMissingCollectionRendersNothing()
+    {
+        $this->assertTemplateResult('', '{% tablerow item in missing %}{{ item }}{% endtablerow %}');
     }
 
     /**

@@ -32,7 +32,7 @@ class TagContinueTest extends TestCase
     public function testTablerow()
     {
         $this->assertTemplateResult(
-            "<tr class=\"row1\">\n</tr>\n",
+            "<tr class=\"row1\">\n<td class=\"col1\"> </td><td class=\"col2\"> </td><td class=\"col3\"> </td><td class=\"col4\"> </td></tr>\n",
             '{%tablerow item in array%} {%continue%} yo {%endtablerow%}',
             ['array' => [1, 2, 3, 4]],
         );
@@ -42,7 +42,7 @@ class TagContinueTest extends TestCase
             ['array' => [1, 2, 3, 4]],
         );
         $this->assertTemplateResult(
-            "<tr class=\"row1\">\n<td class=\"col1\">  1 </td><td class=\"col2\">  2 </td><td class=\"col3\">  4 </td></tr>\n",
+            "<tr class=\"row1\">\n<td class=\"col1\">  1 </td><td class=\"col2\">  2 </td><td class=\"col3\">  </td><td class=\"col4\">  4 </td></tr>\n",
             '{%tablerow item in array%} {%if item == 3%} {%continue%} {%endif%} {{ item }} {%endtablerow%}',
             ['array' => [1, 2, 3, 4]],
         );
