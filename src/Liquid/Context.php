@@ -49,6 +49,8 @@ class Context
 
     private int $sealed = 0;
 
+    private ?array $isolated = null;
+
     private Template $template;
 
     public function __construct(Template $template, array $assigns = [], array $registers = [])
@@ -335,7 +337,9 @@ class Context
      */
     private function fetch($key)
     {
-        foreach ([$this->environments[1], ...$this->assigns, $this->environments[0]] as $scope) {
+        $assigns = $this->isolated === null ? $this->assigns : [...array_slice($this->assigns, 0, count($this->assigns) - $this->isolated[0]), $this->isolated[1]];
+
+        foreach ([$this->environments[1], ...$assigns, $this->environments[0]] as $scope) {
             if (array_key_exists($key, $scope)) {
                 $obj = $scope[$key];
 
@@ -427,6 +431,18 @@ class Context
         return $previous;
     }
 
+    public function isolate(array $globals): ?array
+    {
+        [$previous, $this->isolated] = [$this->isolated, [count($this->assigns) - 1, $globals]];
+
+        return $previous;
+    }
+
+    public function release(?array $isolated): void
+    {
+        $this->isolated = $isolated;
+    }
+
     public function push()
     {
         array_unshift($this->assigns, []);
@@ -459,7 +475,7 @@ class Context
     public function set($key, $value, $global = false)
     {
         if ($global) {
-            for ($i = 0; $i < count($this->assigns) - $this->sealed; $i++) {
+            for ($i = 0; $i < count($this->assigns) - max($this->sealed, $this->isolated[0] ?? 0); $i++) {
                 $this->assigns[$i][$key] = $value;
             }
         } else {

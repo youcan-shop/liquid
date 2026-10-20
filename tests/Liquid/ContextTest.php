@@ -339,9 +339,7 @@ class ContextTest extends TestCase
     public function testJsonSerializableValuesCompareByValue()
     {
         $menu = fn(string $title) => new class ($title) extends Drop implements \JsonSerializable {
-            public function __construct(private string $title)
-            {
-            }
+            public function __construct(private string $title) {}
 
             public function jsonSerialize(): array
             {
@@ -357,7 +355,7 @@ class ContextTest extends TestCase
 
     public function testDropHasTheContextInToLiquid()
     {
-        $drop = fn() => new class () extends Drop {
+        $drop = fn() => new class extends Drop {
             public function toLiquid()
             {
                 return $this->context->get('title');
@@ -372,7 +370,7 @@ class ContextTest extends TestCase
 
     public function testJsonSerializableValuesAreTruthyWithoutSerializing()
     {
-        $drop = new class () extends Drop implements \JsonSerializable {
+        $drop = new class extends Drop implements \JsonSerializable {
             public function jsonSerialize(): array
             {
                 throw new \LogicException('serialized');
@@ -388,9 +386,7 @@ class ContextTest extends TestCase
     public function testContainsOnSerializableCollectionsKeepsStringSemantics()
     {
         $blocks = new class ([['type' => 'title'], ['type' => 'buy_button']]) implements \JsonSerializable {
-            public function __construct(private array $items)
-            {
-            }
+            public function __construct(private array $items) {}
 
             public function jsonSerialize(): array
             {
@@ -517,6 +513,27 @@ class ContextTest extends TestCase
         $this->assertEquals('hat', $this->context->get('product'));
         $this->context->seal($sealed);
         $this->context->pop();
+    }
+
+    public function testIsolatedScopeReadsOnlyItselfAndTheGlobals()
+    {
+        $this->context->set('shop', 'acme');
+        $this->context->set('secret', 'leak');
+        $this->context->push();
+        $this->context->set('product', 'hat');
+        $this->context->push();
+        $isolated = $this->context->isolate(['shop' => 'acme']);
+        $this->context->set('block', 'title');
+        $this->context->set('order', 'b', true);
+        $this->context->push();
+        $this->assertEquals(
+            ['acme', null, null, 'title', 'b'],
+            array_map(fn($key) => $this->context->get($key), ['shop', 'secret', 'product', 'block', 'order']),
+        );
+        $this->context->pop();
+        $this->context->release($isolated);
+        $this->context->pop();
+        $this->assertEquals(['hat', 'leak', null], array_map(fn($key) => $this->context->get($key), ['product', 'secret', 'order']));
     }
 
     public function testMerge()
