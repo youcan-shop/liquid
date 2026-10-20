@@ -528,12 +528,12 @@ class ContextTest extends TestCase
         $this->context->push();
         $this->assertEquals(
             ['acme', null, null, 'title', 'b'],
-            array_map($this->context->get(...), ['shop', 'secret', 'product', 'block', 'order']),
+            array_map(fn($key) => $this->context->get($key), ['shop', 'secret', 'product', 'block', 'order']),
         );
         $this->context->pop();
         $this->context->release($isolated);
         $this->context->pop();
-        $this->assertEquals(['hat', 'leak', null], array_map($this->context->get(...), ['product', 'secret', 'order']));
+        $this->assertEquals(['hat', 'leak', null], array_map(fn($key) => $this->context->get($key), ['product', 'secret', 'order']));
     }
 
     public function testMerge()
