@@ -49,7 +49,7 @@ class Context
 
     private int $sealed = 0;
 
-    private int $isolated = 0;
+    private ?array $isolated = null;
 
     private Template $template;
 
@@ -337,7 +337,7 @@ class Context
      */
     private function fetch($key)
     {
-        $assigns = $this->isolated ? [...array_slice($this->assigns, 0, count($this->assigns) - $this->isolated), end($this->assigns)] : $this->assigns;
+        $assigns = $this->isolated === null ? $this->assigns : [...array_slice($this->assigns, 0, count($this->assigns) - $this->isolated[0]), $this->isolated[1]];
 
         foreach ([$this->environments[1], ...$assigns, $this->environments[0]] as $scope) {
             if (array_key_exists($key, $scope)) {
@@ -431,11 +431,16 @@ class Context
         return $previous;
     }
 
-    public function isolate(?int $isolated = null): int
+    public function isolate(array $globals): ?array
     {
-        [$previous, $this->isolated] = [$this->isolated, $isolated ?? count($this->assigns) - 1];
+        [$previous, $this->isolated] = [$this->isolated, [count($this->assigns) - 1, $globals]];
 
         return $previous;
+    }
+
+    public function release(?array $isolated): void
+    {
+        $this->isolated = $isolated;
     }
 
     public function push()
@@ -470,7 +475,7 @@ class Context
     public function set($key, $value, $global = false)
     {
         if ($global) {
-            for ($i = 0; $i < count($this->assigns) - max($this->sealed, $this->isolated); $i++) {
+            for ($i = 0; $i < count($this->assigns) - max($this->sealed, $this->isolated[0] ?? 0); $i++) {
                 $this->assigns[$i][$key] = $value;
             }
         } else {

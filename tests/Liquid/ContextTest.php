@@ -515,21 +515,25 @@ class ContextTest extends TestCase
         $this->context->pop();
     }
 
-    public function testIsolatedScopeReadsOnlyItselfAndTheOutermostScope()
+    public function testIsolatedScopeReadsOnlyItselfAndTheGlobals()
     {
         $this->context->set('shop', 'acme');
+        $this->context->set('secret', 'leak');
         $this->context->push();
         $this->context->set('product', 'hat');
         $this->context->push();
-        $isolated = $this->context->isolate();
+        $isolated = $this->context->isolate(['shop' => 'acme']);
         $this->context->set('block', 'title');
         $this->context->set('order', 'b', true);
         $this->context->push();
-        $this->assertEquals(['acme', null, 'title', 'b'], [$this->context->get('shop'), $this->context->get('product'), $this->context->get('block'), $this->context->get('order')]);
+        $this->assertEquals(
+            ['acme', null, null, 'title', 'b'],
+            array_map($this->context->get(...), ['shop', 'secret', 'product', 'block', 'order']),
+        );
         $this->context->pop();
-        $this->context->isolate($isolated);
+        $this->context->release($isolated);
         $this->context->pop();
-        $this->assertEquals(['hat', null], [$this->context->get('product'), $this->context->get('order')]);
+        $this->assertEquals(['hat', 'leak', null], array_map($this->context->get(...), ['product', 'secret', 'order']));
     }
 
     public function testMerge()
