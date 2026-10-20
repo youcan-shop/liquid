@@ -519,6 +519,23 @@ class ContextTest extends TestCase
         $this->context->pop();
     }
 
+    public function testIsolatedScopeReadsOnlyItselfAndTheOutermostScope()
+    {
+        $this->context->set('shop', 'acme');
+        $this->context->push();
+        $this->context->set('product', 'hat');
+        $this->context->push();
+        $isolated = $this->context->isolate();
+        $this->context->set('block', 'title');
+        $this->context->set('order', 'b', true);
+        $this->context->push();
+        $this->assertEquals(['acme', null, 'title', 'b'], [$this->context->get('shop'), $this->context->get('product'), $this->context->get('block'), $this->context->get('order')]);
+        $this->context->pop();
+        $this->context->isolate($isolated);
+        $this->context->pop();
+        $this->assertEquals(['hat', null], [$this->context->get('product'), $this->context->get('order')]);
+    }
+
     public function testMerge()
     {
         $this->context->merge(['test' => 'test']);
